@@ -56,6 +56,7 @@ public class RecordingService extends Service {
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
     startRecording();
+    startForeground(100, createNotification());
     return START_STICKY;
   }
 
