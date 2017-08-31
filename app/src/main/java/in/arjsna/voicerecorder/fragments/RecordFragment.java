@@ -3,14 +3,12 @@ package in.arjsna.voicerecorder.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.melnykov.fab.FloatingActionButton;
@@ -39,10 +37,9 @@ public class RecordFragment extends Fragment {
   private TextView mRecordingPrompt;
   private int mRecordPromptCount = 0;
 
-  private boolean mStartRecording = true;
+  private boolean mIsRecording = false;
   private boolean mPauseRecording = true;
 
-  private Chronometer mChronometer = null;
   long timeWhenPaused = 0; //stores time when user clicks pause button
 
   /**
@@ -71,6 +68,7 @@ public class RecordFragment extends Fragment {
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     View recordView = inflater.inflate(R.layout.fragment_record, container, false);
+    mIsRecording = RecordingService.isServiceInProgress();
     initViews(recordView);
     bindEvents();
     return recordView;
@@ -79,8 +77,7 @@ public class RecordFragment extends Fragment {
   private void bindEvents() {
     mRecordButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        onRecord(mStartRecording);
-        mStartRecording = !mStartRecording;
+        onChangeRecord();
       }
     });
 
@@ -93,11 +90,12 @@ public class RecordFragment extends Fragment {
   }
 
   private void initViews(View recordView) {
-    mChronometer = (Chronometer) recordView.findViewById(R.id.chronometer);
     //update recording prompt text
     mRecordingPrompt = (TextView) recordView.findViewById(R.id.recording_status_text);
 
     mRecordButton = (FloatingActionButton) recordView.findViewById(R.id.btnRecord);
+    mRecordButton.setImageResource(
+        mIsRecording ? R.drawable.ic_media_stop : R.drawable.ic_media_play);
     mRecordButton.setColorNormal(getResources().getColor(R.color.primary));
     mRecordButton.setColorPressed(getResources().getColor(R.color.primary_dark));
     mPauseButton = (Button) recordView.findViewById(R.id.btnPause);
@@ -106,12 +104,13 @@ public class RecordFragment extends Fragment {
 
   // Recording Start/Stop
   //TODO: recording pause
-  private void onRecord(boolean start) {
+  private void onChangeRecord() {
 
     Intent intent = new Intent(getActivity(), RecordingService.class);
 
-    if (start) {
+    if (!mIsRecording) {
       // start recording
+      mIsRecording = true;
       mRecordButton.setImageResource(R.drawable.ic_media_stop);
       //mPauseButton.setVisibility(View.VISIBLE);
       Toast.makeText(getActivity(), R.string.toast_recording_start, Toast.LENGTH_SHORT).show();
@@ -121,24 +120,6 @@ public class RecordFragment extends Fragment {
         folder.mkdir();
       }
 
-      //start Chronometer
-      mChronometer.setBase(SystemClock.elapsedRealtime());
-      mChronometer.start();
-      mChronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-        @Override public void onChronometerTick(Chronometer chronometer) {
-          if (mRecordPromptCount == 0) {
-            mRecordingPrompt.setText(getString(R.string.record_in_progress) + ".");
-          } else if (mRecordPromptCount == 1) {
-            mRecordingPrompt.setText(getString(R.string.record_in_progress) + "..");
-          } else if (mRecordPromptCount == 2) {
-            mRecordingPrompt.setText(getString(R.string.record_in_progress) + "...");
-            mRecordPromptCount = -1;
-          }
-
-          mRecordPromptCount++;
-        }
-      });
-
       //start RecordingService
       getActivity().startService(intent);
       //keep screen on while recording
@@ -147,11 +128,10 @@ public class RecordFragment extends Fragment {
       mRecordingPrompt.setText(getString(R.string.record_in_progress) + ".");
       mRecordPromptCount++;
     } else {
+      mIsRecording = false;
       //stop recording
       mRecordButton.setImageResource(R.drawable.ic_mic_white_36dp);
       //mPauseButton.setVisibility(View.GONE);
-      mChronometer.stop();
-      mChronometer.setBase(SystemClock.elapsedRealtime());
       timeWhenPaused = 0;
       mRecordingPrompt.setText(getString(R.string.record_prompt));
 
@@ -166,15 +146,11 @@ public class RecordFragment extends Fragment {
     if (pause) {
       //pause recording
       mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_play, 0, 0, 0);
-      mRecordingPrompt.setText((String) getString(R.string.resume_recording_button).toUpperCase());
-      timeWhenPaused = mChronometer.getBase() - SystemClock.elapsedRealtime();
-      mChronometer.stop();
+      mRecordingPrompt.setText(getString(R.string.resume_recording_button).toUpperCase());
     } else {
       //resume recording
       mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_pause, 0, 0, 0);
-      mRecordingPrompt.setText((String) getString(R.string.pause_recording_button).toUpperCase());
-      mChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenPaused);
-      mChronometer.start();
+      mRecordingPrompt.setText(getString(R.string.pause_recording_button).toUpperCase());
     }
   }
 }

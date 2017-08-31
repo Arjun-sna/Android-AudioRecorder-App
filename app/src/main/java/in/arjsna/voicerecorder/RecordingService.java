@@ -40,6 +40,7 @@ public class RecordingService extends Service {
 
   private Timer mTimer = null;
   private TimerTask mIncrementTimerTask = null;
+  private static boolean isServiceInProgress = false;
 
   @Override public IBinder onBind(Intent intent) {
     return null;
@@ -55,12 +56,15 @@ public class RecordingService extends Service {
   }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
+    isServiceInProgress = true;
     startRecording();
     startForeground(100, createNotification());
     return START_STICKY;
   }
 
   @Override public void onDestroy() {
+    isServiceInProgress = false;
+
     if (mRecorder != null) {
       stopRecording();
     }
@@ -160,5 +164,9 @@ public class RecordingService extends Service {
         new Intent[] { new Intent(getApplicationContext(), MainActivity.class) }, 0));
 
     return mBuilder.build();
+  }
+
+  public static boolean isServiceInProgress() {
+    return isServiceInProgress;
   }
 }
