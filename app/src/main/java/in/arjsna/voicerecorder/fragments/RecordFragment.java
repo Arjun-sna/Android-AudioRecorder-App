@@ -71,14 +71,12 @@ public class RecordFragment extends Fragment {
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     View recordView = inflater.inflate(R.layout.fragment_record, container, false);
+    initViews(recordView);
+    bindEvents();
+    return recordView;
+  }
 
-    mChronometer = (Chronometer) recordView.findViewById(R.id.chronometer);
-    //update recording prompt text
-    mRecordingPrompt = (TextView) recordView.findViewById(R.id.recording_status_text);
-
-    mRecordButton = (FloatingActionButton) recordView.findViewById(R.id.btnRecord);
-    mRecordButton.setColorNormal(getResources().getColor(R.color.primary));
-    mRecordButton.setColorPressed(getResources().getColor(R.color.primary_dark));
+  private void bindEvents() {
     mRecordButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         onRecord(mStartRecording);
@@ -86,16 +84,24 @@ public class RecordFragment extends Fragment {
       }
     });
 
-    mPauseButton = (Button) recordView.findViewById(R.id.btnPause);
-    mPauseButton.setVisibility(View.GONE); //hide pause button before recording starts
     mPauseButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         onPauseRecord(mPauseRecording);
         mPauseRecording = !mPauseRecording;
       }
     });
+  }
 
-    return recordView;
+  private void initViews(View recordView) {
+    mChronometer = (Chronometer) recordView.findViewById(R.id.chronometer);
+    //update recording prompt text
+    mRecordingPrompt = (TextView) recordView.findViewById(R.id.recording_status_text);
+
+    mRecordButton = (FloatingActionButton) recordView.findViewById(R.id.btnRecord);
+    mRecordButton.setColorNormal(getResources().getColor(R.color.primary));
+    mRecordButton.setColorPressed(getResources().getColor(R.color.primary_dark));
+    mPauseButton = (Button) recordView.findViewById(R.id.btnPause);
+    mPauseButton.setVisibility(View.GONE); //hide pause button before recording starts
   }
 
   // Recording Start/Stop

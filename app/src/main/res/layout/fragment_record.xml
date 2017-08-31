@@ -18,30 +18,12 @@
       android:src="@drawable/ic_mic_white_36dp"
       />
 
-  <Chronometer
+  <TextView
+      android:layout_centerInParent="true"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:id="@+id/chronometer"
-      android:textSize="60sp"
-      android:fontFamily="sans-serif-light"
-      android:layout_alignBottom="@+id/recordProgressBar"
-      android:layout_centerHorizontal="true"
-      android:layout_marginBottom="64dp"
-      />
-
-  <ProgressBar
-      style="?android:attr/progressBarStyleHorizontal"
-      android:id="@+id/recordProgressBar"
-      android:layout_width="200dp"
-      android:layout_height="200dp"
-      android:progressDrawable="@drawable/record_progress_bar"
-      android:background="@drawable/record_progress_bar_background"
-      android:indeterminate="false"
-      android:max="100"
-      android:progress="0"
-      android:layout_marginTop="27dp"
-      android:layout_alignParentTop="true"
-      android:layout_centerHorizontal="true"
+      android:textColor="@color/material_blue_500"
+      android:text="Coming soon.."
       />
 
   <Button
