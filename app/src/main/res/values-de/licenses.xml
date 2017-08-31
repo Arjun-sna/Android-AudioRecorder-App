@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="license_title_fab">Floating Action Button</string>
-    <string name="license_author_fab">Oleksandr Melnykov</string>
-    <string name="license_content_fab">
+  <string name="license_title_fab">Floating Action Button</string>
+  <string name="license_author_fab">Oleksandr Melnykov</string>
+  <string name="license_content_fab">
         The MIT License (MIT)
         \n\nCopyright 2014 Oleksandr Melnykov
 
@@ -25,9 +25,9 @@
         SOFTWARE.
     </string>
 
-    <string name="license_title_tabs">PagerSlidingTabStrip</string>
-    <string name="license_author_tabs">Andreas Stütz</string>
-    <string name="license_content_tabs">
+  <string name="license_title_tabs">PagerSlidingTabStrip</string>
+  <string name="license_author_tabs">Andreas Stütz</string>
+  <string name="license_content_tabs">
         Copyright 2013 Andreas Stuetz
 
         \n\nLicensed under the Apache License, Version 2.0 (the "License");

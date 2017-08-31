@@ -4,34 +4,38 @@
     android:id="@+id/main_activity"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar"/>
+  <include
+      layout="@layout/toolbar"
+      android:id="@+id/toolbar"
+      />
 
-    <com.astuetz.PagerSlidingTabStrip
-        android:id="@+id/tabs"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/primary"
-        android:textColor="@color/white"
-        android:elevation="4dp"
-        app:pstsIndicatorColor="@color/tab_strip"
-        app:pstsIndicatorHeight="@dimen/tab_indicator_height"
-        app:pstsShouldExpand="true"/>
+  <android.support.design.widget.TabLayout
+      android:id="@+id/tabs"
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize"
+      android:background="@color/primary"
+      app:tabGravity="fill"
+      app:tabIndicatorColor="@color/white"
+      app:tabMode="fixed"
+      android:elevation="4dp"
+      />
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="1"
-        android:background="@android:color/white" />
+  <android.support.v4.view.ViewPager
+      android:id="@+id/pager"
+      android:layout_width="match_parent"
+      android:layout_height="0px"
+      android:layout_weight="1"
+      android:background="@android:color/white"
+      />
 
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+  <FrameLayout
+      android:id="@+id/container"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      />
 
 </LinearLayout>
 
