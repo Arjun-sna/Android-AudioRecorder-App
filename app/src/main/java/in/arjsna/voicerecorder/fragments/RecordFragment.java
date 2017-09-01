@@ -1,6 +1,7 @@
 package in.arjsna.voicerecorder.fragments;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -72,6 +73,7 @@ public class RecordFragment extends Fragment {
     View recordView = inflater.inflate(R.layout.fragment_record, container, false);
     initViews(recordView);
     bindEvents();
+    tryToBindService();
     return recordView;
   }
 
@@ -93,8 +95,6 @@ public class RecordFragment extends Fragment {
   private void initViews(View recordView) {
     audioVisualization = (AudioVisualization) recordView.findViewById(R.id.visualizer_view);
 
-    //update recording prompt text
-
     mRecordButton = (FloatingActionButton) recordView.findViewById(R.id.btnRecord);
     mRecordButton.setImageResource(
         mIsRecording ? R.drawable.ic_media_stop : R.drawable.ic_media_play);
@@ -104,8 +104,6 @@ public class RecordFragment extends Fragment {
     mPauseButton.setVisibility(View.GONE); //hide pause button before recording starts
   }
 
-  // Recording Start/Stop
-  //TODO: recording pause
   private void onChangeRecord() {
 
     Intent intent = new Intent(getActivity(), AudioRecordService.class);
@@ -114,25 +112,29 @@ public class RecordFragment extends Fragment {
       // start recording
       mIsRecording = true;
       mRecordButton.setImageResource(R.drawable.ic_media_stop);
-      //mPauseButton.setVisibility(View.VISIBLE);
       Toast.makeText(getActivity(), R.string.toast_recording_start, Toast.LENGTH_SHORT).show();
       File folder = new File(Environment.getExternalStorageDirectory() + "/SoundRecorder");
       if (!folder.exists()) {
-        //folder /SoundRecorder doesn't exist, create the folder
         folder.mkdir();
       }
-
-      //start RecordingService
       getActivity().startService(intent);
-      //keep screen on while recording
+      tryToBindService();
       getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     } else {
       mIsRecording = false;
       mRecordButton.setImageResource(R.drawable.ic_media_play);
       getActivity().unbindService(serviceConnection);
       getActivity().stopService(intent);
-      //allow the screen to turn off again once recording is finished
       getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+  }
+
+  private void tryToBindService() {
+    Intent intent = new Intent(getActivity(), AudioRecordService.class);
+    boolean b = getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    Log.i("Tesing", " " + b + " binding service");
+    if (mIsRecording) {
+      mRecordButton.setImageResource(R.drawable.ic_media_stop);
     }
   }
 
@@ -161,6 +163,14 @@ public class RecordFragment extends Fragment {
     } else {
       //resume recording
       mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_pause, 0, 0, 0);
+    }
+  }
+
+  @Override public void onDestroy() {
+    super.onDestroy();
+    audioVisualization.release();
+    if (mIsRecording) {
+      getActivity().unbindService(serviceConnection);
     }
   }
 }
