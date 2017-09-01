@@ -5,12 +5,12 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.activities.MainActivity;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Timer;
@@ -35,6 +35,9 @@ public class AudioRecordService extends Service {
   private AudioRecorder audioRecorder;
   private AudioRecordingDbmHandler handler;
   private ServiceBinder mIBinder;
+  private File currentFile;
+  private FileOutputStream currentFileOutStream;
+  private MediaSaveHelper mediaSaveHelper;
 
   @Override public IBinder onBind(Intent intent) {
     return mIBinder;
@@ -52,8 +55,23 @@ public class AudioRecordService extends Service {
     super.onCreate();
     mIBinder = new ServiceBinder();
     audioRecorder = new AudioRecorder();
+    mediaSaveHelper = new MediaSaveHelper();
     handler = new AudioRecordingDbmHandler();
-    audioRecorder.recordingCallback(handler);
+    audioRecorder.addRecordingCallback(mediaSaveHelper);
+    audioRecorder.addRecordingCallback(handler);
+  }
+
+  private byte[] short2byte(short[] sData) {
+    int shortArrsize = sData.length;
+    byte[] bytes = new byte[shortArrsize * 2];
+
+    for (int i = 0; i < shortArrsize; i++) {
+      bytes[i * 2] = (byte) (sData[i] & 0x00FF);
+      bytes[(i * 2) + 1] = (byte) (sData[i] >> 8);
+      sData[i] = 0;
+    }
+    return bytes;
+
   }
 
   public AudioRecordingDbmHandler getHandler() {
@@ -79,24 +97,31 @@ public class AudioRecordService extends Service {
   }
 
   public void startRecording() {
-    setFileNameAndPath();
+    mediaSaveHelper.createNewFile();
     audioRecorder.startRecord();
   }
 
-  public void setFileNameAndPath() {
-    int count = 0;
-    File f;
-
-    do {
-      count++;
-
-      mFileName = "something_.mp4";
-      mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-      mFilePath += "/SoundRecorder/" + mFileName;
-
-      f = new File(mFilePath);
-    } while (f.exists() && !f.isDirectory());
-  }
+  //public void setFileNameAndPath() {
+  //  int count = 0;
+  //  //do {
+  //    count++;
+  //    Log.i("TEsting", "creating file");
+  //
+  //    mFileName = "something_" + System.currentTimeMillis() + ".mp3";
+  //    mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+  //    mFilePath += "/SoundRecorder/" + mFileName;
+  //
+  //    currentFile = new File(mFilePath);
+  //    try {
+  //      currentFile.createNewFile();
+  //      currentFileOutStream = new FileOutputStream(currentFile);
+  //    } catch (FileNotFoundException e) {
+  //      e.printStackTrace();
+  //    } catch (IOException e) {
+  //      e.printStackTrace();
+  //    }
+  //  //} while (currentFile.exists() && !currentFile.isDirectory());
+  //}
 
   //TODO:
   private Notification createNotification() {

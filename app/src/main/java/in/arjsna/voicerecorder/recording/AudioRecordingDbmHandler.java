@@ -1,6 +1,5 @@
 package in.arjsna.voicerecorder.recording;
 
-import android.util.Log;
 import in.arjsna.voicerecorder.audiovisualization.DbmHandler;
 
 public class AudioRecordingDbmHandler extends DbmHandler<byte[]>
@@ -13,7 +12,6 @@ public class AudioRecordingDbmHandler extends DbmHandler<byte[]>
 
   @Override protected void onDataReceivedImpl(byte[] bytes, int layersCount, float[] dBmArray,
       float[] ampsArray) {
-    Log.i("TEsting", "here");
     if (layersCount < 1) return;
     final int bytesPerSample = 2; // As it is 16bit PCM
     final double amplification = 100.0; // choose a number as you like
@@ -68,5 +66,9 @@ public class AudioRecordingDbmHandler extends DbmHandler<byte[]>
 
   @Override public void onDataReady(byte[] data) {
     onDataReceived(data);
+  }
+
+  @Override public void onRecordingStopped() {
+
   }
 }

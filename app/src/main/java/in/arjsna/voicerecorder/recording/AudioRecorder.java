@@ -6,6 +6,7 @@ import android.media.MediaRecorder;
 import android.os.Process;
 import android.util.Log;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 /**
  * Helper class for audio recording and saving as .wav
@@ -30,10 +31,10 @@ class AudioRecorder implements IAudioRecorder {
 
   private final Object recorderStateMonitor = new Object();
 
-  private RecordingCallback recordingCallback;
+  private ArrayList<RecordingCallback> recordingCallbacks = new ArrayList<>();
 
-  public AudioRecorder recordingCallback(RecordingCallback recordingCallback) {
-    this.recordingCallback = recordingCallback;
+  public AudioRecorder addRecordingCallback(RecordingCallback recordingCallback) {
+    this.recordingCallbacks.add(recordingCallback);
     return this;
   }
 
@@ -87,7 +88,9 @@ class AudioRecorder implements IAudioRecorder {
             int bytesRead = recorder.read(recordBuffer, 0, bufferSize);
 
             if (bytesRead > 0) {
-              recordingCallback.onDataReady(recordBuffer);
+              for (RecordingCallback recordingCallback : recordingCallbacks) {
+                recordingCallback.onDataReady(recordBuffer);
+              }
             } else {
               Log.e(AudioRecorder.class.getSimpleName(), "error: " + bytesRead);
               onRecordFailure();
@@ -103,6 +106,9 @@ class AudioRecorder implements IAudioRecorder {
 
   @Override public void finishRecord() {
     int recorderStateLocal = recorderState;
+    for (RecordingCallback recordingCallback : recordingCallbacks) {
+      recordingCallback.onRecordingStopped();
+    }
     if (recorderStateLocal != RECORDER_STATE_IDLE) {
       synchronized (recorderStateMonitor) {
         recorderStateLocal = recorderState;
@@ -132,5 +138,7 @@ class AudioRecorder implements IAudioRecorder {
 
   interface RecordingCallback {
     void onDataReady(byte[] data);
+
+    void onRecordingStopped();
   }
 }
