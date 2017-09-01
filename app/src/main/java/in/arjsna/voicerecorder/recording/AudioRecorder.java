@@ -1,6 +1,5 @@
 package in.arjsna.voicerecorder.recording;
 
-import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Process;
@@ -12,14 +11,6 @@ import java.util.ArrayList;
  * Helper class for audio recording and saving as .wav
  */
 class AudioRecorder implements IAudioRecorder {
-
-  public static final int RECORDER_SAMPLE_RATE = 8000;
-  public static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_OUT_MONO;
-  public static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
-
-  private static final int BUFFER_BYTES_ELEMENTS = 1024;
-  private static final int BUFFER_BYTES_PER_ELEMENT = RECORDER_AUDIO_ENCODING;
-  private static final int RECORDER_CHANNELS_IN = AudioFormat.CHANNEL_IN_MONO;
 
   public static final int RECORDER_STATE_FAILURE = -1;
   public static final int RECORDER_STATE_IDLE = 0;
@@ -70,12 +61,11 @@ class AudioRecorder implements IAudioRecorder {
       }
 
       @SuppressWarnings("ResultOfMethodCallIgnored") @Override public void runImpl() {
-        int bufferSize = Math.max(BUFFER_BYTES_ELEMENTS * BUFFER_BYTES_PER_ELEMENT,
-            AudioRecord.getMinBufferSize(RECORDER_SAMPLE_RATE, RECORDER_CHANNELS_IN,
-                RECORDER_AUDIO_ENCODING));
+        int bufferSize = 2048;
 
-        AudioRecord recorder = new AudioRecord(MediaRecorder.AudioSource.MIC, RECORDER_SAMPLE_RATE,
-            RECORDER_CHANNELS_IN, RECORDER_AUDIO_ENCODING, bufferSize);
+        AudioRecord recorder =
+            new AudioRecord(MediaRecorder.AudioSource.MIC, Constants.RECORDER_SAMPLE_RATE,
+                Constants.RECORDER_CHANNELS, Constants.RECORDER_AUDIO_ENCODING, bufferSize);
 
         try {
           if (recorderState == RECORDER_STATE_STARTING) {

@@ -1,6 +1,7 @@
 package in.arjsna.voicerecorder.recording;
 
 import android.media.AudioFormat;
+import android.media.AudioRecord;
 import android.os.Environment;
 import android.util.Log;
 import java.io.File;
@@ -15,16 +16,6 @@ public class MediaSaveHelper implements AudioRecorder.RecordingCallback {
   private String mFileName;
   private String mFilePath;
 
-  private static final int RECORDER_BPP = 16;
-  private static final String AUDIO_RECORDER_FILE_EXT_WAV = ".wav";
-  private static final int RECORDER_SAMPLERATE = 8000;
-  private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
-  private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
-
-  private static final int BUFFER_BYTES_ELEMENTS = 1024;
-  private static final int BUFFER_BYTES_PER_ELEMENT = RECORDER_AUDIO_ENCODING;
-  int bufferSize = BUFFER_BYTES_ELEMENTS * BUFFER_BYTES_PER_ELEMENT;
-
   private FileOutputStream os;
   private File mFile;
 
@@ -34,13 +25,13 @@ public class MediaSaveHelper implements AudioRecorder.RecordingCallback {
     count++;
     Log.i("TEsting", "creating file");
 
-    mFileName = "something_" + System.currentTimeMillis() + AUDIO_RECORDER_FILE_EXT_WAV;
+    mFileName = "something_" + System.currentTimeMillis() + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
     mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
     mFilePath += "/SoundRecorder/" + mFileName;
     mFile = new File(mFilePath);
     try {
       os = new FileOutputStream(mFile);
-      writeWavHeader(os, RECORDER_CHANNELS, RECORDER_SAMPLERATE, RECORDER_AUDIO_ENCODING);
+      writeWavHeader(os, Constants.RECORDER_CHANNELS, Constants.RECORDER_SAMPLE_RATE, Constants.RECORDER_AUDIO_ENCODING);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -50,7 +41,7 @@ public class MediaSaveHelper implements AudioRecorder.RecordingCallback {
 
   @Override public void onDataReady(byte[] data) {
     try {
-      os.write(data, 0, bufferSize);
+      os.write(data, 0, data.length);
     } catch (IOException e) {
       e.printStackTrace();
     }
