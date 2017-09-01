@@ -1,19 +1,23 @@
 package in.arjsna.voicerecorder.fragments;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.melnykov.fab.FloatingActionButton;
 import in.arjsna.voicerecorder.R;
-import in.arjsna.voicerecorder.RecordingService;
+import in.arjsna.voicerecorder.audiovisualization.AudioVisualization;
+import in.arjsna.voicerecorder.recording.AudioRecordService;
 import java.io.File;
 
 /**
@@ -33,9 +37,7 @@ public class RecordFragment extends Fragment {
   //Recording controls
   private FloatingActionButton mRecordButton = null;
   private Button mPauseButton = null;
-
-  private TextView mRecordingPrompt;
-  private int mRecordPromptCount = 0;
+  private AudioVisualization audioVisualization;
 
   private boolean mIsRecording = false;
   private boolean mPauseRecording = true;
@@ -68,7 +70,6 @@ public class RecordFragment extends Fragment {
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     View recordView = inflater.inflate(R.layout.fragment_record, container, false);
-    mIsRecording = RecordingService.isServiceInProgress();
     initViews(recordView);
     bindEvents();
     return recordView;
@@ -90,8 +91,9 @@ public class RecordFragment extends Fragment {
   }
 
   private void initViews(View recordView) {
+    audioVisualization = (AudioVisualization) recordView.findViewById(R.id.visualizer_view);
+
     //update recording prompt text
-    mRecordingPrompt = (TextView) recordView.findViewById(R.id.recording_status_text);
 
     mRecordButton = (FloatingActionButton) recordView.findViewById(R.id.btnRecord);
     mRecordButton.setImageResource(
@@ -106,7 +108,7 @@ public class RecordFragment extends Fragment {
   //TODO: recording pause
   private void onChangeRecord() {
 
-    Intent intent = new Intent(getActivity(), RecordingService.class);
+    Intent intent = new Intent(getActivity(), AudioRecordService.class);
 
     if (!mIsRecording) {
       // start recording
@@ -124,33 +126,41 @@ public class RecordFragment extends Fragment {
       getActivity().startService(intent);
       //keep screen on while recording
       getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-      mRecordingPrompt.setText(getString(R.string.record_in_progress) + ".");
-      mRecordPromptCount++;
     } else {
       mIsRecording = false;
-      //stop recording
-      mRecordButton.setImageResource(R.drawable.ic_mic_white_36dp);
-      //mPauseButton.setVisibility(View.GONE);
-      timeWhenPaused = 0;
-      mRecordingPrompt.setText(getString(R.string.record_prompt));
-
+      mRecordButton.setImageResource(R.drawable.ic_media_play);
+      getActivity().unbindService(serviceConnection);
       getActivity().stopService(intent);
       //allow the screen to turn off again once recording is finished
       getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
   }
 
+  ServiceConnection serviceConnection = new ServiceConnection() {
+    @Override public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+      AudioRecordService audioRecordService =
+          ((AudioRecordService.ServiceBinder) iBinder).getService();
+      audioVisualization.linkTo(audioRecordService.getHandler());
+      Log.i("Tesing", " " + audioRecordService.isRecording() + " recording");
+      mIsRecording = audioRecordService.isRecording();
+      if (mIsRecording) {
+        mRecordButton.setImageResource(R.drawable.ic_media_stop);
+      }
+    }
+
+    @Override public void onServiceDisconnected(ComponentName componentName) {
+      audioVisualization.release();
+    }
+  };
+
   //TODO: implement pause recording
   private void onPauseRecord(boolean pause) {
     if (pause) {
       //pause recording
       mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_play, 0, 0, 0);
-      mRecordingPrompt.setText(getString(R.string.resume_recording_button).toUpperCase());
     } else {
       //resume recording
       mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_pause, 0, 0, 0);
-      mRecordingPrompt.setText(getString(R.string.pause_recording_button).toUpperCase());
     }
   }
 }

@@ -7,6 +7,19 @@
     android:layout_height="fill_parent"
     >
 
+  <in.arjsna.voicerecorder.audiovisualization.GLAudioVisualizationView
+      android:id="@+id/visualizer_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:av_bubblesSize="@dimen/bubble_size"
+      app:av_bubblesRandomizeSizes="true"
+      app:av_wavesHeight="@dimen/wave_height"
+      app:av_wavesFooterHeight="@dimen/footer_height"
+      app:av_wavesCount="7"
+      app:av_layersCount="4"
+      app:av_backgroundColor="@color/av_color_bg"
+      />
+
   <com.melnykov.fab.FloatingActionButton
       android:id="@+id/btnRecord"
       android:layout_width="wrap_content"
@@ -18,13 +31,6 @@
       android:src="@drawable/ic_mic_white_36dp"
       />
 
-  <TextView
-      android:layout_centerInParent="true"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:textColor="@color/material_blue_500"
-      android:text="Coming soon.."
-      />
 
   <Button
       android:layout_width="wrap_content"
@@ -40,20 +46,6 @@
       android:layout_marginBottom="10dp"
       android:layout_marginLeft="10dp"
       android:layout_marginStart="10dp"
-      />
-
-  <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:id="@+id/recording_status_text"
-      android:text="@string/record_prompt"
-      android:textStyle="bold"
-      android:textSize="17sp"
-      android:textColor="#000000"
-      android:fontFamily="sans-serif-condensed"
-      android:layout_above="@+id/btnRecord"
-      android:layout_centerHorizontal="true"
-      android:layout_marginBottom="60dp"
       />
 
 </RelativeLayout>
