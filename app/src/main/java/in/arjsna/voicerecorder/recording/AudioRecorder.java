@@ -10,7 +10,7 @@ import java.util.ArrayList;
 /**
  * Helper class for audio recording and saving as .wav
  */
-class AudioRecorder implements IAudioRecorder {
+public class AudioRecorder implements IAudioRecorder {
 
   public static final int RECORDER_STATE_FAILURE = -1;
   public static final int RECORDER_STATE_IDLE = 0;
@@ -20,14 +20,21 @@ class AudioRecorder implements IAudioRecorder {
 
   private volatile int recorderState;
 
+  private MediaSaveHelper mediaSaveHelper;
+
   private final Object recorderStateMonitor = new Object();
 
-  private ArrayList<RecordingCallback> recordingCallbacks = new ArrayList<>();
+  //private ArrayList<RecordingCallback> recordingCallbacks = new ArrayList<>();
+  private byte[] recordBuffer;
 
-  public AudioRecorder addRecordingCallback(RecordingCallback recordingCallback) {
-    this.recordingCallbacks.add(recordingCallback);
-    return this;
+  public AudioRecorder() {
+    this.mediaSaveHelper = new MediaSaveHelper();
   }
+
+  //public AudioRecorder addRecordingCallback(RecordingCallback recordingCallback) {
+  //  this.recordingCallbacks.add(recordingCallback);
+  //  return this;
+  //}
 
   @SuppressWarnings("ResultOfMethodCallIgnored") private void onRecordFailure() {
     recorderState = RECORDER_STATE_FAILURE;
@@ -61,11 +68,13 @@ class AudioRecorder implements IAudioRecorder {
       }
 
       @SuppressWarnings("ResultOfMethodCallIgnored") @Override public void runImpl() {
-        int bufferSize = 2048;
-
+        //int bufferSize = 7 * AudioRecord.getMinBufferSize(Constants.RECORDER_SAMPLE_RATE,
+        //    Constants.RECORDER_CHANNELS, Constants.RECORDER_AUDIO_ENCODING);
+        int bufferSize = 4 * 1024;
         AudioRecord recorder =
             new AudioRecord(MediaRecorder.AudioSource.MIC, Constants.RECORDER_SAMPLE_RATE,
                 Constants.RECORDER_CHANNELS, Constants.RECORDER_AUDIO_ENCODING, bufferSize);
+        mediaSaveHelper.createNewFile();
 
         try {
           if (recorderState == RECORDER_STATE_STARTING) {
@@ -73,14 +82,14 @@ class AudioRecorder implements IAudioRecorder {
           }
           recorder.startRecording();
 
-          byte recordBuffer[] = new byte[bufferSize];
+          recordBuffer = new byte[bufferSize];
           do {
             int bytesRead = recorder.read(recordBuffer, 0, bufferSize);
-
+            mediaSaveHelper.onDataReady(recordBuffer);
             if (bytesRead > 0) {
-              for (RecordingCallback recordingCallback : recordingCallbacks) {
-                recordingCallback.onDataReady(recordBuffer);
-              }
+              //for (RecordingCallback recordingCallback : recordingCallbacks) {
+              //  recordingCallback.onDataReady(recordBuffer);
+              //}
             } else {
               Log.e(AudioRecorder.class.getSimpleName(), "error: " + bytesRead);
               onRecordFailure();
@@ -96,9 +105,10 @@ class AudioRecorder implements IAudioRecorder {
 
   @Override public void finishRecord() {
     int recorderStateLocal = recorderState;
-    for (RecordingCallback recordingCallback : recordingCallbacks) {
-      recordingCallback.onRecordingStopped();
-    }
+    mediaSaveHelper.onRecordingStopped();
+    //for (RecordingCallback recordingCallback : recordingCallbacks) {
+    //  recordingCallback.onRecordingStopped();
+    //}
     if (recorderStateLocal != RECORDER_STATE_IDLE) {
       synchronized (recorderStateMonitor) {
         recorderStateLocal = recorderState;
@@ -126,9 +136,13 @@ class AudioRecorder implements IAudioRecorder {
     return recorderState != RECORDER_STATE_IDLE;
   }
 
-  interface RecordingCallback {
-    void onDataReady(byte[] data);
-
-    void onRecordingStopped();
+  public byte[] getMoreData() {
+    return recordBuffer;
   }
+
+  //interface RecordingCallback {
+  //  void onDataReady(byte[] data);
+  //
+  //  void onRecordingStopped();
+  //}
 }

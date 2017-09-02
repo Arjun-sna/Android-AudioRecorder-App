@@ -1,14 +1,16 @@
 package in.arjsna.voicerecorder.recording;
 
+import android.os.Process;
+import android.util.Log;
 import in.arjsna.voicerecorder.audiovisualization.DbmHandler;
 
-public class AudioRecordingDbmHandler extends DbmHandler<byte[]>
-    implements AudioRecorder.RecordingCallback {
+public class AudioRecordingDbmHandler extends DbmHandler<byte[]> {
 
   private static final float MAX_DB_VALUE = 170;
 
   private float[] dbs;
   private float[] allAmps;
+  private boolean isRunning = false;
 
   @Override protected void onDataReceivedImpl(byte[] bytes, int layersCount, float[] dBmArray,
       float[] ampsArray) {
@@ -60,15 +62,36 @@ public class AudioRecordingDbmHandler extends DbmHandler<byte[]>
     }
   }
 
+  @Override public void startRecordThread() {
+    isRunning = true;
+    new Thread(new PriorityRunnable(Process.THREAD_PRIORITY_AUDIO) {
+
+      private void onExit() {
+
+      }
+
+      @SuppressWarnings("ResultOfMethodCallIgnored") @Override public void runImpl() {
+        while(isRunning) {
+          byte[] moreData = audioRecorder.getMoreData();
+          if (moreData != null && moreData.length > 0) {
+            //Log.i("Visualise ", moreData.length + " ");
+            onDataReceived(moreData);
+          }
+        }
+      }
+    }).start();
+  }
+
   public void stop() {
+    isRunning = false;
     calmDownAndStopRendering();
   }
 
-  @Override public void onDataReady(byte[] data) {
-    onDataReceived(data);
-  }
+  //@Override public void onDataReady(byte[] data) {
+  //  onDataReceived(data);
+  //}
 
-  @Override public void onRecordingStopped() {
-
-  }
+  //@Override public void onRecordingStopped() {
+  //
+  //}
 }

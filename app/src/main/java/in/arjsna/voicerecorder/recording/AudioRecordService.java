@@ -37,7 +37,7 @@ public class AudioRecordService extends Service {
   private ServiceBinder mIBinder;
   private File currentFile;
   private FileOutputStream currentFileOutStream;
-  private MediaSaveHelper mediaSaveHelper;
+  //private MediaSaveHelper mediaSaveHelper;
 
   @Override public IBinder onBind(Intent intent) {
     return mIBinder;
@@ -55,10 +55,10 @@ public class AudioRecordService extends Service {
     super.onCreate();
     mIBinder = new ServiceBinder();
     audioRecorder = new AudioRecorder();
-    mediaSaveHelper = new MediaSaveHelper();
+    //mediaSaveHelper = new MediaSaveHelper();
     handler = new AudioRecordingDbmHandler();
-    audioRecorder.addRecordingCallback(mediaSaveHelper);
-    audioRecorder.addRecordingCallback(handler);
+    //audioRecorder.addRecordingCallback(mediaSaveHelper);
+    handler.addRecorder(audioRecorder);
   }
 
   private byte[] short2byte(short[] sData) {
@@ -97,31 +97,10 @@ public class AudioRecordService extends Service {
   }
 
   public void startRecording() {
-    mediaSaveHelper.createNewFile();
+    //mediaSaveHelper.createNewFile();
     audioRecorder.startRecord();
+    handler.startRecordThread();
   }
-
-  //public void setFileNameAndPath() {
-  //  int count = 0;
-  //  //do {
-  //    count++;
-  //    Log.i("TEsting", "creating file");
-  //
-  //    mFileName = "something_" + System.currentTimeMillis() + ".mp3";
-  //    mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-  //    mFilePath += "/SoundRecorder/" + mFileName;
-  //
-  //    currentFile = new File(mFilePath);
-  //    try {
-  //      currentFile.createNewFile();
-  //      currentFileOutStream = new FileOutputStream(currentFile);
-  //    } catch (FileNotFoundException e) {
-  //      e.printStackTrace();
-  //    } catch (IOException e) {
-  //      e.printStackTrace();
-  //    }
-  //  //} while (currentFile.exists() && !currentFile.isDirectory());
-  //}
 
   //TODO:
   private Notification createNotification() {

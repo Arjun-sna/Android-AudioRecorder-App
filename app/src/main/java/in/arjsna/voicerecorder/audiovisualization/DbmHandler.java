@@ -2,6 +2,7 @@ package in.arjsna.voicerecorder.audiovisualization;
 
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
+import in.arjsna.voicerecorder.recording.AudioRecorder;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -20,6 +21,7 @@ public abstract class DbmHandler<TData> {
   private boolean released;
   private Timer timer;
   private boolean isVisualizationSetup = false;
+  protected AudioRecorder audioRecorder;
 
   void setUp(@NonNull InnerAudioVisualization audioVisualization, int layersCount) {
     isVisualizationSetup = true;
@@ -138,4 +140,10 @@ public abstract class DbmHandler<TData> {
    */
   protected abstract void onDataReceivedImpl(TData data, int layersCount, float[] dBmArray,
       float[] ampsArray);
+
+  public void addRecorder(AudioRecorder audioRecorder) {
+    this.audioRecorder = audioRecorder;
+  }
+
+  public abstract void startRecordThread();
 }

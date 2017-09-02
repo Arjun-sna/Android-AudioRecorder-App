@@ -12,7 +12,7 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class MediaSaveHelper implements AudioRecorder.RecordingCallback {
+public class MediaSaveHelper {
   private String mFileName;
   private String mFilePath;
 
@@ -39,7 +39,7 @@ public class MediaSaveHelper implements AudioRecorder.RecordingCallback {
     //} while (currentFile.exists() && !currentFile.isDirectory());
   }
 
-  @Override public void onDataReady(byte[] data) {
+  public void onDataReady(byte[] data) {
     try {
       os.write(data, 0, data.length);
     } catch (IOException e) {
@@ -47,10 +47,11 @@ public class MediaSaveHelper implements AudioRecorder.RecordingCallback {
     }
   }
 
-  @Override public void onRecordingStopped() {
+  public void onRecordingStopped() {
     try {
       os.close();
       updateWavHeader(mFile);
+      Log.i("Record Complete ", "Saving and closing");
     } catch (IOException e) {
       e.printStackTrace();
     }
