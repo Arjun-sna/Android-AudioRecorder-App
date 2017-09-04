@@ -8,27 +8,22 @@
     android:clipChildren="false"
     >
 
-  <FrameLayout
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
+  <in.arjsna.voicerecorder.audiovisualization.GLAudioVisualizationView
+      android:id="@+id/visualizer_view"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
       app:layout_constraintLeft_toLeftOf="parent"
       app:layout_constraintRight_toRightOf="parent"
-      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintBottom_toTopOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      >
-    <in.arjsna.voicerecorder.audiovisualization.GLAudioVisualizationView
-        android:id="@+id/visualizer_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:av_bubblesSize="@dimen/bubble_size"
-        app:av_bubblesRandomizeSizes="true"
-        app:av_wavesHeight="@dimen/wave_height"
-        app:av_wavesFooterHeight="@dimen/footer_height"
-        app:av_wavesCount="7"
-        app:av_layersCount="4"
-        app:av_backgroundColor="@color/av_color_bg"
-        />
-  </FrameLayout>
+      app:av_backgroundColor="@color/av_color_bg"
+      app:av_bubblesRandomizeSizes="true"
+      app:av_bubblesSize="@dimen/bubble_size"
+      app:av_layersCount="4"
+      app:av_wavesCount="7"
+      app:av_wavesFooterHeight="@dimen/footer_height"
+      app:av_wavesHeight="@dimen/wave_height"
+      />
 
 
   <android.support.design.widget.FloatingActionButton
@@ -36,31 +31,31 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:background="@color/primary"
+      android:src="@drawable/ic_mic_white_36dp"
       app:fabSize="normal"
-      app:rippleColor="@color/primary"
+      app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintLeft_toLeftOf="parent"
       app:layout_constraintRight_toRightOf="parent"
-      app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintVertical_bias="0.5"
-      android:src="@drawable/ic_mic_white_36dp"
+      app:layout_constraintVertical_bias="0.9"
+      app:rippleColor="@color/primary"
       />
 
 
   <Button
+      android:id="@+id/btnPause"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:id="@+id/btnPause"
-      android:drawableLeft="@drawable/ic_media_pause"
-      android:text="@string/pause_recording_button"
-      android:textAllCaps="true"
-      android:fontFamily="sans-serif-condensed"
+      android:layout_alignParentBottom="true"
       android:layout_alignParentLeft="true"
       android:layout_alignParentStart="true"
-      android:layout_alignParentBottom="true"
       android:layout_marginBottom="10dp"
       android:layout_marginLeft="10dp"
       android:layout_marginStart="10dp"
+      android:drawableLeft="@drawable/ic_media_pause"
+      android:fontFamily="sans-serif-condensed"
+      android:text="@string/pause_recording_button"
+      android:textAllCaps="true"
       />
 
 </android.support.constraint.ConstraintLayout>

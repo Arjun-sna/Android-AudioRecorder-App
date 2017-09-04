@@ -33,8 +33,6 @@ public class RecordFragment extends Fragment {
   private static final String ARG_POSITION = "position";
   private static final String LOG_TAG = RecordFragment.class.getSimpleName();
 
-  private int position;
-
   //Recording controls
   private FloatingActionButton mRecordButton = null;
   private Button mPauseButton = null;
@@ -51,12 +49,8 @@ public class RecordFragment extends Fragment {
    *
    * @return A new instance of fragment Record_Fragment.
    */
-  public static RecordFragment newInstance(int position) {
+  public static RecordFragment newInstance() {
     RecordFragment f = new RecordFragment();
-    Bundle b = new Bundle();
-    b.putInt(ARG_POSITION, position);
-    f.setArguments(b);
-
     return f;
   }
 
@@ -65,7 +59,6 @@ public class RecordFragment extends Fragment {
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    position = getArguments().getInt(ARG_POSITION);
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
