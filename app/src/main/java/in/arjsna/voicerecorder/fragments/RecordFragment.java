@@ -98,14 +98,12 @@ public class RecordFragment extends Fragment {
       mIsRecording = true;
       mRecordButton.setImageResource(R.drawable.ic_media_stop);
       getActivity().startService(intent);
-      bindToService();
       getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     } else {
       chronometer.stop();
       chronometer.setBase(SystemClock.elapsedRealtime());
       mIsRecording = false;
       mRecordButton.setImageResource(R.drawable.ic_mic_white_36dp);
-      getActivity().unbindService(serviceConnection);
       getActivity().stopService(intent);
       getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
@@ -113,27 +111,25 @@ public class RecordFragment extends Fragment {
 
   private void bindToService() {
     Intent intent = new Intent(getActivity(), AudioRecordService.class);
-    boolean b = getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-    Log.i("Tesing", " " + b + " binding service");
-    if (mIsRecording) {
-      mRecordButton.setImageResource(R.drawable.ic_media_stop);
-    }
+    getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
   }
 
   ServiceConnection serviceConnection = new ServiceConnection() {
     @Override public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
       AudioRecordService audioRecordService =
           ((AudioRecordService.ServiceBinder) iBinder).getService();
-      audioVisualization.linkTo(audioRecordService.getHandler());
       Log.i("Tesing", " " + audioRecordService.isRecording() + " recording");
       mIsRecording = audioRecordService.isRecording();
       if (mIsRecording) {
+        audioVisualization.linkTo(audioRecordService.getHandler());
         mRecordButton.setImageResource(R.drawable.ic_media_stop);
+        chronometer.setBase(SystemClock.elapsedRealtime() - audioRecordService.getElapsedTime());
+        chronometer.start();
       }
+      getActivity().unbindService(this);
     }
 
     @Override public void onServiceDisconnected(ComponentName componentName) {
-      audioVisualization.release();
     }
   };
 
@@ -151,8 +147,5 @@ public class RecordFragment extends Fragment {
   @Override public void onDestroy() {
     super.onDestroy();
     audioVisualization.release();
-    if (mIsRecording) {
-      getActivity().unbindService(serviceConnection);
-    }
   }
 }

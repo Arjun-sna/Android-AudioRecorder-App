@@ -63,6 +63,7 @@ public class AudioRecorder implements IAudioRecorder {
     timerObservable = Observable.interval(1000, TimeUnit.MILLISECONDS).map(seconds -> {
       recordTimeSeconds = seconds;
       RecordTime recordTime = new RecordTime();
+      recordTime.millis = seconds * 1000;
       recordTime.hours = seconds / (60 * 60);
       seconds = seconds % (60 * 60);
       recordTime.minutes = seconds / 60;
@@ -160,6 +161,6 @@ public class AudioRecorder implements IAudioRecorder {
     long seconds = 0;
     long minutes = 0;
     long hours = 0;
-    long millis;
+    long millis = 0;
   }
 }

@@ -60,7 +60,9 @@ public class AudioRecordService extends Service {
 
   @Override public void onDestroy() {
     super.onDestroy();
-    stopRecodingAndRelease();
+    if (isRecording()) {
+      stopRecodingAndRelease();
+    }
   }
 
   private void stopRecodingAndRelease() {
@@ -75,7 +77,7 @@ public class AudioRecordService extends Service {
   }
 
   private void updateNotification(AudioRecorder.RecordTime recordTime) {
-    //mElapsedSeconds = seconds;
+    mElapsedMillis = recordTime.millis;
     mNotificationManager.notify(NOTIFY_ID, createNotification(recordTime));
   }
 
@@ -92,6 +94,10 @@ public class AudioRecordService extends Service {
         new Intent[] { new Intent(getApplicationContext(), MainActivity.class) }, 0));
 
     return mBuilder.build();
+  }
+
+  public long getElapsedTime() {
+    return mElapsedMillis;
   }
 
   public class ServiceBinder extends Binder {
