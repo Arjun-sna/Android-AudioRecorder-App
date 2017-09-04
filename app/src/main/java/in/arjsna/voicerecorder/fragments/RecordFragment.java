@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.Toast;
 import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.audiovisualization.AudioVisualization;
@@ -42,6 +44,7 @@ public class RecordFragment extends Fragment {
   private boolean mPauseRecording = true;
 
   long timeWhenPaused = 0; //stores time when user clicks pause button
+  private Chronometer chronometer;
 
   /**
    * Use this factory method to create a new instance of
@@ -86,6 +89,9 @@ public class RecordFragment extends Fragment {
   }
 
   private void initViews(View recordView) {
+    chronometer = (Chronometer) recordView.findViewById(R.id.chronometer);
+    chronometer.setBase(SystemClock.elapsedRealtime());
+
     audioVisualization = (AudioVisualization) recordView.findViewById(R.id.visualizer_view);
 
     mRecordButton = (FloatingActionButton) recordView.findViewById(R.id.btnRecord);
@@ -101,6 +107,7 @@ public class RecordFragment extends Fragment {
 
     if (!mIsRecording) {
       // start recording
+      chronometer.start();
       mIsRecording = true;
       mRecordButton.setImageResource(R.drawable.ic_media_stop);
       Toast.makeText(getActivity(), R.string.toast_recording_start, Toast.LENGTH_SHORT).show();
@@ -112,6 +119,8 @@ public class RecordFragment extends Fragment {
       tryToBindService();
       getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     } else {
+      chronometer.stop();
+      chronometer.setBase(SystemClock.elapsedRealtime());
       mIsRecording = false;
       mRecordButton.setImageResource(R.drawable.ic_mic_white_36dp);
       getActivity().unbindService(serviceConnection);
