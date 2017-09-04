@@ -1,7 +1,6 @@
 package in.arjsna.voicerecorder.recording;
 
 import android.media.AudioFormat;
-import android.media.AudioRecord;
 import android.os.Environment;
 import android.util.Log;
 import java.io.File;
@@ -20,23 +19,23 @@ public class MediaSaveHelper {
   private File mFile;
 
   public void createNewFile() {
-    int count = 0;
-    //do {
-    count++;
     Log.i("TEsting", "creating file");
-
+    String storeLocation = Environment.getExternalStorageDirectory().getAbsolutePath();
+    File folder = new File(storeLocation + "/SoundRecorder");
+    if (!folder.exists()) {
+      folder.mkdir();
+    }
     mFileName = "something_" + System.currentTimeMillis() + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
-    mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-    mFilePath += "/SoundRecorder/" + mFileName;
+    mFilePath = storeLocation + "/SoundRecorder/" + mFileName;
     mFile = new File(mFilePath);
     try {
       os = new FileOutputStream(mFile);
-      writeWavHeader(os, Constants.RECORDER_CHANNELS, Constants.RECORDER_SAMPLE_RATE, Constants.RECORDER_AUDIO_ENCODING);
+      writeWavHeader(os, Constants.RECORDER_CHANNELS, Constants.RECORDER_SAMPLE_RATE,
+          Constants.RECORDER_AUDIO_ENCODING);
     } catch (IOException e) {
+      // TODO: 4/9/17 handle this
       e.printStackTrace();
     }
-
-    //} while (currentFile.exists() && !currentFile.isDirectory());
   }
 
   public void onDataReady(byte[] data) {
