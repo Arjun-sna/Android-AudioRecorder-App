@@ -1,7 +1,6 @@
 package in.arjsna.voicerecorder.recording;
 
 import android.os.Process;
-import android.util.Log;
 import in.arjsna.voicerecorder.audiovisualization.DbmHandler;
 
 public class AudioRecordingDbmHandler extends DbmHandler<byte[]> {
@@ -71,7 +70,7 @@ public class AudioRecordingDbmHandler extends DbmHandler<byte[]> {
       }
 
       @SuppressWarnings("ResultOfMethodCallIgnored") @Override public void runImpl() {
-        while(isRunning) {
+        while (isRunning) {
           byte[] moreData = audioRecorder.getMoreData();
           if (moreData != null && moreData.length > 0) {
             //Log.i("Visualise ", moreData.length + " ");
