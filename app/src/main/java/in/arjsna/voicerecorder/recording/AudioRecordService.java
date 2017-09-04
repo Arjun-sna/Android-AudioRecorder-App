@@ -9,8 +9,6 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.activities.MainActivity;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Timer;
@@ -18,9 +16,6 @@ import java.util.TimerTask;
 
 public class AudioRecordService extends Service {
   private static final String LOG_TAG = "RecordingService";
-
-  private String mFileName = null;
-  private String mFilePath = null;
 
   private long mStartingTimeMillis = 0;
   private long mElapsedMillis = 0;
@@ -31,20 +26,16 @@ public class AudioRecordService extends Service {
 
   private Timer mTimer = null;
   private TimerTask mIncrementTimerTask = null;
-  private boolean isServiceInProgress = false;
   private AudioRecorder audioRecorder;
   private AudioRecordingDbmHandler handler;
   private ServiceBinder mIBinder;
-  private File currentFile;
-  private FileOutputStream currentFileOutStream;
-  //private MediaSaveHelper mediaSaveHelper;
 
   @Override public IBinder onBind(Intent intent) {
     return mIBinder;
   }
 
   public boolean isRecording() {
-    return isServiceInProgress;
+    return audioRecorder.isRecording();
   }
 
   public interface OnTimerChangedListener {
@@ -55,23 +46,8 @@ public class AudioRecordService extends Service {
     super.onCreate();
     mIBinder = new ServiceBinder();
     audioRecorder = new AudioRecorder();
-    //mediaSaveHelper = new MediaSaveHelper();
     handler = new AudioRecordingDbmHandler();
-    //audioRecorder.addRecordingCallback(mediaSaveHelper);
     handler.addRecorder(audioRecorder);
-  }
-
-  private byte[] short2byte(short[] sData) {
-    int shortArrsize = sData.length;
-    byte[] bytes = new byte[shortArrsize * 2];
-
-    for (int i = 0; i < shortArrsize; i++) {
-      bytes[i * 2] = (byte) (sData[i] & 0x00FF);
-      bytes[(i * 2) + 1] = (byte) (sData[i] >> 8);
-      sData[i] = 0;
-    }
-    return bytes;
-
   }
 
   public AudioRecordingDbmHandler getHandler() {
@@ -79,7 +55,6 @@ public class AudioRecordService extends Service {
   }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
-    isServiceInProgress = true;
     startRecording();
     startForeground(100, createNotification());
     return START_STICKY;
@@ -87,7 +62,6 @@ public class AudioRecordService extends Service {
 
   @Override public void onDestroy() {
     super.onDestroy();
-    isServiceInProgress = false;
     stopRecodingAndRelease();
   }
 
@@ -97,7 +71,6 @@ public class AudioRecordService extends Service {
   }
 
   public void startRecording() {
-    //mediaSaveHelper.createNewFile();
     audioRecorder.startRecord();
     handler.startRecordThread();
   }

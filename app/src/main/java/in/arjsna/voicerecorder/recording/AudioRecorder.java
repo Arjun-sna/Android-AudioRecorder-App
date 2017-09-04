@@ -5,7 +5,6 @@ import android.media.MediaRecorder;
 import android.os.Process;
 import android.util.Log;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 
 /**
  * Helper class for audio recording and saving as .wav
@@ -24,17 +23,11 @@ public class AudioRecorder implements IAudioRecorder {
 
   private final Object recorderStateMonitor = new Object();
 
-  //private ArrayList<RecordingCallback> recordingCallbacks = new ArrayList<>();
   private byte[] recordBuffer;
 
   public AudioRecorder() {
     this.mediaSaveHelper = new MediaSaveHelper();
   }
-
-  //public AudioRecorder addRecordingCallback(RecordingCallback recordingCallback) {
-  //  this.recordingCallbacks.add(recordingCallback);
-  //  return this;
-  //}
 
   @SuppressWarnings("ResultOfMethodCallIgnored") private void onRecordFailure() {
     recorderState = RECORDER_STATE_FAILURE;
@@ -68,8 +61,6 @@ public class AudioRecorder implements IAudioRecorder {
       }
 
       @SuppressWarnings("ResultOfMethodCallIgnored") @Override public void runImpl() {
-        //int bufferSize = 7 * AudioRecord.getMinBufferSize(Constants.RECORDER_SAMPLE_RATE,
-        //    Constants.RECORDER_CHANNELS, Constants.RECORDER_AUDIO_ENCODING);
         int bufferSize = 4 * 1024;
         AudioRecord recorder =
             new AudioRecord(MediaRecorder.AudioSource.MIC, Constants.RECORDER_SAMPLE_RATE,
@@ -86,11 +77,7 @@ public class AudioRecorder implements IAudioRecorder {
           do {
             int bytesRead = recorder.read(recordBuffer, 0, bufferSize);
             mediaSaveHelper.onDataReady(recordBuffer);
-            if (bytesRead > 0) {
-              //for (RecordingCallback recordingCallback : recordingCallbacks) {
-              //  recordingCallback.onDataReady(recordBuffer);
-              //}
-            } else {
+            if (bytesRead == 0) {
               Log.e(AudioRecorder.class.getSimpleName(), "error: " + bytesRead);
               onRecordFailure();
             }
@@ -106,9 +93,6 @@ public class AudioRecorder implements IAudioRecorder {
   @Override public void finishRecord() {
     int recorderStateLocal = recorderState;
     mediaSaveHelper.onRecordingStopped();
-    //for (RecordingCallback recordingCallback : recordingCallbacks) {
-    //  recordingCallback.onRecordingStopped();
-    //}
     if (recorderStateLocal != RECORDER_STATE_IDLE) {
       synchronized (recorderStateMonitor) {
         recorderStateLocal = recorderState;
@@ -139,10 +123,4 @@ public class AudioRecorder implements IAudioRecorder {
   public byte[] getMoreData() {
     return recordBuffer;
   }
-
-  //interface RecordingCallback {
-  //  void onDataReady(byte[] data);
-  //
-  //  void onRecordingStopped();
-  //}
 }
