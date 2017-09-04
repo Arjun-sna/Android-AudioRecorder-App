@@ -160,5 +160,6 @@ public class AudioRecorder implements IAudioRecorder {
     long seconds = 0;
     long minutes = 0;
     long hours = 0;
+    long millis;
   }
 }
