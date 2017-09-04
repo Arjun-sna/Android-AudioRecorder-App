@@ -124,11 +124,9 @@ public class PlaybackFragment extends DialogFragment {
     });
 
     mPlayButton = (FloatingActionButton) view.findViewById(R.id.fab_play);
-    mPlayButton.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        onPlay(isPlaying);
-        isPlaying = !isPlaying;
-      }
+    mPlayButton.setOnClickListener(v -> {
+      onPlay(isPlaying);
+      isPlaying = !isPlaying;
     });
 
     mFileNameTextView.setText(item.getName());
@@ -196,20 +194,12 @@ public class PlaybackFragment extends DialogFragment {
       mMediaPlayer.prepare();
       mSeekBar.setMax(mMediaPlayer.getDuration());
 
-      mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-        @Override public void onPrepared(MediaPlayer mp) {
-          mMediaPlayer.start();
-        }
-      });
+      mMediaPlayer.setOnPreparedListener(mp -> mMediaPlayer.start());
     } catch (IOException e) {
       Log.e(LOG_TAG, "prepare() failed");
     }
 
-    mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-      @Override public void onCompletion(MediaPlayer mp) {
-        stopPlaying();
-      }
-    });
+    mMediaPlayer.setOnCompletionListener(mp -> stopPlaying());
 
     updateSeekBar();
 
@@ -228,11 +218,7 @@ public class PlaybackFragment extends DialogFragment {
       mSeekBar.setMax(mMediaPlayer.getDuration());
       mMediaPlayer.seekTo(progress);
 
-      mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-        @Override public void onCompletion(MediaPlayer mp) {
-          stopPlaying();
-        }
-      });
+      mMediaPlayer.setOnCompletionListener(mp -> stopPlaying());
     } catch (IOException e) {
       Log.e(LOG_TAG, "prepare() failed");
     }
@@ -273,20 +259,18 @@ public class PlaybackFragment extends DialogFragment {
   }
 
   //updating mSeekBar
-  private Runnable mRunnable = new Runnable() {
-    @Override public void run() {
-      if (mMediaPlayer != null) {
+  private Runnable mRunnable = () -> {
+    if (mMediaPlayer != null) {
 
-        int mCurrentPosition = mMediaPlayer.getCurrentPosition();
-        mSeekBar.setProgress(mCurrentPosition);
+      int mCurrentPosition = mMediaPlayer.getCurrentPosition();
+      mSeekBar.setProgress(mCurrentPosition);
 
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(mCurrentPosition);
-        long seconds =
-            TimeUnit.MILLISECONDS.toSeconds(mCurrentPosition) - TimeUnit.MINUTES.toSeconds(minutes);
-        mCurrentProgressTextView.setText(String.format("%02d:%02d", minutes, seconds));
+      long minutes = TimeUnit.MILLISECONDS.toMinutes(mCurrentPosition);
+      long seconds =
+          TimeUnit.MILLISECONDS.toSeconds(mCurrentPosition) - TimeUnit.MINUTES.toSeconds(minutes);
+      mCurrentProgressTextView.setText(String.format("%02d:%02d", minutes, seconds));
 
-        updateSeekBar();
-      }
+      updateSeekBar();
     }
   };
 

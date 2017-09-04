@@ -12,8 +12,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class MediaSaveHelper {
-  private String mFileName;
-  private String mFilePath;
 
   private FileOutputStream os;
   private File mFile;
@@ -25,8 +23,9 @@ public class MediaSaveHelper {
     if (!folder.exists()) {
       folder.mkdir();
     }
-    mFileName = "something_" + System.currentTimeMillis() + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
-    mFilePath = storeLocation + "/SoundRecorder/" + mFileName;
+    String mFileName =
+        "something_" + System.currentTimeMillis() + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
+    String mFilePath = storeLocation + "/SoundRecorder/" + mFileName;
     mFile = new File(mFilePath);
     try {
       os = new FileOutputStream(mFile);

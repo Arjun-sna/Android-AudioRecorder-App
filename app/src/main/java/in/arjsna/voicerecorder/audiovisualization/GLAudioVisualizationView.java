@@ -43,12 +43,10 @@ public class GLAudioVisualizationView extends GLSurfaceView
   private void init() {
     setEGLContextClientVersion(EGL_VERSION);
     setRenderer(renderer);
-    renderer.calmDownListener(new CalmDownListener() {
-      @Override public void onCalmedDown() {
-        stopRendering();
-        if (innerCalmDownListener != null) {
-          innerCalmDownListener.onCalmedDown();
-        }
+    renderer.calmDownListener(() -> {
+      stopRendering();
+      if (innerCalmDownListener != null) {
+        innerCalmDownListener.onCalmedDown();
       }
     });
   }
@@ -472,11 +470,7 @@ public class GLAudioVisualizationView extends GLSurfaceView
           renderer.onDataReceived(dBmArray, ampsArray);
         }
       };
-      renderer.calmDownListener(new CalmDownListener() {
-        @Override public void onCalmedDown() {
-          audioVisualization.stopRendering();
-        }
-      });
+      renderer.calmDownListener(audioVisualization::stopRendering);
       handler.setUp(audioVisualization, builder.layersCount);
       return renderer;
     }

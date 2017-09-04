@@ -18,23 +18,19 @@ public class SettingsFragment extends PreferenceFragment {
     CheckBoxPreference highQualityPref = (CheckBoxPreference) findPreference(
         getResources().getString(R.string.pref_high_quality_key));
     highQualityPref.setChecked(MySharedPreferences.getPrefHighQuality(getActivity()));
-    highQualityPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-      @Override public boolean onPreferenceChange(Preference preference, Object newValue) {
-        MySharedPreferences.setPrefHighQuality(getActivity(), (boolean) newValue);
-        return true;
-      }
+    highQualityPref.setOnPreferenceChangeListener((preference, newValue) -> {
+      MySharedPreferences.setPrefHighQuality(getActivity(), (boolean) newValue);
+      return true;
     });
 
     Preference aboutPref = findPreference(getString(R.string.pref_about_key));
     aboutPref.setSummary(getString(R.string.pref_about_desc, BuildConfig.VERSION_NAME));
-    aboutPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-      @Override public boolean onPreferenceClick(Preference preference) {
-        LicensesFragment licensesFragment = new LicensesFragment();
-        licensesFragment.show(
-            ((SettingsActivity) getActivity()).getSupportFragmentManager().beginTransaction(),
-            "dialog_licenses");
-        return true;
-      }
+    aboutPref.setOnPreferenceClickListener(preference -> {
+      LicensesFragment licensesFragment = new LicensesFragment();
+      licensesFragment.show(
+          ((SettingsActivity) getActivity()).getSupportFragmentManager().beginTransaction(),
+          "dialog_licenses");
+      return true;
     });
   }
 }

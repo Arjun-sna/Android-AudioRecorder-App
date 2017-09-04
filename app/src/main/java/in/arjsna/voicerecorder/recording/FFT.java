@@ -111,26 +111,26 @@ class FFT {
   }
 
   // compute the linear convolution of x and y
-  public static Complex[] convolve(Complex[] x, Complex[] y) {
+  private static Complex[] convolve(Complex[] x, Complex[] y) {
     Complex ZERO = new Complex(0, 0);
 
     Complex[] a = new Complex[2 * x.length];
-    for (int i = 0; i < x.length; i++) a[i] = x[i];
+    System.arraycopy(x, 0, a, 0, x.length);
     for (int i = x.length; i < 2 * x.length; i++) a[i] = ZERO;
 
     Complex[] b = new Complex[2 * y.length];
-    for (int i = 0; i < y.length; i++) b[i] = y[i];
+    System.arraycopy(y, 0, b, 0, y.length);
     for (int i = y.length; i < 2 * y.length; i++) b[i] = ZERO;
 
     return cconvolve(a, b);
   }
 
   // display an array of Complex numbers to standard output
-  public static void show(Complex[] x, String title) {
+  private static void show(Complex[] x, String title) {
     System.out.println(title);
     System.out.println("-------------------");
-    for (int i = 0; i < x.length; i++) {
-      System.out.println(x[i]);
+    for (Complex aX : x) {
+      System.out.println(aX);
     }
     System.out.println();
   }

@@ -78,11 +78,7 @@ public abstract class DbmHandler<TData> {
       }, UPDATE_INTERVAL, UPDATE_INTERVAL);
     }
     if (isVisualizationSetup) {
-      audioVisualization.calmDownListener(new InnerAudioVisualization.CalmDownListener() {
-        @Override public void onCalmedDown() {
-          stopRendering();
-        }
-      });
+      audioVisualization.calmDownListener(this::stopRendering);
     }
   }
 
