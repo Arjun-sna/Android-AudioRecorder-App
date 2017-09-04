@@ -98,6 +98,7 @@ public class RecordFragment extends Fragment {
       mIsRecording = true;
       mRecordButton.setImageResource(R.drawable.ic_media_stop);
       getActivity().startService(intent);
+      bindToService();
       getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     } else {
       chronometer.stop();
