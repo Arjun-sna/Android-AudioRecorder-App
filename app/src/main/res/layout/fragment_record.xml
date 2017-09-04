@@ -1,33 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fragment_record"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
     >
 
-  <in.arjsna.voicerecorder.audiovisualization.GLAudioVisualizationView
-      android:id="@+id/visualizer_view"
+  <FrameLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      app:av_bubblesSize="@dimen/bubble_size"
-      app:av_bubblesRandomizeSizes="true"
-      app:av_wavesHeight="@dimen/wave_height"
-      app:av_wavesFooterHeight="@dimen/footer_height"
-      app:av_wavesCount="7"
-      app:av_layersCount="4"
-      app:av_backgroundColor="@color/av_color_bg"
-      />
+      app:layout_constraintLeft_toLeftOf="parent"
+      app:layout_constraintRight_toRightOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      >
+    <in.arjsna.voicerecorder.audiovisualization.GLAudioVisualizationView
+        android:id="@+id/visualizer_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:av_bubblesSize="@dimen/bubble_size"
+        app:av_bubblesRandomizeSizes="true"
+        app:av_wavesHeight="@dimen/wave_height"
+        app:av_wavesFooterHeight="@dimen/footer_height"
+        app:av_wavesCount="7"
+        app:av_layersCount="4"
+        app:av_backgroundColor="@color/av_color_bg"
+        />
+  </FrameLayout>
 
-  <com.melnykov.fab.FloatingActionButton
+
+  <android.support.design.widget.FloatingActionButton
       android:id="@+id/btnRecord"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      app:fab_colorNormal="@color/primary"
-      android:layout_marginBottom="10dp"
-      android:layout_alignParentBottom="true"
-      android:layout_centerHorizontal="true"
+      android:background="@color/primary"
+      app:fabSize="normal"
+      app:rippleColor="@color/primary"
+      app:layout_constraintLeft_toLeftOf="parent"
+      app:layout_constraintRight_toRightOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.5"
       android:src="@drawable/ic_mic_white_36dp"
       />
 
@@ -48,4 +63,4 @@
       android:layout_marginStart="10dp"
       />
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

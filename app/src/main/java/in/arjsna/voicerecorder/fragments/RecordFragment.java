@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +16,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
-import com.melnykov.fab.FloatingActionButton;
 import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.audiovisualization.AudioVisualization;
 import in.arjsna.voicerecorder.recording.AudioRecordService;
@@ -97,9 +97,7 @@ public class RecordFragment extends Fragment {
 
     mRecordButton = (FloatingActionButton) recordView.findViewById(R.id.btnRecord);
     mRecordButton.setImageResource(
-        mIsRecording ? R.drawable.ic_media_stop : R.drawable.ic_media_play);
-    mRecordButton.setColorNormal(getResources().getColor(R.color.primary));
-    mRecordButton.setColorPressed(getResources().getColor(R.color.primary_dark));
+        mIsRecording ? R.drawable.ic_media_stop : R.drawable.ic_mic_white_36dp);
     mPauseButton = (Button) recordView.findViewById(R.id.btnPause);
     mPauseButton.setVisibility(View.GONE); //hide pause button before recording starts
   }
@@ -122,7 +120,7 @@ public class RecordFragment extends Fragment {
       getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     } else {
       mIsRecording = false;
-      mRecordButton.setImageResource(R.drawable.ic_media_play);
+      mRecordButton.setImageResource(R.drawable.ic_mic_white_36dp);
       getActivity().unbindService(serviceConnection);
       getActivity().stopService(intent);
       getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -159,7 +157,7 @@ public class RecordFragment extends Fragment {
   private void onPauseRecord(boolean pause) {
     if (pause) {
       //pause recording
-      mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_play, 0, 0, 0);
+      mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_white_36dp, 0, 0, 0);
     } else {
       //resume recording
       mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_pause, 0, 0, 0);

@@ -103,7 +103,4 @@ public class MainActivity extends AppCompatActivity {
       return titles[position];
     }
   }
-
-  public MainActivity() {
-  }
 }
