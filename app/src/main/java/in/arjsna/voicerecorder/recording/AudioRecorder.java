@@ -2,12 +2,15 @@ package in.arjsna.voicerecorder.recording;
 
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
-import android.os.Process;
 import android.util.Log;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subscribers.DisposableSubscriber;
 import java.io.FileNotFoundException;
 import java.util.concurrent.TimeUnit;
 
@@ -73,55 +76,55 @@ public class AudioRecorder implements IAudioRecorder {
     }).subscribeOn(Schedulers.newThread());
   }
 
-  private void stopTimer() {
-    compositeDisposable.dispose();
-  }
-
   private void startRecordThread() throws FileNotFoundException {
+    compositeDisposable.add(Flowable.create((FlowableOnSubscribe<byte[]>) emitter -> {
+      int bufferSize = 4 * 1024;
+      AudioRecord recorder =
+          new AudioRecord(MediaRecorder.AudioSource.MIC, Constants.RECORDER_SAMPLE_RATE,
+              Constants.RECORDER_CHANNELS, Constants.RECORDER_AUDIO_ENCODING, bufferSize);
+      mediaSaveHelper.createNewFile();
 
-    new Thread(new PriorityRunnable(Process.THREAD_PRIORITY_AUDIO) {
-
-      private void onExit() {
-        synchronized (recorderStateMonitor) {
-          recorderState = RECORDER_STATE_IDLE;
-          recorderStateMonitor.notifyAll();
+      try {
+        if (recorderState == RECORDER_STATE_STARTING) {
+          recorderState = RECORDER_STATE_BUSY;
         }
-      }
+        recorder.startRecording();
 
-      @SuppressWarnings("ResultOfMethodCallIgnored") @Override public void runImpl() {
-        int bufferSize = 4 * 1024;
-        AudioRecord recorder =
-            new AudioRecord(MediaRecorder.AudioSource.MIC, Constants.RECORDER_SAMPLE_RATE,
-                Constants.RECORDER_CHANNELS, Constants.RECORDER_AUDIO_ENCODING, bufferSize);
-        mediaSaveHelper.createNewFile();
-
-        try {
-          if (recorderState == RECORDER_STATE_STARTING) {
-            recorderState = RECORDER_STATE_BUSY;
+        recordBuffer = new byte[bufferSize];
+        do {
+          int bytesRead = recorder.read(recordBuffer, 0, bufferSize);
+          mediaSaveHelper.onDataReady(recordBuffer);
+          if (bytesRead == 0) {
+            Log.e(AudioRecorder.class.getSimpleName(), "error: " + bytesRead);
+            onRecordFailure();
           }
-          recorder.startRecording();
-
-          recordBuffer = new byte[bufferSize];
-          do {
-            int bytesRead = recorder.read(recordBuffer, 0, bufferSize);
-            mediaSaveHelper.onDataReady(recordBuffer);
-            if (bytesRead == 0) {
-              Log.e(AudioRecorder.class.getSimpleName(), "error: " + bytesRead);
-              onRecordFailure();
-            }
-          } while (recorderState == RECORDER_STATE_BUSY);
-        } finally {
-          recorder.release();
-        }
-        onExit();
+        } while (recorderState == RECORDER_STATE_BUSY);
+      } finally {
+        recorder.release();
       }
-    }).start();
+      emitter.onComplete();
+    }, BackpressureStrategy.BUFFER)
+        .subscribeOn(Schedulers.io())
+        .subscribeWith(new DisposableSubscriber<byte[]>() {
+          @Override public void onNext(byte[] bytes) {
+
+          }
+
+          @Override public void onError(Throwable t) {
+
+          }
+
+          @Override public void onComplete() {
+            synchronized (recorderStateMonitor) {
+              recorderState = RECORDER_STATE_IDLE;
+              recorderStateMonitor.notifyAll();
+            }
+          }
+        }));
   }
 
   @Override public void finishRecord() {
-    stopTimer();
     int recorderStateLocal = recorderState;
-    mediaSaveHelper.onRecordingStopped();
     if (recorderStateLocal != RECORDER_STATE_IDLE) {
       synchronized (recorderStateMonitor) {
         recorderStateLocal = recorderState;
@@ -143,6 +146,8 @@ public class AudioRecorder implements IAudioRecorder {
         } while (recorderStateLocal == RECORDER_STATE_STOPPING);
       }
     }
+    mediaSaveHelper.onRecordingStopped();
+    compositeDisposable.dispose();
   }
 
   @Override public boolean isRecording() {
