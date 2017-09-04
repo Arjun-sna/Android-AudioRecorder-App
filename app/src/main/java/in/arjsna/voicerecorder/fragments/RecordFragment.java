@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.Toast;
+import com.jakewharton.rxbinding2.view.RxView;
 import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.audiovisualization.AudioVisualization;
 import in.arjsna.voicerecorder.recording.AudioRecordService;
@@ -53,8 +54,7 @@ public class RecordFragment extends Fragment {
    * @return A new instance of fragment Record_Fragment.
    */
   public static RecordFragment newInstance() {
-    RecordFragment f = new RecordFragment();
-    return f;
+    return new RecordFragment();
   }
 
   public RecordFragment() {
@@ -74,11 +74,7 @@ public class RecordFragment extends Fragment {
   }
 
   private void bindEvents() {
-    mRecordButton.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        onChangeRecord();
-      }
-    });
+    RxView.clicks(mRecordButton).subscribe(o -> onChangeRecord());
 
     mPauseButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
