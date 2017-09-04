@@ -1,8 +1,10 @@
 package in.arjsna.voicerecorder.recording;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -11,24 +13,22 @@ import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.activities.MainActivity;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.TimeZone;
 
 public class AudioRecordService extends Service {
   private static final String LOG_TAG = "RecordingService";
 
   private long mStartingTimeMillis = 0;
   private long mElapsedMillis = 0;
-  private int mElapsedSeconds = 0;
-  private OnTimerChangedListener onTimerChangedListener = null;
+  private long mElapsedSeconds = 0;
   private static final SimpleDateFormat mTimerFormat =
-      new SimpleDateFormat("mm:ss", Locale.getDefault());
+      new SimpleDateFormat("hh:mm:ss", Locale.getDefault());
 
-  private Timer mTimer = null;
-  private TimerTask mIncrementTimerTask = null;
   private AudioRecorder audioRecorder;
   private AudioRecordingDbmHandler handler;
   private ServiceBinder mIBinder;
+  private NotificationManager mNotificationManager;
+  private static int NOTIFY_ID = 100;
 
   @Override public IBinder onBind(Intent intent) {
     return mIBinder;
@@ -38,16 +38,14 @@ public class AudioRecordService extends Service {
     return audioRecorder.isRecording();
   }
 
-  public interface OnTimerChangedListener {
-    void onTimerChanged(int seconds);
-  }
-
   @Override public void onCreate() {
     super.onCreate();
     mIBinder = new ServiceBinder();
     audioRecorder = new AudioRecorder();
     handler = new AudioRecordingDbmHandler();
     handler.addRecorder(audioRecorder);
+    mTimerFormat.setTimeZone(TimeZone.getTimeZone("IST"));
+    mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
   }
 
   public AudioRecordingDbmHandler getHandler() {
@@ -56,7 +54,7 @@ public class AudioRecordService extends Service {
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
     startRecording();
-    startForeground(100, createNotification());
+    startForeground(NOTIFY_ID, createNotification(new AudioRecorder.RecordTime()));
     return START_STICKY;
   }
 
@@ -73,15 +71,21 @@ public class AudioRecordService extends Service {
   public void startRecording() {
     audioRecorder.startRecord();
     handler.startRecordThread();
+    audioRecorder.subscribeTimer(this::updateNotification);
   }
 
-  //TODO:
-  private Notification createNotification() {
+  private void updateNotification(AudioRecorder.RecordTime recordTime) {
+    //mElapsedSeconds = seconds;
+    mNotificationManager.notify(NOTIFY_ID, createNotification(recordTime));
+  }
+
+  private Notification createNotification(AudioRecorder.RecordTime recordTime) {
     NotificationCompat.Builder mBuilder =
         new NotificationCompat.Builder(getApplicationContext()).setSmallIcon(
             R.drawable.ic_launcher_background)
             .setContentTitle(getString(R.string.notification_recording))
-            .setContentText(mTimerFormat.format(mElapsedSeconds * 1000))
+            .setContentText(String.format("%02d:%02d:%02d", recordTime.hours, recordTime.minutes,
+                recordTime.seconds))
             .setOngoing(true);
 
     mBuilder.setContentIntent(PendingIntent.getActivities(getApplicationContext(), 0,

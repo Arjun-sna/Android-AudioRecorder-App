@@ -4,7 +4,12 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Process;
 import android.util.Log;
+import io.reactivex.Observable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import java.io.FileNotFoundException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Helper class for audio recording and saving as .wav
@@ -25,6 +30,11 @@ public class AudioRecorder implements IAudioRecorder {
 
   private byte[] recordBuffer;
 
+  private CompositeDisposable compositeDisposable = new CompositeDisposable();
+  private Observable<RecordTime> timerObservable;
+
+  private Long recordTimeSeconds;
+
   public AudioRecorder() {
     this.mediaSaveHelper = new MediaSaveHelper();
   }
@@ -38,7 +48,7 @@ public class AudioRecorder implements IAudioRecorder {
     if (recorderState != RECORDER_STATE_IDLE) {
       return;
     }
-
+    startTimer();
     try {
       recorderState = RECORDER_STATE_STARTING;
 
@@ -47,6 +57,23 @@ public class AudioRecorder implements IAudioRecorder {
       onRecordFailure();
       e.printStackTrace();
     }
+  }
+
+  private void startTimer() {
+    timerObservable = Observable.interval(1000, TimeUnit.MILLISECONDS).map(seconds -> {
+      recordTimeSeconds = seconds;
+      RecordTime recordTime = new RecordTime();
+      recordTime.hours = seconds / (60 * 60);
+      seconds = seconds % (60 * 60);
+      recordTime.minutes = seconds / 60;
+      seconds = seconds % 60;
+      recordTime.seconds = seconds;
+      return recordTime;
+    }).subscribeOn(Schedulers.newThread());
+  }
+
+  private void stopTimer() {
+    compositeDisposable.dispose();
   }
 
   private void startRecordThread() throws FileNotFoundException {
@@ -91,6 +118,7 @@ public class AudioRecorder implements IAudioRecorder {
   }
 
   @Override public void finishRecord() {
+    stopTimer();
     int recorderStateLocal = recorderState;
     mediaSaveHelper.onRecordingStopped();
     if (recorderStateLocal != RECORDER_STATE_IDLE) {
@@ -122,5 +150,15 @@ public class AudioRecorder implements IAudioRecorder {
 
   public byte[] getMoreData() {
     return recordBuffer;
+  }
+
+  public void subscribeTimer(Consumer<RecordTime> timerConsumer) {
+    compositeDisposable.add(timerObservable.subscribe(timerConsumer));
+  }
+
+  public static class RecordTime {
+    long seconds = 0;
+    long minutes = 0;
+    long hours = 0;
   }
 }
