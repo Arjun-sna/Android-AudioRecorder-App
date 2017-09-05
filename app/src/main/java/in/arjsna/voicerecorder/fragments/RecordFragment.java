@@ -94,7 +94,6 @@ public class RecordFragment extends Fragment {
 
     if (!mIsRecording) {
       // start recording
-      chronometer.start();
       mIsRecording = true;
       mRecordButton.setImageResource(R.drawable.ic_media_stop);
       getActivity().startService(intent);
