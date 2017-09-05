@@ -13,6 +13,7 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 import java.io.FileNotFoundException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Helper class for audio recording and saving as .wav
@@ -37,7 +38,8 @@ public class AudioRecorder implements IAudioRecorder {
   private Observable<RecordTime> timerObservable;
 
   private Long recordTimeSeconds;
-  private boolean isInPause = false;
+
+  private AtomicBoolean mIsPaused = new AtomicBoolean(false);
 
   public AudioRecorder() {
     this.mediaSaveHelper = new MediaSaveHelper();
@@ -64,17 +66,22 @@ public class AudioRecorder implements IAudioRecorder {
   }
 
   private void startTimer() {
-    timerObservable = Observable.interval(1000, TimeUnit.MILLISECONDS).map(seconds -> {
-      recordTimeSeconds = seconds;
-      RecordTime recordTime = new RecordTime();
-      recordTime.millis = seconds * 1000;
-      recordTime.hours = seconds / (60 * 60);
-      seconds = seconds % (60 * 60);
-      recordTime.minutes = seconds / 60;
-      seconds = seconds % 60;
-      recordTime.seconds = seconds;
-      return recordTime;
-    }).subscribeOn(Schedulers.newThread());
+    timerObservable = getTimerObservable().subscribeOn(Schedulers.newThread());
+  }
+
+  private Observable<RecordTime> getTimerObservable() {
+    return Observable.interval(1000, TimeUnit.MILLISECONDS)
+        .filter(timeElapsed -> !mIsPaused.get()).scan((acc, tick) -> acc + 1).map(seconds -> {
+          recordTimeSeconds = seconds;
+          RecordTime recordTime = new RecordTime();
+          recordTime.millis = seconds * 1000;
+          recordTime.hours = seconds / (60 * 60);
+          seconds = seconds % (60 * 60);
+          recordTime.minutes = seconds / 60;
+          seconds = seconds % 60;
+          recordTime.seconds = seconds;
+          return recordTime;
+        });
   }
 
   private Flowable<byte[]> audioDataFlowable = Flowable.create(emitter -> {
@@ -93,7 +100,7 @@ public class AudioRecorder implements IAudioRecorder {
 
       recordBuffer = new byte[bufferSize];
       do {
-        if (!isInPause) {
+        if (!mIsPaused.get()) {
           int bytesRead = recorder.read(recordBuffer, 0, bufferSize);
           emitter.onNext(recordBuffer);
           if (bytesRead == 0) {
@@ -160,11 +167,11 @@ public class AudioRecorder implements IAudioRecorder {
   }
 
   @Override public void pauseRecord() {
-    isInPause = true;
+    mIsPaused.set(true);
   }
 
   @Override public void resumeRecord() {
-    isInPause = false;
+    mIsPaused.set(false);
   }
 
   @Override public boolean isRecording() {

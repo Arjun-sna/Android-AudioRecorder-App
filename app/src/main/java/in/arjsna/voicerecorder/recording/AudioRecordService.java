@@ -11,9 +11,6 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.activities.MainActivity;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class AudioRecordService extends Service {
   private static final String LOG_TAG = "RecordingService";
@@ -21,8 +18,6 @@ public class AudioRecordService extends Service {
   private long mStartingTimeMillis = 0;
   private long mElapsedMillis = 0;
   private long mElapsedSeconds = 0;
-  private static final SimpleDateFormat mTimerFormat =
-      new SimpleDateFormat("hh:mm:ss", Locale.getDefault());
 
   private AudioRecorder audioRecorder;
   private AudioRecordingDbmHandler handler;
@@ -44,7 +39,6 @@ public class AudioRecordService extends Service {
     audioRecorder = new AudioRecorder();
     handler = new AudioRecordingDbmHandler();
     handler.addRecorder(audioRecorder);
-    mTimerFormat.setTimeZone(TimeZone.getTimeZone("IST"));
     mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
   }
 
