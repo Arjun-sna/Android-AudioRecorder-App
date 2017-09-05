@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.activities.MainActivity;
+import io.reactivex.functions.Consumer;
 
 public class AudioRecordService extends Service {
   private static final String LOG_TAG = "RecordingService";
@@ -70,6 +71,10 @@ public class AudioRecordService extends Service {
     audioRecorder.subscribeTimer(this::updateNotification);
   }
 
+  public void subscribeForTimer(Consumer<AudioRecorder.RecordTime> timerConsumer) {
+    audioRecorder.subscribeTimer(timerConsumer);
+  }
+
   private void updateNotification(AudioRecorder.RecordTime recordTime) {
     mElapsedMillis = recordTime.millis;
     mNotificationManager.notify(NOTIFY_ID, createNotification(recordTime));
@@ -92,6 +97,10 @@ public class AudioRecordService extends Service {
 
   public void pauseRecord() {
     audioRecorder.pauseRecord();
+  }
+
+  public boolean isPaused() {
+    return audioRecorder.isPaused();
   }
 
   public void resumeRecord() {

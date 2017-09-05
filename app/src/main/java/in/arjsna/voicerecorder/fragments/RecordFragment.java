@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,11 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Chronometer;
+import android.widget.TextView;
 import com.jakewharton.rxbinding2.view.RxView;
 import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.audiovisualization.AudioVisualization;
 import in.arjsna.voicerecorder.recording.AudioRecordService;
+import in.arjsna.voicerecorder.recording.AudioRecorder;
+import io.reactivex.functions.Consumer;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,9 +38,9 @@ public class RecordFragment extends Fragment {
   private AudioVisualization audioVisualization;
 
   private boolean mIsRecording = false;
-  private boolean mPauseRecording = true;
+  private boolean mIsRecordingPaused = true;
 
-  private Chronometer chronometer;
+  private TextView chronometer;
   private boolean mIsServiceBound = false;
   private AudioRecordService mAudioRecordService;
 
@@ -52,8 +54,7 @@ public class RecordFragment extends Fragment {
     return new RecordFragment();
   }
 
-  public RecordFragment() {
-  }
+  private boolean mIsRecordPaused = false;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -72,14 +73,14 @@ public class RecordFragment extends Fragment {
     RxView.clicks(mRecordButton).subscribe(o -> onChangeRecord());
 
     mPauseButton.setOnClickListener(v -> {
-      onPauseRecord(mPauseRecording);
-      mPauseRecording = !mPauseRecording;
+      onPauseRecord(mIsRecordingPaused);
+      mIsRecordingPaused = !mIsRecordingPaused;
     });
   }
 
   private void initViews(View recordView) {
-    chronometer = (Chronometer) recordView.findViewById(R.id.chronometer);
-    chronometer.setBase(SystemClock.elapsedRealtime());
+    chronometer = (TextView) recordView.findViewById(R.id.chronometer);
+    setChronometer(new AudioRecorder.RecordTime());
 
     audioVisualization = (AudioVisualization) recordView.findViewById(R.id.visualizer_view);
 
@@ -91,11 +92,8 @@ public class RecordFragment extends Fragment {
   }
 
   private void onChangeRecord() {
-
     Intent intent = new Intent(getActivity(), AudioRecordService.class);
-
     if (!mIsRecording) {
-      // start recording
       mIsRecording = true;
       mRecordButton.setImageResource(R.drawable.ic_media_stop);
       getActivity().startService(intent);
@@ -103,13 +101,12 @@ public class RecordFragment extends Fragment {
       mPauseButton.setVisibility(View.VISIBLE);
       getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     } else {
-      chronometer.stop();
-      chronometer.setBase(SystemClock.elapsedRealtime());
       mIsRecording = false;
       mRecordButton.setImageResource(R.drawable.ic_mic_white_36dp);
       getActivity().stopService(intent);
       getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
       unbindService();
+      setChronometer(new AudioRecorder.RecordTime());
       mPauseButton.setVisibility(View.GONE);
     }
   }
@@ -127,10 +124,13 @@ public class RecordFragment extends Fragment {
       mIsRecording = mAudioRecordService.isRecording();
       if (mIsRecording) {
         mIsServiceBound = true;
+        mIsRecordingPaused = mAudioRecordService.isPaused();
+        if (mIsRecordingPaused) {
+          showResumeBtn();
+        }
         audioVisualization.linkTo(mAudioRecordService.getHandler());
         mRecordButton.setImageResource(R.drawable.ic_media_stop);
-        chronometer.setBase(SystemClock.elapsedRealtime() - mAudioRecordService.getElapsedTime());
-        chronometer.start();
+        mAudioRecordService.subscribeForTimer(recordTimeConsumer);
       } else {
         mIsServiceBound = false;
         getActivity().unbindService(this);
@@ -140,6 +140,20 @@ public class RecordFragment extends Fragment {
     @Override public void onServiceDisconnected(ComponentName componentName) {
     }
   };
+
+  private void showResumeBtn() {
+    mPauseButton.setVisibility(View.VISIBLE);
+    mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_white_36dp, 0, 0, 0);
+    mPauseButton.setText("Resume");
+  }
+
+  Consumer<AudioRecorder.RecordTime> recordTimeConsumer = this::setChronometer;
+
+  private void setChronometer(AudioRecorder.RecordTime recordTime) {
+    chronometer.setText(
+        String.format(Locale.getDefault(), "%02d:%02d:%02d", recordTime.hours, recordTime.minutes,
+            recordTime.seconds));
+  }
 
   private void onPauseRecord(boolean pause) {
     if (pause) {

@@ -5,15 +5,17 @@ import android.media.MediaRecorder;
 import android.util.Log;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.processors.BehaviorProcessor;
 import io.reactivex.processors.PublishProcessor;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 import java.io.FileNotFoundException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Helper class for audio recording and saving as .wav
@@ -35,10 +37,8 @@ public class AudioRecorder implements IAudioRecorder {
   private byte[] recordBuffer;
 
   private CompositeDisposable compositeDisposable = new CompositeDisposable();
-  private Observable<RecordTime> timerObservable;
 
-  private Long recordTimeSeconds;
-
+  private AtomicLong mRecordTimeCounter = new AtomicLong(0);
   private AtomicBoolean mIsPaused = new AtomicBoolean(false);
 
   public AudioRecorder() {
@@ -65,14 +65,16 @@ public class AudioRecorder implements IAudioRecorder {
     }
   }
 
+  private BehaviorProcessor<RecordTime> recordTimeProcessor = BehaviorProcessor.create();
+
   private void startTimer() {
-    timerObservable = getTimerObservable().subscribeOn(Schedulers.newThread());
+    getTimerObservable().subscribeOn(Schedulers.newThread()).subscribe(recordTimeProcessor);
   }
 
-  private Observable<RecordTime> getTimerObservable() {
-    return Observable.interval(1000, TimeUnit.MILLISECONDS)
-        .filter(timeElapsed -> !mIsPaused.get()).scan((acc, tick) -> acc + 1).map(seconds -> {
-          recordTimeSeconds = seconds;
+  private Flowable<RecordTime> getTimerObservable() {
+    return Flowable.interval(1000, TimeUnit.MILLISECONDS)
+        .filter(timeElapsed -> !mIsPaused.get()).map(tick -> {
+          long seconds = mRecordTimeCounter.incrementAndGet();
           RecordTime recordTime = new RecordTime();
           recordTime.millis = seconds * 1000;
           recordTime.hours = seconds / (60 * 60);
@@ -115,11 +117,11 @@ public class AudioRecorder implements IAudioRecorder {
     emitter.onComplete();
   }, BackpressureStrategy.DROP);
 
-  private PublishProcessor<byte[]> publishProcessor = PublishProcessor.create();
+  private PublishProcessor<byte[]> recordDataPublishProcessor = PublishProcessor.create();
 
   private void startRecordThread() throws FileNotFoundException {
-    audioDataFlowable.subscribeOn(Schedulers.io()).subscribe(publishProcessor);
-    compositeDisposable.add(publishProcessor.onBackpressureBuffer()
+    audioDataFlowable.subscribeOn(Schedulers.io()).subscribe(recordDataPublishProcessor);
+    compositeDisposable.add(recordDataPublishProcessor.onBackpressureBuffer()
         .observeOn(Schedulers.io())
         .subscribeWith(new DisposableSubscriber<byte[]>() {
           @Override public void onNext(byte[] bytes) {
@@ -179,17 +181,23 @@ public class AudioRecorder implements IAudioRecorder {
   }
 
   public Flowable<byte[]> getAudioDataFlowable() {
-    return publishProcessor;
+    return recordDataPublishProcessor;
   }
 
   public void subscribeTimer(Consumer<RecordTime> timerConsumer) {
-    compositeDisposable.add(timerObservable.subscribe(timerConsumer));
+    compositeDisposable.add(
+        recordTimeProcessor.observeOn(AndroidSchedulers.mainThread())
+            .subscribe(timerConsumer));
+  }
+
+  boolean isPaused() {
+    return mIsPaused.get();
   }
 
   public static class RecordTime {
-    long seconds = 0;
-    long minutes = 0;
-    long hours = 0;
+    public long seconds = 0;
+    public long minutes = 0;
+    public long hours = 0;
     long millis = 0;
   }
 }
