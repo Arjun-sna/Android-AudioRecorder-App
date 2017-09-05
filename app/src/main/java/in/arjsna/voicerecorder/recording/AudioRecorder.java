@@ -5,10 +5,10 @@ import android.media.MediaRecorder;
 import android.util.Log;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.processors.PublishProcessor;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 import java.io.FileNotFoundException;
@@ -76,38 +76,44 @@ public class AudioRecorder implements IAudioRecorder {
     }).subscribeOn(Schedulers.newThread());
   }
 
-  private void startRecordThread() throws FileNotFoundException {
-    compositeDisposable.add(Flowable.create((FlowableOnSubscribe<byte[]>) emitter -> {
-      int bufferSize = 4 * 1024;
-      AudioRecord recorder =
-          new AudioRecord(MediaRecorder.AudioSource.MIC, Constants.RECORDER_SAMPLE_RATE,
-              Constants.RECORDER_CHANNELS, Constants.RECORDER_AUDIO_ENCODING, bufferSize);
-      mediaSaveHelper.createNewFile();
+  private Flowable<byte[]> audioDataFlowable = Flowable.create(emitter -> {
+    int bufferSize = 4 * 1024;
 
-      try {
-        if (recorderState == RECORDER_STATE_STARTING) {
-          recorderState = RECORDER_STATE_BUSY;
-        }
-        recorder.startRecording();
+    AudioRecord recorder =
+        new AudioRecord(MediaRecorder.AudioSource.MIC, Constants.RECORDER_SAMPLE_RATE,
+            Constants.RECORDER_CHANNELS, Constants.RECORDER_AUDIO_ENCODING, bufferSize);
+    mediaSaveHelper.createNewFile();
 
-        recordBuffer = new byte[bufferSize];
-        do {
-          int bytesRead = recorder.read(recordBuffer, 0, bufferSize);
-          mediaSaveHelper.onDataReady(recordBuffer);
-          if (bytesRead == 0) {
-            Log.e(AudioRecorder.class.getSimpleName(), "error: " + bytesRead);
-            onRecordFailure();
-          }
-        } while (recorderState == RECORDER_STATE_BUSY);
-      } finally {
-        recorder.release();
+    try {
+      if (recorderState == RECORDER_STATE_STARTING) {
+        recorderState = RECORDER_STATE_BUSY;
       }
-      emitter.onComplete();
-    }, BackpressureStrategy.BUFFER)
-        .subscribeOn(Schedulers.io())
+      recorder.startRecording();
+
+      recordBuffer = new byte[bufferSize];
+      do {
+        int bytesRead = recorder.read(recordBuffer, 0, bufferSize);
+        emitter.onNext(recordBuffer);
+        if (bytesRead == 0) {
+          Log.e(AudioRecorder.class.getSimpleName(), "error: " + bytesRead);
+          onRecordFailure();
+        }
+      } while (recorderState == RECORDER_STATE_BUSY);
+    } finally {
+      recorder.release();
+    }
+    emitter.onComplete();
+  }, BackpressureStrategy.DROP);
+
+  private PublishProcessor<byte[]> publishProcessor = PublishProcessor.create();
+
+  private void startRecordThread() throws FileNotFoundException {
+    audioDataFlowable.subscribeOn(Schedulers.io()).subscribe(publishProcessor);
+    compositeDisposable.add(publishProcessor.onBackpressureBuffer()
+        .observeOn(Schedulers.io())
         .subscribeWith(new DisposableSubscriber<byte[]>() {
           @Override public void onNext(byte[] bytes) {
-
+            mediaSaveHelper.onDataReady(recordBuffer);
           }
 
           @Override public void onError(Throwable t) {
@@ -154,8 +160,8 @@ public class AudioRecorder implements IAudioRecorder {
     return recorderState != RECORDER_STATE_IDLE;
   }
 
-  public byte[] getMoreData() {
-    return recordBuffer;
+  public Flowable<byte[]> getAudioDataFlowable() {
+    return publishProcessor;
   }
 
   public void subscribeTimer(Consumer<RecordTime> timerConsumer) {

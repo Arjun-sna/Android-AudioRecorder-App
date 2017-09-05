@@ -72,7 +72,7 @@ public class AudioRecordService extends Service {
 
   public void startRecording() {
     audioRecorder.startRecord();
-    handler.startRecordThread();
+    handler.startDbmThread();
     audioRecorder.subscribeTimer(this::updateNotification);
   }
 

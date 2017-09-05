@@ -141,5 +141,5 @@ public abstract class DbmHandler<TData> {
     this.audioRecorder = audioRecorder;
   }
 
-  public abstract void startRecordThread();
+  public abstract void startDbmThread();
 }

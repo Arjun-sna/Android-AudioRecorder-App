@@ -1,7 +1,10 @@
 package in.arjsna.voicerecorder.recording;
 
-import android.os.Process;
+import android.util.Log;
 import in.arjsna.voicerecorder.audiovisualization.DbmHandler;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subscribers.DisposableSubscriber;
 
 public class AudioRecordingDbmHandler extends DbmHandler<byte[]> {
 
@@ -9,7 +12,7 @@ public class AudioRecordingDbmHandler extends DbmHandler<byte[]> {
 
   private float[] dbs;
   private float[] allAmps;
-  private boolean isRunning = false;
+  private Disposable disposableSubscriber;
 
   @Override protected void onDataReceivedImpl(byte[] bytes, int layersCount, float[] dBmArray,
       float[] ampsArray) {
@@ -61,36 +64,31 @@ public class AudioRecordingDbmHandler extends DbmHandler<byte[]> {
     }
   }
 
-  @Override public void startRecordThread() {
-    isRunning = true;
-    new Thread(new PriorityRunnable(Process.THREAD_PRIORITY_AUDIO) {
-
-      private void onExit() {
-
-      }
-
-      @SuppressWarnings("ResultOfMethodCallIgnored") @Override public void runImpl() {
-        while (isRunning) {
-          byte[] moreData = audioRecorder.getMoreData();
-          if (moreData != null && moreData.length > 0) {
-            //Log.i("Visualise ", moreData.length + " ");
-            onDataReceived(moreData);
+  @Override public void startDbmThread() {
+    disposableSubscriber = audioRecorder.getAudioDataFlowable()
+        .onBackpressureLatest()
+        .observeOn(Schedulers.newThread())
+        .subscribeWith(new DisposableSubscriber<byte[]>() {
+          @Override public void onNext(byte[] moreData) {
+            if (moreData != null && moreData.length > 0) {
+              onDataReceived(moreData);
+            }
           }
-        }
-      }
-    }).start();
+
+          @Override public void onError(Throwable t) {
+            Log.i("Visual Error ", t.getMessage() + " ");
+          }
+
+          @Override public void onComplete() {
+            Log.i("Visualise ", "complete");
+          }
+        });
   }
 
   public void stop() {
-    isRunning = false;
+    if (disposableSubscriber != null) {
+      disposableSubscriber.dispose();
+    }
     calmDownAndStopRendering();
   }
-
-  //@Override public void onDataReady(byte[] data) {
-  //  onDataReceived(data);
-  //}
-
-  //@Override public void onRecordingStopped() {
-  //
-  //}
 }
