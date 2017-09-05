@@ -8,5 +8,9 @@ interface IAudioRecorder {
 
   void finishRecord();
 
+  void pauseRecord();
+
+  void resumeRecord();
+
   boolean isRecording();
 }

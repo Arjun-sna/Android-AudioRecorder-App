@@ -37,6 +37,7 @@ public class AudioRecorder implements IAudioRecorder {
   private Observable<RecordTime> timerObservable;
 
   private Long recordTimeSeconds;
+  private boolean isInPause = false;
 
   public AudioRecorder() {
     this.mediaSaveHelper = new MediaSaveHelper();
@@ -92,11 +93,13 @@ public class AudioRecorder implements IAudioRecorder {
 
       recordBuffer = new byte[bufferSize];
       do {
-        int bytesRead = recorder.read(recordBuffer, 0, bufferSize);
-        emitter.onNext(recordBuffer);
-        if (bytesRead == 0) {
-          Log.e(AudioRecorder.class.getSimpleName(), "error: " + bytesRead);
-          onRecordFailure();
+        if (!isInPause) {
+          int bytesRead = recorder.read(recordBuffer, 0, bufferSize);
+          emitter.onNext(recordBuffer);
+          if (bytesRead == 0) {
+            Log.e(AudioRecorder.class.getSimpleName(), "error: " + bytesRead);
+            onRecordFailure();
+          }
         }
       } while (recorderState == RECORDER_STATE_BUSY);
     } finally {
@@ -154,6 +157,14 @@ public class AudioRecorder implements IAudioRecorder {
     }
     mediaSaveHelper.onRecordingStopped();
     compositeDisposable.dispose();
+  }
+
+  @Override public void pauseRecord() {
+    isInPause = true;
+  }
+
+  @Override public void resumeRecord() {
+    isInPause = false;
   }
 
   @Override public boolean isRecording() {

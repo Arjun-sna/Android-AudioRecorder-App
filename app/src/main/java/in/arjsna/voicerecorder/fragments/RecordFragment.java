@@ -39,6 +39,8 @@ public class RecordFragment extends Fragment {
   private boolean mPauseRecording = true;
 
   private Chronometer chronometer;
+  private boolean mIsServiceBound = false;
+  private AudioRecordService mAudioRecordService;
 
   /**
    * Use this factory method to create a new instance of
@@ -107,6 +109,7 @@ public class RecordFragment extends Fragment {
       mRecordButton.setImageResource(R.drawable.ic_mic_white_36dp);
       getActivity().stopService(intent);
       getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+      unbindService();
       mPauseButton.setVisibility(View.GONE);
     }
   }
@@ -118,31 +121,33 @@ public class RecordFragment extends Fragment {
 
   ServiceConnection serviceConnection = new ServiceConnection() {
     @Override public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-      AudioRecordService audioRecordService =
+      mAudioRecordService =
           ((AudioRecordService.ServiceBinder) iBinder).getService();
-      Log.i("Tesing", " " + audioRecordService.isRecording() + " recording");
-      mIsRecording = audioRecordService.isRecording();
+      Log.i("Tesing", " " + mAudioRecordService.isRecording() + " recording");
+      mIsRecording = mAudioRecordService.isRecording();
       if (mIsRecording) {
-        audioVisualization.linkTo(audioRecordService.getHandler());
+        mIsServiceBound = true;
+        audioVisualization.linkTo(mAudioRecordService.getHandler());
         mRecordButton.setImageResource(R.drawable.ic_media_stop);
-        chronometer.setBase(SystemClock.elapsedRealtime() - audioRecordService.getElapsedTime());
+        chronometer.setBase(SystemClock.elapsedRealtime() - mAudioRecordService.getElapsedTime());
         chronometer.start();
+      } else {
+        mIsServiceBound = false;
+        getActivity().unbindService(this);
       }
-      getActivity().unbindService(this);
     }
 
     @Override public void onServiceDisconnected(ComponentName componentName) {
     }
   };
 
-  //TODO: implement pause recording
   private void onPauseRecord(boolean pause) {
     if (pause) {
-      //pause recording
+      mAudioRecordService.pauseRecord();
       mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_white_36dp, 0, 0, 0);
       mPauseButton.setText("Resume");
     } else {
-      //resume recording
+      mAudioRecordService.resumeRecord();
       mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_pause, 0, 0, 0);
       mPauseButton.setText("Pause");
     }
@@ -151,5 +156,13 @@ public class RecordFragment extends Fragment {
   @Override public void onDestroy() {
     super.onDestroy();
     audioVisualization.release();
+    unbindService();
+  }
+
+  private void unbindService() {
+    if (mIsServiceBound) {
+      mIsServiceBound = false;
+      getActivity().unbindService(serviceConnection);
+    }
   }
 }

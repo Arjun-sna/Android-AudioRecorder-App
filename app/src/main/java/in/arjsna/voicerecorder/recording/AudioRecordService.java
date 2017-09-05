@@ -96,6 +96,14 @@ public class AudioRecordService extends Service {
     return mBuilder.build();
   }
 
+  public void pauseRecord() {
+    audioRecorder.pauseRecord();
+  }
+
+  public void resumeRecord() {
+    audioRecorder.resumeRecord();
+  }
+
   public long getElapsedTime() {
     return mElapsedMillis;
   }
