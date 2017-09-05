@@ -98,6 +98,7 @@ public class RecordFragment extends Fragment {
       mRecordButton.setImageResource(R.drawable.ic_media_stop);
       getActivity().startService(intent);
       bindToService();
+      mPauseButton.setVisibility(View.VISIBLE);
       getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     } else {
       chronometer.stop();
@@ -106,6 +107,7 @@ public class RecordFragment extends Fragment {
       mRecordButton.setImageResource(R.drawable.ic_mic_white_36dp);
       getActivity().stopService(intent);
       getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+      mPauseButton.setVisibility(View.GONE);
     }
   }
 
@@ -138,9 +140,11 @@ public class RecordFragment extends Fragment {
     if (pause) {
       //pause recording
       mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_white_36dp, 0, 0, 0);
+      mPauseButton.setText("Resume");
     } else {
       //resume recording
       mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_pause, 0, 0, 0);
+      mPauseButton.setText("Pause");
     }
   }
 
