@@ -179,7 +179,8 @@ public class RecordFragment extends Fragment {
 
   private void setChronometer(AudioRecorder.RecordTime recordTime) {
     chronometer.setText(
-        String.format(Locale.getDefault(), "%02d:%02d:%02d", recordTime.hours, recordTime.minutes,
+        String.format(Locale.getDefault(), getString(R.string.record_time_format), recordTime.hours,
+            recordTime.minutes,
             recordTime.seconds));
   }
 

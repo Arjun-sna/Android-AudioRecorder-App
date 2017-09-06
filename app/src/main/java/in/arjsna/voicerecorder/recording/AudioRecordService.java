@@ -112,9 +112,11 @@ public class AudioRecordService extends Service {
         new NotificationCompat.Builder(getApplicationContext()).setSmallIcon(
             R.drawable.ic_launcher_background)
             .setContentTitle(getString(R.string.notification_recording))
-            .setContentText(String.format(Locale.getDefault(), "%02d:%02d:%02d", recordTime.hours,
-                recordTime.minutes,
-                recordTime.seconds))
+            .setContentText(
+                String.format(Locale.getDefault(), getString(R.string.record_time_format),
+                    recordTime.hours,
+                    recordTime.minutes,
+                    recordTime.seconds))
             .addAction(R.drawable.ic_media_stop, getString(R.string.stop_recording),
                 getActionIntent(AppConstants.ACTION_STOP))
             .setOngoing(true);
