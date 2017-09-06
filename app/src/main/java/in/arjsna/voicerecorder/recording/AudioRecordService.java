@@ -115,12 +115,15 @@ public class AudioRecordService extends Service {
             .setContentText(String.format(Locale.getDefault(), "%02d:%02d:%02d", recordTime.hours,
                 recordTime.minutes,
                 recordTime.seconds))
-            .addAction(R.drawable.ic_media_stop, "Stop", getActionIntent(AppConstants.ACTION_STOP))
+            .addAction(R.drawable.ic_media_stop, getString(R.string.stop_recording),
+                getActionIntent(AppConstants.ACTION_STOP))
             .setOngoing(true);
     if (audioRecorder.isPaused()) {
-      mBuilder.addAction(R.drawable.ic_media_record, "Resume", getActionIntent(AppConstants.ACTION_RESUME));
+      mBuilder.addAction(R.drawable.ic_media_record, getString(R.string.resume_recording_button),
+          getActionIntent(AppConstants.ACTION_RESUME));
     } else {
-      mBuilder.addAction(R.drawable.ic_media_pause, "Pause", getActionIntent(AppConstants.ACTION_PAUSE));
+      mBuilder.addAction(R.drawable.ic_media_pause, getString(R.string.pause_recording_button),
+          getActionIntent(AppConstants.ACTION_PAUSE));
     }
     mBuilder.setContentIntent(PendingIntent.getActivities(getApplicationContext(), 0,
         new Intent[] {new Intent(getApplicationContext(), MainActivity.class)}, 0));
