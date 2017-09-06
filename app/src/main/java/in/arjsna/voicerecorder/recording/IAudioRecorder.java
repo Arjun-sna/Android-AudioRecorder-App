@@ -4,7 +4,7 @@ package in.arjsna.voicerecorder.recording;
  * Interface for audio recorder
  */
 interface IAudioRecorder {
-  void startRecord();
+  void startRecord(int recordSampleRate);
 
   void finishRecord();
 

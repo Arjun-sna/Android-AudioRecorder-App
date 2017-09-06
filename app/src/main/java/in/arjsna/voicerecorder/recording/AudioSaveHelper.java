@@ -16,6 +16,7 @@ public class AudioSaveHelper {
 
   private FileOutputStream os;
   private File mFile;
+  private int mRecordSampleRate;
 
   public void createNewFile() {
     Log.i("TEsting", "creating file");
@@ -30,7 +31,7 @@ public class AudioSaveHelper {
     mFile = new File(mFilePath);
     try {
       os = new FileOutputStream(mFile);
-      writeWavHeader(os, Constants.RECORDER_CHANNELS, Constants.RECORDER_SAMPLE_RATE,
+      writeWavHeader(os, Constants.RECORDER_CHANNELS, mRecordSampleRate,
           Constants.RECORDER_AUDIO_ENCODING);
     } catch (IOException e) {
       // TODO: 4/9/17 handle this
@@ -179,5 +180,9 @@ public class AudioSaveHelper {
         }
       }
     }
+  }
+
+  public void setSampleRate(int sampleRate) {
+    this.mRecordSampleRate = sampleRate;
   }
 }

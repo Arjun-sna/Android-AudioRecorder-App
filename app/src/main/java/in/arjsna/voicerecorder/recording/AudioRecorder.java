@@ -28,6 +28,8 @@ public class AudioRecorder implements IAudioRecorder {
 
   private volatile int recorderState;
 
+  private int mRecorderSampleRate = 8000;
+
   private AudioSaveHelper audioSaveHelper;
 
   private final Object recorderStateMonitor = new Object();
@@ -48,10 +50,12 @@ public class AudioRecorder implements IAudioRecorder {
     finishRecord();
   }
 
-  @Override public void startRecord() {
+  @Override public void startRecord(int recorderSampleRate) {
     if (recorderState != RECORDER_STATE_IDLE) {
       return;
     }
+    this.mRecorderSampleRate = recorderSampleRate;
+    audioSaveHelper.setSampleRate(mRecorderSampleRate);
     startTimer();
     try {
       recorderState = RECORDER_STATE_STARTING;
@@ -88,7 +92,7 @@ public class AudioRecorder implements IAudioRecorder {
     int bufferSize = 4 * 1024;
 
     AudioRecord recorder =
-        new AudioRecord(MediaRecorder.AudioSource.MIC, Constants.RECORDER_SAMPLE_RATE,
+        new AudioRecord(MediaRecorder.AudioSource.MIC, mRecorderSampleRate,
             Constants.RECORDER_CHANNELS, Constants.RECORDER_AUDIO_ENCODING, bufferSize);
     audioSaveHelper.createNewFile();
 

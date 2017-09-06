@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import in.arjsna.voicerecorder.AppConstants;
+import in.arjsna.voicerecorder.MySharedPreferences;
 import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.activities.MainActivity;
 import io.reactivex.disposables.Disposable;
@@ -93,7 +94,9 @@ public class AudioRecordService extends Service {
   }
 
   public void startRecording() {
-    audioRecorder.startRecord();
+    boolean prefHighQuality = MySharedPreferences.getPrefHighQuality(getApplicationContext());
+    audioRecorder.startRecord(
+        prefHighQuality ? Constants.RECORDER_SAMPLE_RATE_HIGH : Constants.RECORDER_SAMPLE_RATE_LOW);
     handler.startDbmThread();
     audioRecorder.subscribeTimer(this::updateNotification);
   }
