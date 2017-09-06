@@ -26,6 +26,7 @@ import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.audiovisualization.AudioVisualization;
 import in.arjsna.voicerecorder.recording.AudioRecordService;
 import in.arjsna.voicerecorder.recording.AudioRecorder;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import java.util.Locale;
 
@@ -162,6 +163,7 @@ public class RecordFragment extends Fragment {
     registerLocalBroadCastReceiver();
   }
 
+  private Disposable timerDisposable;
   ServiceConnection serviceConnection = new ServiceConnection() {
     @Override public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
       mAudioRecordService =
@@ -174,7 +176,7 @@ public class RecordFragment extends Fragment {
         onPauseRecord();
         audioVisualization.linkTo(mAudioRecordService.getHandler());
         mRecordButton.setImageResource(R.drawable.ic_media_stop);
-        mAudioRecordService.subscribeForTimer(recordTimeConsumer);
+        timerDisposable = mAudioRecordService.subscribeForTimer(recordTimeConsumer);
       } else {
         unbindService();
       }
@@ -231,6 +233,9 @@ public class RecordFragment extends Fragment {
 
   private void unbindService() {
     unRegisterLocalBroadCastReceiver();
+    if (timerDisposable != null) {
+      timerDisposable.dispose();
+    }
     if (mIsServiceBound) {
       mIsServiceBound = false;
       getActivity().unbindService(serviceConnection);

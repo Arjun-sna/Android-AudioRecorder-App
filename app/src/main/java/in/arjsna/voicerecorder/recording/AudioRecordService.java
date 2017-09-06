@@ -13,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import in.arjsna.voicerecorder.AppConstants;
 import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.activities.MainActivity;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import java.util.Locale;
 
@@ -97,8 +98,8 @@ public class AudioRecordService extends Service {
     audioRecorder.subscribeTimer(this::updateNotification);
   }
 
-  public void subscribeForTimer(Consumer<AudioRecorder.RecordTime> timerConsumer) {
-    audioRecorder.subscribeTimer(timerConsumer);
+  public Disposable subscribeForTimer(Consumer<AudioRecorder.RecordTime> timerConsumer) {
+    return audioRecorder.subscribeTimer(timerConsumer);
   }
 
   private void updateNotification(AudioRecorder.RecordTime recordTime) {

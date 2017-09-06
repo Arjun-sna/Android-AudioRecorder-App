@@ -7,6 +7,7 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.processors.BehaviorProcessor;
 import io.reactivex.processors.PublishProcessor;
@@ -181,10 +182,11 @@ public class AudioRecorder implements IAudioRecorder {
     return recordDataPublishProcessor;
   }
 
-  public void subscribeTimer(Consumer<RecordTime> timerConsumer) {
-    compositeDisposable.add(
-        recordTimeProcessor.observeOn(AndroidSchedulers.mainThread())
-            .subscribe(timerConsumer));
+  public Disposable subscribeTimer(Consumer<RecordTime> timerConsumer) {
+    Disposable disposable = recordTimeProcessor.observeOn(AndroidSchedulers.mainThread())
+        .subscribe(timerConsumer);
+    compositeDisposable.add(disposable);
+    return disposable;
   }
 
   boolean isPaused() {
