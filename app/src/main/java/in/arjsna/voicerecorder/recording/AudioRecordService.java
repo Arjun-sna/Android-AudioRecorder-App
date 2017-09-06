@@ -10,6 +10,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import in.arjsna.voicerecorder.AppConstants;
 import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.activities.MainActivity;
 import io.reactivex.functions.Consumer;
@@ -54,17 +55,22 @@ public class AudioRecordService extends Service {
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
     if (intent.getAction() != null) {
-      if (intent.getAction().equals("pause")) {
-        pauseRecord();
-        updateNotification(lastUpdated);
-      } else if (intent.getAction().equals("resume")) {
-        resumeRecord();
-      } else if (intent.getAction().equals("stop")) {
-        if (mIsClientBound) {
-          LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("stopservice"));
-        } else {
-          stopService(new Intent(this, AudioRecordService.class));
-        }
+      switch (intent.getAction()) {
+        case AppConstants.ACTION_PAUSE:
+          pauseRecord();
+          break;
+        case AppConstants.ACTION_RESUME:
+          resumeRecord();
+          break;
+        case AppConstants.ACTION_STOP:
+          if (!mIsClientBound) {
+            stopSelf();
+          }
+      }
+      if (mIsClientBound) {
+        intent.putExtra(AppConstants.ACTION_IN_SERVICE, intent.getAction());
+        intent.setAction(AppConstants.ACTION_IN_SERVICE);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
       }
     } else {
       startRecording();
@@ -109,12 +115,12 @@ public class AudioRecordService extends Service {
             .setContentText(String.format(Locale.getDefault(), "%02d:%02d:%02d", recordTime.hours,
                 recordTime.minutes,
                 recordTime.seconds))
-            .addAction(-1, "Stop", getActionIntent("stop"))
+            .addAction(-1, "Stop", getActionIntent(AppConstants.ACTION_STOP))
             .setOngoing(true);
     if (audioRecorder.isPaused()) {
-      mBuilder.addAction(-1, "Resume", getActionIntent("resume"));
+      mBuilder.addAction(-1, "Resume", getActionIntent(AppConstants.ACTION_RESUME));
     } else {
-      mBuilder.addAction(-1, "Pause", getActionIntent("pause"));
+      mBuilder.addAction(-1, "Pause", getActionIntent(AppConstants.ACTION_PAUSE));
     }
     mBuilder.setContentIntent(PendingIntent.getActivities(getApplicationContext(), 0,
         new Intent[] {new Intent(getApplicationContext(), MainActivity.class)}, 0));
@@ -124,6 +130,7 @@ public class AudioRecordService extends Service {
 
   public void pauseRecord() {
     audioRecorder.pauseRecord();
+    updateNotification(lastUpdated);
   }
 
   public boolean isPaused() {

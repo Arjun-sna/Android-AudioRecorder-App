@@ -19,6 +19,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import com.jakewharton.rxbinding2.view.RxView;
+import in.arjsna.voicerecorder.AppConstants;
 import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.audiovisualization.AudioVisualization;
 import in.arjsna.voicerecorder.recording.AudioRecordService;
@@ -56,8 +57,6 @@ public class RecordFragment extends Fragment {
   public static RecordFragment newInstance() {
     return new RecordFragment();
   }
-
-  private boolean mIsRecordPaused = false;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -121,7 +120,21 @@ public class RecordFragment extends Fragment {
 
   BroadcastReceiver stopServiceReceiver = new BroadcastReceiver() {
     @Override public void onReceive(Context context, Intent intent) {
-      stopRecording();
+      if (!intent.hasExtra(AppConstants.ACTION_IN_SERVICE)) return;
+      String actionExtra = intent.getStringExtra(AppConstants.ACTION_IN_SERVICE);
+      switch (actionExtra) {
+        case AppConstants.ACTION_PAUSE:
+          mIsRecordingPaused = true;
+          togglePauseBtn();
+          break;
+        case AppConstants.ACTION_RESUME:
+          mIsRecordingPaused = false;
+          togglePauseBtn();
+          break;
+        case AppConstants.ACTION_STOP:
+          stopRecording();
+          break;
+      }
     }
   };
 
@@ -131,7 +144,7 @@ public class RecordFragment extends Fragment {
 
   private void registerLocalBroadCastReceiver() {
     LocalBroadcastManager.getInstance(getActivity())
-        .registerReceiver(stopServiceReceiver, new IntentFilter("stopservice"));
+        .registerReceiver(stopServiceReceiver, new IntentFilter(AppConstants.ACTION_IN_SERVICE));
   }
 
   private void bindToService() {
@@ -174,12 +187,28 @@ public class RecordFragment extends Fragment {
     mPauseButton.setVisibility(View.VISIBLE);
     if (mIsRecordingPaused) {
       mAudioRecordService.pauseRecord();
-      mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_white_36dp, 0, 0, 0);
-      mPauseButton.setText("Resume");
+      setAsResumeBtn();
     } else {
       mAudioRecordService.resumeRecord();
-      mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_pause, 0, 0, 0);
-      mPauseButton.setText("Pause");
+      setAsPauseBtn();
+    }
+  }
+
+  private void setAsPauseBtn() {
+    mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_pause, 0, 0, 0);
+    mPauseButton.setText(getString(R.string.pause_recording_button));
+  }
+
+  private void setAsResumeBtn() {
+    mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_white_36dp, 0, 0, 0);
+    mPauseButton.setText(getString(R.string.resume_recording_button));
+  }
+
+  private void togglePauseBtn() {
+    if (mIsRecordingPaused) {
+      setAsResumeBtn();
+    } else {
+      setAsPauseBtn();
     }
   }
 
