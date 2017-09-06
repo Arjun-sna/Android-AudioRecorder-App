@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="false"
-    >
+>
 
   <in.arjsna.voicerecorder.audiovisualization.GLAudioVisualizationView
       android:id="@+id/visualizer_view"
@@ -23,7 +23,7 @@
       app:av_wavesCount="7"
       app:av_wavesFooterHeight="@dimen/footer_height"
       app:av_wavesHeight="@dimen/wave_height"
-      />
+  />
 
 
   <android.support.design.widget.FloatingActionButton
@@ -38,7 +38,7 @@
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="0.9"
       app:rippleColor="@color/primary"
-      />
+  />
 
   <TextView
       android:id="@+id/chronometer"
@@ -54,18 +54,17 @@
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="0.03"/>
 
-  <Button
+
+  <android.support.design.widget.FloatingActionButton
       android:id="@+id/btnPause"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      app:layout_constraintBottom_toBottomOf="@+id/btnRecord"
+      app:fabSize="mini"
+      android:layout_marginBottom="10dp"
+      app:layout_constraintBottom_toTopOf="@+id/btnRecord"
       app:layout_constraintLeft_toLeftOf="parent"
-      app:layout_constraintRight_toLeftOf="@+id/btnRecord"
-      app:layout_constraintTop_toTopOf="@+id/btnRecord"
-      android:drawableLeft="@drawable/ic_media_pause"
-      android:drawableStart="@drawable/ic_media_pause"
-      android:text="@string/pause_recording_button"
-      android:textAllCaps="true"
-      />
+      app:layout_constraintRight_toRightOf="parent"
+      app:rippleColor="@color/primary_light"
+  />
 
 </android.support.constraint.ConstraintLayout>

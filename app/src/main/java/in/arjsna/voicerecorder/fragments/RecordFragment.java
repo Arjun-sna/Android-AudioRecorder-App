@@ -1,5 +1,8 @@
 package in.arjsna.voicerecorder.fragments;
 
+import android.animation.FloatEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 import com.jakewharton.rxbinding2.view.RxView;
 import in.arjsna.voicerecorder.AppConstants;
@@ -36,9 +38,8 @@ import java.util.Locale;
  */
 public class RecordFragment extends Fragment {
   private static final String LOG_TAG = RecordFragment.class.getSimpleName();
-
   private FloatingActionButton mRecordButton = null;
-  private Button mPauseButton = null;
+  private FloatingActionButton mPauseButton = null;
   private AudioVisualization audioVisualization;
 
   private boolean mIsRecording = false;
@@ -47,6 +48,7 @@ public class RecordFragment extends Fragment {
   private TextView chronometer;
   private boolean mIsServiceBound = false;
   private AudioRecordService mAudioRecordService;
+  private ObjectAnimator alphaAnimator;
 
   /**
    * Use this factory method to create a new instance of
@@ -89,8 +91,13 @@ public class RecordFragment extends Fragment {
     mRecordButton = (FloatingActionButton) recordView.findViewById(R.id.btnRecord);
     mRecordButton.setImageResource(
         mIsRecording ? R.drawable.ic_media_stop : R.drawable.ic_media_record);
-    mPauseButton = (Button) recordView.findViewById(R.id.btnPause);
+    mPauseButton = (FloatingActionButton) recordView.findViewById(R.id.btnPause);
     mPauseButton.setVisibility(View.GONE); //hide pause button before recording starts
+
+    alphaAnimator =
+        ObjectAnimator.ofObject(chronometer, "alpha", new FloatEvaluator(), 0.2f);
+    alphaAnimator.setRepeatMode(ValueAnimator.REVERSE);
+    alphaAnimator.setRepeatCount(ValueAnimator.INFINITE);
   }
 
   private void onChangeRecord() {
@@ -110,12 +117,14 @@ public class RecordFragment extends Fragment {
   private void stopRecording() {
     Intent intent = new Intent(getContext(), AudioRecordService.class);
     mIsRecording = false;
+    mIsRecordingPaused = false;
     mRecordButton.setImageResource(R.drawable.ic_media_record);
     getActivity().stopService(intent);
     getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     unbindService();
     setChronometer(new AudioRecorder.RecordTime());
     mPauseButton.setVisibility(View.GONE);
+    togglePauseBtn();
   }
 
   BroadcastReceiver stopServiceReceiver = new BroadcastReceiver() {
@@ -196,13 +205,14 @@ public class RecordFragment extends Fragment {
   }
 
   private void setAsPauseBtn() {
-    mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_pause, 0, 0, 0);
-    mPauseButton.setText(getString(R.string.pause_recording_button));
+    alphaAnimator.cancel();
+    chronometer.setAlpha(1.0f);
+    mPauseButton.setImageResource(R.drawable.ic_media_pause);
   }
 
   private void setAsResumeBtn() {
-    mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_record, 0, 0, 0);
-    mPauseButton.setText(getString(R.string.resume_recording_button));
+    alphaAnimator.start();
+    mPauseButton.setImageResource(R.drawable.ic_media_record);
   }
 
   private void togglePauseBtn() {
