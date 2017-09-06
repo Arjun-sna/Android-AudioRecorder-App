@@ -12,6 +12,7 @@ import android.support.v4.app.NotificationCompat;
 import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.activities.MainActivity;
 import io.reactivex.functions.Consumer;
+import java.util.Locale;
 
 public class AudioRecordService extends Service {
   private static final String LOG_TAG = "RecordingService";
@@ -25,6 +26,7 @@ public class AudioRecordService extends Service {
   private ServiceBinder mIBinder;
   private NotificationManager mNotificationManager;
   private static int NOTIFY_ID = 100;
+  private AudioRecorder.RecordTime lastUpdated;
 
   @Override public IBinder onBind(Intent intent) {
     return mIBinder;
@@ -48,8 +50,19 @@ public class AudioRecordService extends Service {
   }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
-    startRecording();
-    startForeground(NOTIFY_ID, createNotification(new AudioRecorder.RecordTime()));
+    if (intent.getAction() != null) {
+      if (intent.getAction().equals("pause")) {
+        pauseRecord();
+        updateNotification(lastUpdated);
+      } else if (intent.getAction().equals("resume")) {
+        resumeRecord();
+      } else if (intent.getAction().equals("stop")) {
+        stopService(new Intent(this, AudioRecordService.class));
+      }
+    } else {
+      startRecording();
+      startForeground(NOTIFY_ID, createNotification(new AudioRecorder.RecordTime()));
+    }
     return START_STICKY;
   }
 
@@ -81,16 +94,23 @@ public class AudioRecordService extends Service {
   }
 
   private Notification createNotification(AudioRecorder.RecordTime recordTime) {
+    lastUpdated = recordTime;
     NotificationCompat.Builder mBuilder =
         new NotificationCompat.Builder(getApplicationContext()).setSmallIcon(
             R.drawable.ic_launcher_background)
             .setContentTitle(getString(R.string.notification_recording))
-            .setContentText(String.format("%02d:%02d:%02d", recordTime.hours, recordTime.minutes,
+            .setContentText(String.format(Locale.getDefault(), "%02d:%02d:%02d", recordTime.hours,
+                recordTime.minutes,
                 recordTime.seconds))
+            .addAction(-1, "Stop", getActionIntent("stop"))
             .setOngoing(true);
-
+    if (audioRecorder.isPaused()) {
+      mBuilder.addAction(-1, "Resume", getActionIntent("resume"));
+    } else {
+      mBuilder.addAction(-1, "Pause", getActionIntent("pause"));
+    }
     mBuilder.setContentIntent(PendingIntent.getActivities(getApplicationContext(), 0,
-        new Intent[] { new Intent(getApplicationContext(), MainActivity.class) }, 0));
+        new Intent[] {new Intent(getApplicationContext(), MainActivity.class)}, 0));
 
     return mBuilder.build();
   }
@@ -115,5 +135,11 @@ public class AudioRecordService extends Service {
     public AudioRecordService getService() {
       return AudioRecordService.this;
     }
+  }
+
+  private PendingIntent getActionIntent(String action) {
+    Intent pauseIntent = new Intent(this, AudioRecordService.class);
+    pauseIntent.setAction(action);
+    return PendingIntent.getService(this, 100, pauseIntent, 0);
   }
 }
