@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.jakewharton.rxbinding2.view.RxView;
 import in.arjsna.voicerecorder.AppConstants;
 import in.arjsna.voicerecorder.R;
+import in.arjsna.voicerecorder.activities.SettingsActivity;
 import in.arjsna.voicerecorder.audiovisualization.AudioVisualization;
 import in.arjsna.voicerecorder.recording.AudioRecordService;
 import in.arjsna.voicerecorder.recording.AudioRecorder;
@@ -50,6 +51,7 @@ public class RecordFragment extends Fragment {
   private boolean mIsServiceBound = false;
   private AudioRecordService mAudioRecordService;
   private ObjectAnimator alphaAnimator;
+  private FloatingActionButton mSettingsButton;
 
   /**
    * Use this factory method to create a new instance of
@@ -76,6 +78,10 @@ public class RecordFragment extends Fragment {
 
   private void bindEvents() {
     RxView.clicks(mRecordButton).subscribe(o -> onChangeRecord());
+    RxView.clicks(mSettingsButton).subscribe(o -> {
+      Intent settingsIntent = new Intent(getActivity(), SettingsActivity.class);
+      startActivity(settingsIntent);
+    });
 
     mPauseButton.setOnClickListener(v -> {
       mIsRecordingPaused = !mIsRecordingPaused;
@@ -89,6 +95,7 @@ public class RecordFragment extends Fragment {
 
     audioVisualization = (AudioVisualization) recordView.findViewById(R.id.visualizer_view);
 
+    mSettingsButton = (FloatingActionButton) recordView.findViewById(R.id.settings_btn);
     mRecordButton = (FloatingActionButton) recordView.findViewById(R.id.btnRecord);
     mRecordButton.setImageResource(
         mIsRecording ? R.drawable.ic_media_stop : R.drawable.ic_media_record);
