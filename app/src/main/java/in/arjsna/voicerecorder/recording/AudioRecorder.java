@@ -28,7 +28,7 @@ public class AudioRecorder implements IAudioRecorder {
 
   private volatile int recorderState;
 
-  private MediaSaveHelper mediaSaveHelper;
+  private AudioSaveHelper audioSaveHelper;
 
   private final Object recorderStateMonitor = new Object();
 
@@ -40,7 +40,7 @@ public class AudioRecorder implements IAudioRecorder {
   private AtomicBoolean mIsPaused = new AtomicBoolean(false);
 
   public AudioRecorder() {
-    this.mediaSaveHelper = new MediaSaveHelper();
+    this.audioSaveHelper = new AudioSaveHelper();
   }
 
   @SuppressWarnings("ResultOfMethodCallIgnored") private void onRecordFailure() {
@@ -90,7 +90,7 @@ public class AudioRecorder implements IAudioRecorder {
     AudioRecord recorder =
         new AudioRecord(MediaRecorder.AudioSource.MIC, Constants.RECORDER_SAMPLE_RATE,
             Constants.RECORDER_CHANNELS, Constants.RECORDER_AUDIO_ENCODING, bufferSize);
-    mediaSaveHelper.createNewFile();
+    audioSaveHelper.createNewFile();
 
     try {
       if (recorderState == RECORDER_STATE_STARTING) {
@@ -123,7 +123,7 @@ public class AudioRecorder implements IAudioRecorder {
         .observeOn(Schedulers.io())
         .subscribeWith(new DisposableSubscriber<byte[]>() {
           @Override public void onNext(byte[] bytes) {
-            mediaSaveHelper.onDataReady(recordBuffer);
+            audioSaveHelper.onDataReady(recordBuffer);
           }
 
           @Override public void onError(Throwable t) {
@@ -162,7 +162,7 @@ public class AudioRecorder implements IAudioRecorder {
         } while (recorderStateLocal == RECORDER_STATE_STOPPING);
       }
     }
-    mediaSaveHelper.onRecordingStopped();
+    audioSaveHelper.onRecordingStopped();
     compositeDisposable.dispose();
   }
 

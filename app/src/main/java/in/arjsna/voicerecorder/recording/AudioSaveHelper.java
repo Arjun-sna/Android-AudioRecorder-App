@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.UUID;
 
-public class MediaSaveHelper {
+public class AudioSaveHelper {
 
   private FileOutputStream os;
   private File mFile;
