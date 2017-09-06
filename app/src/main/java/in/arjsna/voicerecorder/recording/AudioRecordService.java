@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.activities.MainActivity;
 import io.reactivex.functions.Consumer;
@@ -27,8 +28,10 @@ public class AudioRecordService extends Service {
   private NotificationManager mNotificationManager;
   private static int NOTIFY_ID = 100;
   private AudioRecorder.RecordTime lastUpdated;
+  private boolean mIsClientBound = false;
 
   @Override public IBinder onBind(Intent intent) {
+    mIsClientBound = true;
     return mIBinder;
   }
 
@@ -57,7 +60,11 @@ public class AudioRecordService extends Service {
       } else if (intent.getAction().equals("resume")) {
         resumeRecord();
       } else if (intent.getAction().equals("stop")) {
-        stopService(new Intent(this, AudioRecordService.class));
+        if (mIsClientBound) {
+          LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("stopservice"));
+        } else {
+          stopService(new Intent(this, AudioRecordService.class));
+        }
       }
     } else {
       startRecording();
@@ -141,5 +148,14 @@ public class AudioRecordService extends Service {
     Intent pauseIntent = new Intent(this, AudioRecordService.class);
     pauseIntent.setAction(action);
     return PendingIntent.getService(this, 100, pauseIntent, 0);
+  }
+
+  @Override public boolean onUnbind(Intent intent) {
+    mIsClientBound = false;
+    return true;
+  }
+
+  @Override public void onRebind(Intent intent) {
+    mIsClientBound = true;
   }
 }

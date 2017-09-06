@@ -1,13 +1,16 @@
 package in.arjsna.voicerecorder.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,16 +102,38 @@ public class RecordFragment extends Fragment {
       getActivity().startService(intent);
       bindToService();
       mPauseButton.setVisibility(View.VISIBLE);
+      registerLocalBroadCastReceiver();
       getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     } else {
-      mIsRecording = false;
-      mRecordButton.setImageResource(R.drawable.ic_mic_white_36dp);
-      getActivity().stopService(intent);
-      getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-      unbindService();
-      setChronometer(new AudioRecorder.RecordTime());
-      mPauseButton.setVisibility(View.GONE);
+      stopRecording();
     }
+  }
+
+  private void stopRecording() {
+    Intent intent = new Intent(getContext(), AudioRecordService.class);
+    mIsRecording = false;
+    mRecordButton.setImageResource(R.drawable.ic_mic_white_36dp);
+    getActivity().stopService(intent);
+    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    unbindService();
+    setChronometer(new AudioRecorder.RecordTime());
+    unRegisterLocalBroadCastReceiver();
+    mPauseButton.setVisibility(View.GONE);
+  }
+
+  BroadcastReceiver stopServiceReceiver = new BroadcastReceiver() {
+    @Override public void onReceive(Context context, Intent intent) {
+      stopRecording();
+    }
+  };
+
+  private void unRegisterLocalBroadCastReceiver() {
+    LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(stopServiceReceiver);
+  }
+
+  private void registerLocalBroadCastReceiver() {
+    LocalBroadcastManager.getInstance(getActivity())
+        .registerReceiver(stopServiceReceiver, new IntentFilter("stopservice"));
   }
 
   private void bindToService() {
@@ -131,6 +156,7 @@ public class RecordFragment extends Fragment {
         audioVisualization.linkTo(mAudioRecordService.getHandler());
         mRecordButton.setImageResource(R.drawable.ic_media_stop);
         mAudioRecordService.subscribeForTimer(recordTimeConsumer);
+        registerLocalBroadCastReceiver();
       } else {
         mIsServiceBound = false;
         getActivity().unbindService(this);
