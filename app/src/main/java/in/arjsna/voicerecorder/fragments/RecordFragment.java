@@ -102,7 +102,6 @@ public class RecordFragment extends Fragment {
       getActivity().startService(intent);
       bindToService();
       mPauseButton.setVisibility(View.VISIBLE);
-      registerLocalBroadCastReceiver();
       getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     } else {
       stopRecording();
@@ -117,7 +116,6 @@ public class RecordFragment extends Fragment {
     getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     unbindService();
     setChronometer(new AudioRecorder.RecordTime());
-    unRegisterLocalBroadCastReceiver();
     mPauseButton.setVisibility(View.GONE);
   }
 
@@ -139,6 +137,7 @@ public class RecordFragment extends Fragment {
   private void bindToService() {
     Intent intent = new Intent(getActivity(), AudioRecordService.class);
     getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    registerLocalBroadCastReceiver();
   }
 
   ServiceConnection serviceConnection = new ServiceConnection() {
@@ -147,31 +146,21 @@ public class RecordFragment extends Fragment {
           ((AudioRecordService.ServiceBinder) iBinder).getService();
       Log.i("Tesing", " " + mAudioRecordService.isRecording() + " recording");
       mIsRecording = mAudioRecordService.isRecording();
+      mIsServiceBound = true;
       if (mIsRecording) {
-        mIsServiceBound = true;
         mIsRecordingPaused = mAudioRecordService.isPaused();
-        if (mIsRecordingPaused) {
-          showResumeBtn();
-        }
+        onPauseRecord();
         audioVisualization.linkTo(mAudioRecordService.getHandler());
         mRecordButton.setImageResource(R.drawable.ic_media_stop);
         mAudioRecordService.subscribeForTimer(recordTimeConsumer);
-        registerLocalBroadCastReceiver();
       } else {
-        mIsServiceBound = false;
-        getActivity().unbindService(this);
+        unbindService();
       }
     }
 
     @Override public void onServiceDisconnected(ComponentName componentName) {
     }
   };
-
-  private void showResumeBtn() {
-    mPauseButton.setVisibility(View.VISIBLE);
-    mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_white_36dp, 0, 0, 0);
-    mPauseButton.setText("Resume");
-  }
 
   Consumer<AudioRecorder.RecordTime> recordTimeConsumer = this::setChronometer;
 
@@ -182,6 +171,7 @@ public class RecordFragment extends Fragment {
   }
 
   private void onPauseRecord() {
+    mPauseButton.setVisibility(View.VISIBLE);
     if (mIsRecordingPaused) {
       mAudioRecordService.pauseRecord();
       mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_white_36dp, 0, 0, 0);
@@ -200,6 +190,7 @@ public class RecordFragment extends Fragment {
   }
 
   private void unbindService() {
+    unRegisterLocalBroadCastReceiver();
     if (mIsServiceBound) {
       mIsServiceBound = false;
       getActivity().unbindService(serviceConnection);
