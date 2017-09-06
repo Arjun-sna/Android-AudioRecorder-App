@@ -73,8 +73,8 @@ public class RecordFragment extends Fragment {
     RxView.clicks(mRecordButton).subscribe(o -> onChangeRecord());
 
     mPauseButton.setOnClickListener(v -> {
-      onPauseRecord(mIsRecordingPaused);
       mIsRecordingPaused = !mIsRecordingPaused;
+      onPauseRecord();
     });
   }
 
@@ -155,8 +155,8 @@ public class RecordFragment extends Fragment {
             recordTime.seconds));
   }
 
-  private void onPauseRecord(boolean pause) {
-    if (pause) {
+  private void onPauseRecord() {
+    if (mIsRecordingPaused) {
       mAudioRecordService.pauseRecord();
       mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_white_36dp, 0, 0, 0);
       mPauseButton.setText("Resume");
