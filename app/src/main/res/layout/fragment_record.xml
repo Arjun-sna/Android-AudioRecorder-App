@@ -30,7 +30,7 @@
       android:id="@+id/btnRecord"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:src="@drawable/ic_mic_white_36dp"
+      android:src="@drawable/ic_media_record"
       app:fabSize="normal"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintLeft_toLeftOf="parent"

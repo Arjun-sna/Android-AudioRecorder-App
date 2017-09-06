@@ -88,7 +88,7 @@ public class RecordFragment extends Fragment {
 
     mRecordButton = (FloatingActionButton) recordView.findViewById(R.id.btnRecord);
     mRecordButton.setImageResource(
-        mIsRecording ? R.drawable.ic_media_stop : R.drawable.ic_mic_white_36dp);
+        mIsRecording ? R.drawable.ic_media_stop : R.drawable.ic_media_record);
     mPauseButton = (Button) recordView.findViewById(R.id.btnPause);
     mPauseButton.setVisibility(View.GONE); //hide pause button before recording starts
   }
@@ -110,7 +110,7 @@ public class RecordFragment extends Fragment {
   private void stopRecording() {
     Intent intent = new Intent(getContext(), AudioRecordService.class);
     mIsRecording = false;
-    mRecordButton.setImageResource(R.drawable.ic_mic_white_36dp);
+    mRecordButton.setImageResource(R.drawable.ic_media_record);
     getActivity().stopService(intent);
     getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     unbindService();
@@ -200,7 +200,7 @@ public class RecordFragment extends Fragment {
   }
 
   private void setAsResumeBtn() {
-    mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_white_36dp, 0, 0, 0);
+    mPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_record, 0, 0, 0);
     mPauseButton.setText(getString(R.string.resume_recording_button));
   }
 
