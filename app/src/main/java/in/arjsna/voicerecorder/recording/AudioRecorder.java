@@ -17,9 +17,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * Helper class for audio recording and saving as .wav
- */
 public class AudioRecorder implements IAudioRecorder {
 
   public static final int RECORDER_STATE_FAILURE = -1;

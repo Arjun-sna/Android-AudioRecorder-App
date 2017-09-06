@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.UUID;
 
 public class MediaSaveHelper {
 
@@ -24,7 +25,7 @@ public class MediaSaveHelper {
       folder.mkdir();
     }
     String mFileName =
-        "something_" + System.currentTimeMillis() + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
+        "AudioRecord_" + UUID.randomUUID() + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
     String mFilePath = storeLocation + "/SoundRecorder/" + mFileName;
     mFile = new File(mFilePath);
     try {
