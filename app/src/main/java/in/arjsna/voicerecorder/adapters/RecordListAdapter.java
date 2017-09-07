@@ -2,7 +2,6 @@ package in.arjsna.voicerecorder.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
@@ -27,10 +26,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.RecordingsViewHolder>
+public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.RecordingsViewHolder>
     implements OnDatabaseChangedListener {
 
-  private static final String LOG_TAG = "FileViewerAdapter";
+  private static final String LOG_TAG = "RecordListAdapter";
 
   private DBHelper mDatabase;
 
@@ -38,7 +37,7 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
   Context mContext;
   LinearLayoutManager llm;
 
-  public FileViewerAdapter(Context context, LinearLayoutManager linearLayoutManager) {
+  public RecordListAdapter(Context context, LinearLayoutManager linearLayoutManager) {
     super();
     mContext = context;
     mDatabase = new DBHelper(mContext);

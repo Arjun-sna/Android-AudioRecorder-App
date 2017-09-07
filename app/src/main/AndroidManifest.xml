@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="in.arjsna.voicerecorder">
 
-  <uses-permission android:name="android.permission.RECORD_AUDIO" />
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
 
   <application
@@ -13,7 +13,8 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
-    <activity android:name=".activities.MainActivity"
+    <activity
+        android:name=".activities.MainActivity"
         android:launchMode="singleTop">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -23,23 +24,28 @@
     </activity>
     <activity
         android:name=".activities.SettingsActivity"
-        android:screenOrientation="portrait"
         android:label="@string/action_settings"
-        android:parentActivityName=".activities.MainActivity">
+        android:parentActivityName=".activities.MainActivity"
+        android:screenOrientation="portrait">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".activities.MainActivity" />
+          android:value=".activities.MainActivity"/>
     </activity>
+
     <provider
         android:name="android.support.v4.content.FileProvider"
-        android:authorities="com.danielkim.soundrecorder.fileprovider"
-        android:grantUriPermissions="true"
-        android:exported="false">
+        android:authorities="in.arjsna.voicerecorder.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true">
       <meta-data
           android:name="android.support.FILE_PROVIDER_PATHS"
-          android:resource="@xml/filepaths" />
+          android:resource="@xml/filepaths"/>
     </provider>
-    <service android:name=".recording.AudioRecordService" />
+
+    <service android:name=".recording.AudioRecordService"/>
+
+    <activity android:name=".activities.PlayListActivity">
+    </activity>
   </application>
 
 </manifest>
