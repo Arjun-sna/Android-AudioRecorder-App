@@ -28,7 +28,7 @@ public class SettingsFragment extends PreferenceFragment {
     aboutPref.setOnPreferenceClickListener(preference -> {
       LicensesFragment licensesFragment = new LicensesFragment();
       licensesFragment.show(
-          ((SettingsActivity) getActivity()).getSupportFragmentManager().beginTransaction(),
+          ((SettingsActivity) getActivity()).getSupportFragmentManager(),
           "dialog_licenses");
       return true;
     });

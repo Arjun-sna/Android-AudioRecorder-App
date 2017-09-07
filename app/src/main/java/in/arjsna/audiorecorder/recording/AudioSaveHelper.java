@@ -13,7 +13,7 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class AudioSaveHelper {
+class AudioSaveHelper {
 
   private final DBHelper mDbHelper;
   private FileOutputStream os;

@@ -10,10 +10,10 @@ public class RecordingItem implements Parcelable {
   private int mLength; // length of recording in seconds
   private long mTime; // date/time of the recording
 
-  public RecordingItem() {
+  RecordingItem() {
   }
 
-  public RecordingItem(Parcel in) {
+  private RecordingItem(Parcel in) {
     mName = in.readString();
     mFilePath = in.readString();
     mId = in.readInt();

@@ -18,7 +18,6 @@ public abstract class DbmHandler<TData> {
   private float[] dBmArray;
   private float[] ampsArray;
   private float[] emptyArray;
-  private boolean released;
   private Timer timer;
   private boolean isVisualizationSetup = false;
   protected AudioRecorder audioRecorder;
@@ -112,7 +111,6 @@ public abstract class DbmHandler<TData> {
    */
   @CallSuper public void release() {
     isVisualizationSetup = false;
-    released = true;
     dBmArray = null;
     ampsArray = null;
     audioVisualization = null;

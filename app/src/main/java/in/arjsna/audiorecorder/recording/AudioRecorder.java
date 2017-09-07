@@ -14,18 +14,17 @@ import io.reactivex.processors.BehaviorProcessor;
 import io.reactivex.processors.PublishProcessor;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
-import java.io.FileNotFoundException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class AudioRecorder implements IAudioRecorder {
 
-  public static final int RECORDER_STATE_FAILURE = -1;
-  public static final int RECORDER_STATE_IDLE = 0;
-  public static final int RECORDER_STATE_STARTING = 1;
-  public static final int RECORDER_STATE_STOPPING = 2;
-  public static final int RECORDER_STATE_BUSY = 3;
+  private static final int RECORDER_STATE_FAILURE = -1;
+  private static final int RECORDER_STATE_IDLE = 0;
+  private static final int RECORDER_STATE_STARTING = 1;
+  private static final int RECORDER_STATE_STOPPING = 2;
+  private static final int RECORDER_STATE_BUSY = 3;
 
   private volatile int recorderState;
 
@@ -37,10 +36,10 @@ public class AudioRecorder implements IAudioRecorder {
 
   private byte[] recordBuffer;
 
-  private CompositeDisposable compositeDisposable = new CompositeDisposable();
+  private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-  private AtomicLong mRecordTimeCounter = new AtomicLong(0);
-  private AtomicBoolean mIsPaused = new AtomicBoolean(false);
+  private final AtomicLong mRecordTimeCounter = new AtomicLong(0);
+  private final AtomicBoolean mIsPaused = new AtomicBoolean(false);
   private RecordTime currentRecordTime;
 
   public AudioRecorder(Context applicationContext) {
@@ -59,17 +58,11 @@ public class AudioRecorder implements IAudioRecorder {
     this.mRecorderSampleRate = recorderSampleRate;
     audioSaveHelper.setSampleRate(mRecorderSampleRate);
     startTimer();
-    try {
-      recorderState = RECORDER_STATE_STARTING;
-
-      startRecordThread();
-    } catch (FileNotFoundException e) {
-      onRecordFailure();
-      e.printStackTrace();
-    }
+    recorderState = RECORDER_STATE_STARTING;
+    startRecordThread();
   }
 
-  private BehaviorProcessor<RecordTime> recordTimeProcessor = BehaviorProcessor.create();
+  private final BehaviorProcessor<RecordTime> recordTimeProcessor = BehaviorProcessor.create();
 
   private void startTimer() {
     getTimerObservable().subscribeOn(Schedulers.newThread()).subscribe(recordTimeProcessor);
@@ -91,7 +84,7 @@ public class AudioRecorder implements IAudioRecorder {
         });
   }
 
-  private Flowable<byte[]> audioDataFlowable = Flowable.create(emitter -> {
+  private final Flowable<byte[]> audioDataFlowable = Flowable.create(emitter -> {
     int bufferSize = 4 * 1024;
 
     AudioRecord recorder =
@@ -122,9 +115,9 @@ public class AudioRecorder implements IAudioRecorder {
     emitter.onComplete();
   }, BackpressureStrategy.DROP);
 
-  private PublishProcessor<byte[]> recordDataPublishProcessor = PublishProcessor.create();
+  private final PublishProcessor<byte[]> recordDataPublishProcessor = PublishProcessor.create();
 
-  private void startRecordThread() throws FileNotFoundException {
+  private void startRecordThread() {
     audioDataFlowable.subscribeOn(Schedulers.io()).subscribe(recordDataPublishProcessor);
     compositeDisposable.add(recordDataPublishProcessor.onBackpressureBuffer()
         .observeOn(Schedulers.io())

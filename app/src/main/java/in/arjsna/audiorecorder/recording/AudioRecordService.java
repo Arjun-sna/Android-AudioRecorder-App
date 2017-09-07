@@ -21,15 +21,13 @@ import java.util.Locale;
 public class AudioRecordService extends Service {
   private static final String LOG_TAG = "RecordingService";
 
-  private long mStartingTimeMillis = 0;
   private long mElapsedMillis = 0;
-  private long mElapsedSeconds = 0;
 
   private AudioRecorder audioRecorder;
   private AudioRecordingDbmHandler handler;
   private ServiceBinder mIBinder;
   private NotificationManager mNotificationManager;
-  private static int NOTIFY_ID = 100;
+  private static final int NOTIFY_ID = 100;
   private AudioRecorder.RecordTime lastUpdated;
   private boolean mIsClientBound = false;
 
@@ -148,10 +146,6 @@ public class AudioRecordService extends Service {
 
   public void resumeRecord() {
     audioRecorder.resumeRecord();
-  }
-
-  public long getElapsedTime() {
-    return mElapsedMillis;
   }
 
   public class ServiceBinder extends Binder {

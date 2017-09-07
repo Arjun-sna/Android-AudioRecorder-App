@@ -32,14 +32,12 @@
           app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintBottom_toBottomOf="parent"
           android:layout_marginLeft="10dp"
-          android:layout_marginStart="10dp"
-      />
+          android:layout_marginStart="10dp"/>
 
       <TextView
           android:id="@+id/file_name_text"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:text="file_name"
           android:textSize="15sp"
           android:fontFamily="sans-serif-condensed"
           android:textStyle="bold"
@@ -69,7 +67,6 @@
           android:id="@+id/file_date_added_text"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:text="mmm dd yyyy - hh:mm a"
           android:textSize="12sp"
           android:fontFamily="sans-serif-condensed"
           app:layout_constraintLeft_toLeftOf="@+id/file_name_text"

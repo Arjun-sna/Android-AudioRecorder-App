@@ -65,10 +65,6 @@ public class RecordFragment extends Fragment {
     return new RecordFragment();
   }
 
-  @Override public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-  }
-
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     View recordView = inflater.inflate(R.layout.fragment_record, container, false);
@@ -142,7 +138,7 @@ public class RecordFragment extends Fragment {
     togglePauseBtn();
   }
 
-  BroadcastReceiver stopServiceReceiver = new BroadcastReceiver() {
+  private final BroadcastReceiver stopServiceReceiver = new BroadcastReceiver() {
     @Override public void onReceive(Context context, Intent intent) {
       if (!intent.hasExtra(AppConstants.ACTION_IN_SERVICE)) return;
       String actionExtra = intent.getStringExtra(AppConstants.ACTION_IN_SERVICE);
@@ -178,7 +174,7 @@ public class RecordFragment extends Fragment {
   }
 
   private Disposable timerDisposable;
-  ServiceConnection serviceConnection = new ServiceConnection() {
+  private final ServiceConnection serviceConnection = new ServiceConnection() {
     @Override public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
       mAudioRecordService =
           ((AudioRecordService.ServiceBinder) iBinder).getService();
@@ -200,7 +196,7 @@ public class RecordFragment extends Fragment {
     }
   };
 
-  Consumer<AudioRecorder.RecordTime> recordTimeConsumer = this::setChronometer;
+  private final Consumer<AudioRecorder.RecordTime> recordTimeConsumer = this::setChronometer;
 
   private void setChronometer(AudioRecorder.RecordTime recordTime) {
     chronometer.setText(

@@ -10,22 +10,22 @@ import in.arjsna.audiorecorder.listeners.OnDatabaseChangedListener;
 import java.util.Comparator;
 
 public class DBHelper extends SQLiteOpenHelper {
-  private Context mContext;
+  private final Context mContext;
 
   private static final String LOG_TAG = "DBHelper";
 
   private OnDatabaseChangedListener mOnDatabaseChangedListener;
 
-  public static final String DATABASE_NAME = "saved_recordings.db";
+  private static final String DATABASE_NAME = "saved_recordings.db";
   private static final int DATABASE_VERSION = 1;
 
-  public static abstract class DBHelperItem implements BaseColumns {
-    public static final String TABLE_NAME = "saved_recordings";
+  static abstract class DBHelperItem implements BaseColumns {
+    static final String TABLE_NAME = "saved_recordings";
 
-    public static final String COLUMN_NAME_RECORDING_NAME = "recording_name";
-    public static final String COLUMN_NAME_RECORDING_FILE_PATH = "file_path";
-    public static final String COLUMN_NAME_RECORDING_LENGTH = "length";
-    public static final String COLUMN_NAME_TIME_ADDED = "time_added";
+    static final String COLUMN_NAME_RECORDING_NAME = "recording_name";
+    static final String COLUMN_NAME_RECORDING_FILE_PATH = "file_path";
+    static final String COLUMN_NAME_RECORDING_LENGTH = "length";
+    static final String COLUMN_NAME_TIME_ADDED = "time_added";
   }
 
   private static final String TEXT_TYPE = " TEXT";
@@ -103,10 +103,6 @@ public class DBHelper extends SQLiteOpenHelper {
     int count = c.getCount();
     c.close();
     return count;
-  }
-
-  public Context getContext() {
-    return mContext;
   }
 
   public class RecordingComparator implements Comparator<RecordingItem> {

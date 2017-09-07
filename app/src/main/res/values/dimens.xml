@@ -1,9 +1,5 @@
 <resources>
   <!-- Default screen margins, per the Android Design guidelines. -->
-  <dimen name="activity_horizontal_margin">16dp</dimen>
-  <dimen name="activity_vertical_margin">16dp</dimen>
-
-  <dimen name="tab_indicator_height">5dp</dimen>
   <dimen name="bubble_size">25dp</dimen>
   <dimen name="wave_height">60dp</dimen>
   <dimen name="footer_height">170dp</dimen>

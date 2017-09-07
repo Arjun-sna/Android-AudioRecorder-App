@@ -7,12 +7,9 @@
   <string name="app_name">Audio Recorder</string>
   <string name="action_licenses">Licenses</string>
   <string name="action_settings">Settings</string>
-  <string name="tab_title_record">Record</string>
   <string name="tab_title_saved_recordings">Saved Recordings</string>
 
   <!-- Toasts -->
-  <string name="toast_recording_start">Recording started</string>
-  <string name="toast_recording_finish">Recording saved to</string>
   <string name="toast_file_delete">%1$s successfully deleted</string>
   <string name="toast_file_exists">The file %1$s already exists. Please choose a different file
     name.
@@ -55,5 +52,6 @@
   <string name="pref_about_desc">v%s</string>
   <string name="stop_recording">Stop</string>
   <string name="record_time_format">%02d:%02d:%02d</string>
+  <string name="play_time_format">%02d:%02d</string>
 
 </resources>

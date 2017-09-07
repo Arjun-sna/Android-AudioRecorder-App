@@ -32,11 +32,11 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
 
   private static final String LOG_TAG = "PlayListAdapter";
 
-  private DBHelper mDatabase;
+  private final DBHelper mDatabase;
 
   private RecordingItem item;
   private Context mContext;
-  private LinearLayoutManager llm;
+  private final LinearLayoutManager llm;
 
   public PlayListAdapter(Context context, LinearLayoutManager linearLayoutManager) {
     super();
@@ -56,7 +56,8 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
         TimeUnit.MILLISECONDS.toSeconds(itemDuration) - TimeUnit.MINUTES.toSeconds(minutes);
 
     holder.vName.setText(item.getName());
-    holder.vLength.setText(String.format("%02d:%02d", minutes, seconds));
+    holder.vLength.setText(
+        String.format(mContext.getString(R.string.play_time_format), minutes, seconds));
     holder.vDateAdded.setText(DateUtils.formatDateTime(mContext, item.getTime(),
         DateUtils.FORMAT_SHOW_DATE
             | DateUtils.FORMAT_NUMERIC_DATE
@@ -67,7 +68,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     holder.cardView.setOnClickListener(view -> {
       try {
         PlaybackFragment playbackFragment =
-            new PlaybackFragment().newInstance(getItem(holder.getPosition()));
+            new PlaybackFragment().newInstance(getItem(holder.getAdapterPosition()));
 
         FragmentTransaction transaction =
             ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction();
@@ -122,13 +123,13 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     return new RecordingsViewHolder(itemView);
   }
 
-  public static class RecordingsViewHolder extends RecyclerView.ViewHolder {
-    protected TextView vName;
-    protected TextView vLength;
-    protected TextView vDateAdded;
-    protected View cardView;
+  static class RecordingsViewHolder extends RecyclerView.ViewHolder {
+    final TextView vName;
+    final TextView vLength;
+    final TextView vDateAdded;
+    final View cardView;
 
-    public RecordingsViewHolder(View v) {
+    RecordingsViewHolder(View v) {
       super(v);
       vName = (TextView) v.findViewById(R.id.file_name_text);
       vLength = (TextView) v.findViewById(R.id.file_length_text);
@@ -141,7 +142,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     return mDatabase.getCount();
   }
 
-  public RecordingItem getItem(int position) {
+  private RecordingItem getItem(int position) {
     return mDatabase.getItemAt(position);
   }
 
@@ -157,7 +158,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
 
   }
 
-  public void remove(int position) {
+  private void remove(int position) {
     //remove item from database, recyclerview and storage
 
     //delete file from storage
@@ -177,7 +178,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     //user deletes a saved recording out of the application through another application
   }
 
-  public void rename(int position, String name) {
+  private void rename(int position, String name) {
     //rename a file
 
     String mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -197,7 +198,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     }
   }
 
-  public void shareFileDialog(int position) {
+  private void shareFileDialog(int position) {
     Intent shareIntent = new Intent();
     shareIntent.setAction(Intent.ACTION_SEND);
     shareIntent.putExtra(Intent.EXTRA_STREAM,
@@ -206,7 +207,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     mContext.startActivity(Intent.createChooser(shareIntent, mContext.getText(R.string.send_to)));
   }
 
-  public void renameFileDialog(final int position) {
+  private void renameFileDialog(final int position) {
     // File rename dialog
     AlertDialog.Builder renameFileBuilder = new AlertDialog.Builder(mContext);
 
@@ -237,7 +238,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     alert.show();
   }
 
-  public void deleteFileDialog(final int position) {
+  private void deleteFileDialog(final int position) {
     // File delete confirm
     AlertDialog.Builder confirmDelete = new AlertDialog.Builder(mContext);
     confirmDelete.setTitle(mContext.getString(R.string.dialog_title_delete));

@@ -28,14 +28,13 @@ public class PlaybackFragment extends DialogFragment {
   private static final String ARG_ITEM = "recording_item";
   private RecordingItem item;
 
-  private Handler mHandler = new Handler();
+  private final Handler mHandler = new Handler();
 
   private MediaPlayer mMediaPlayer = null;
 
   private SeekBar mSeekBar = null;
   private FloatingActionButton mPlayButton = null;
   private TextView mCurrentProgressTextView = null;
-  private TextView mFileNameTextView = null;
   private TextView mFileLengthTextView = null;
 
   //stores whether or not the mediaplayer is currently playing audio
@@ -63,10 +62,6 @@ public class PlaybackFragment extends DialogFragment {
     seconds = TimeUnit.MILLISECONDS.toSeconds(itemDuration) - TimeUnit.MINUTES.toSeconds(minutes);
   }
 
-  @Override public void onActivityCreated(Bundle savedInstanceState) {
-    super.onActivityCreated(savedInstanceState);
-  }
-
   @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
 
     Dialog dialog = super.onCreateDialog(savedInstanceState);
@@ -74,7 +69,7 @@ public class PlaybackFragment extends DialogFragment {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_media_playback, null);
 
-    mFileNameTextView = (TextView) view.findViewById(R.id.file_name_text_view);
+    TextView mFileNameTextView = (TextView) view.findViewById(R.id.file_name_text_view);
     mFileLengthTextView = (TextView) view.findViewById(R.id.file_length_text_view);
     mCurrentProgressTextView = (TextView) view.findViewById(R.id.current_progress_text_view);
 
@@ -93,7 +88,7 @@ public class PlaybackFragment extends DialogFragment {
           long minutes = TimeUnit.MILLISECONDS.toMinutes(mMediaPlayer.getCurrentPosition());
           long seconds = TimeUnit.MILLISECONDS.toSeconds(mMediaPlayer.getCurrentPosition())
               - TimeUnit.MINUTES.toSeconds(minutes);
-          mCurrentProgressTextView.setText(String.format("%02d:%02d", minutes, seconds));
+          mCurrentProgressTextView.setText(String.format(getString(R.string.play_time_format), minutes, seconds));
 
           updateSeekBar();
         } else if (mMediaPlayer == null && fromUser) {
@@ -117,7 +112,7 @@ public class PlaybackFragment extends DialogFragment {
           long minutes = TimeUnit.MILLISECONDS.toMinutes(mMediaPlayer.getCurrentPosition());
           long seconds = TimeUnit.MILLISECONDS.toSeconds(mMediaPlayer.getCurrentPosition())
               - TimeUnit.MINUTES.toSeconds(minutes);
-          mCurrentProgressTextView.setText(String.format("%02d:%02d", minutes, seconds));
+          mCurrentProgressTextView.setText(String.format(getString(R.string.play_time_format), minutes, seconds));
           updateSeekBar();
         }
       }
@@ -130,7 +125,7 @@ public class PlaybackFragment extends DialogFragment {
     });
 
     mFileNameTextView.setText(item.getName());
-    mFileLengthTextView.setText(String.format("%02d:%02d", minutes, seconds));
+    mFileLengthTextView.setText(String.format(getString(R.string.play_time_format), minutes, seconds));
 
     builder.setView(view);
 
@@ -259,7 +254,7 @@ public class PlaybackFragment extends DialogFragment {
   }
 
   //updating mSeekBar
-  private Runnable mRunnable = () -> {
+  private final Runnable mRunnable = () -> {
     if (mMediaPlayer != null) {
 
       int mCurrentPosition = mMediaPlayer.getCurrentPosition();
@@ -268,7 +263,7 @@ public class PlaybackFragment extends DialogFragment {
       long minutes = TimeUnit.MILLISECONDS.toMinutes(mCurrentPosition);
       long seconds =
           TimeUnit.MILLISECONDS.toSeconds(mCurrentPosition) - TimeUnit.MINUTES.toSeconds(minutes);
-      mCurrentProgressTextView.setText(String.format("%02d:%02d", minutes, seconds));
+      mCurrentProgressTextView.setText(String.format(getString(R.string.play_time_format), minutes, seconds));
 
       updateSeekBar();
     }

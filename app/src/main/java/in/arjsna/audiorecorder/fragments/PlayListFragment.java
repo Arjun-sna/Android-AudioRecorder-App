@@ -51,7 +51,7 @@ public class PlayListFragment extends Fragment {
     mRecyclerView.setAdapter(mPlayListAdapter);
   }
 
-  FileObserver observer = new FileObserver(
+  final FileObserver observer = new FileObserver(
       android.os.Environment.getExternalStorageDirectory().toString() + "/SoundRecorder") {
     // set up a file observer to watch this directory on sd card
     @Override public void onEvent(int event, String file) {

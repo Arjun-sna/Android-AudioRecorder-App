@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 public class MySharedPreferences {
-  private static String PREF_HIGH_QUALITY = "pref_high_quality";
+  private static final String PREF_HIGH_QUALITY = "pref_high_quality";
 
   public static void setPrefHighQuality(Context context, boolean isEnabled) {
     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

@@ -3,13 +3,7 @@
   <color name="primary">#e36a97</color>
   <color name="primary_dark">#bc428b</color>
   <color name="primary_light">#FFCDD2</color>
-  <color name="primary_text">#212121</color>
   <color name="accent">#bc428b</color>
-  <color name="secondary_text">#727272</color>
-  <color name="divider">#FFFFFF</color>
-  <color name="text">#FFFFFF</color>
-  <color name="white">#FFFFFF</color>
-  <color name="tab_strip">#B42929</color>
   <color name="av_color1">#f7b09e</color>
   <color name="av_color2">#f0979b</color>
   <color name="av_color3">#e36a97</color>
