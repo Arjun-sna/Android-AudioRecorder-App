@@ -12,7 +12,6 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.UUID;
 
 public class AudioSaveHelper {
 
@@ -32,10 +31,16 @@ public class AudioSaveHelper {
     if (!folder.exists()) {
       folder.mkdir();
     }
-    String mFileName =
-        "AudioRecord_" + UUID.randomUUID() + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
-    String mFilePath = storeLocation + "/SoundRecorder/" + mFileName;
-    mFile = new File(mFilePath);
+    int count = 0;
+    String fileName;
+    do {
+      count++;
+      fileName =
+          "AudioRecord_" + (mDbHelper.getCount() + count) + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
+      String mFilePath = storeLocation + "/SoundRecorder/" + fileName;
+      mFile = new File(mFilePath);
+    } while (mFile.exists() && !mFile.isDirectory());
+
     try {
       os = new FileOutputStream(mFile);
       writeWavHeader(os, Constants.RECORDER_CHANNELS, mRecordSampleRate,
