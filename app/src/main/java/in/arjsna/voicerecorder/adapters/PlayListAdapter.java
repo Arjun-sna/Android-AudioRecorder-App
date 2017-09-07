@@ -22,6 +22,7 @@ import in.arjsna.voicerecorder.R;
 import in.arjsna.voicerecorder.RecordingItem;
 import in.arjsna.voicerecorder.fragments.PlaybackFragment;
 import in.arjsna.voicerecorder.listeners.OnDatabaseChangedListener;
+import in.arjsna.voicerecorder.recording.Constants;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -219,7 +220,8 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     renameFileBuilder.setPositiveButton(mContext.getString(R.string.dialog_action_ok),
         (dialog, id) -> {
           try {
-            String value = input.getText().toString().trim() + ".mp4";
+            String value =
+                input.getText().toString().trim() + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
             rename(position, value);
           } catch (Exception e) {
             Log.e(LOG_TAG, "exception", e);
