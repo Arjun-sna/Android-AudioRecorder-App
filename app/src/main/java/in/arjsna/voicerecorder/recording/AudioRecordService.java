@@ -45,7 +45,7 @@ public class AudioRecordService extends Service {
   @Override public void onCreate() {
     super.onCreate();
     mIBinder = new ServiceBinder();
-    audioRecorder = new AudioRecorder();
+    audioRecorder = new AudioRecorder(getApplicationContext());
     handler = new AudioRecordingDbmHandler();
     handler.addRecorder(audioRecorder);
     mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

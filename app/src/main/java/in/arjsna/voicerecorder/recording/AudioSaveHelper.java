@@ -1,8 +1,10 @@
 package in.arjsna.voicerecorder.recording;
 
+import android.content.Context;
 import android.media.AudioFormat;
 import android.os.Environment;
 import android.util.Log;
+import in.arjsna.voicerecorder.DBHelper;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -14,9 +16,14 @@ import java.util.UUID;
 
 public class AudioSaveHelper {
 
+  private final DBHelper mDbHelper;
   private FileOutputStream os;
   private File mFile;
   private int mRecordSampleRate;
+
+  public AudioSaveHelper(Context applicationContext) {
+    mDbHelper = new DBHelper(applicationContext);
+  }
 
   public void createNewFile() {
     Log.i("TEsting", "creating file");
@@ -47,14 +54,22 @@ public class AudioSaveHelper {
     }
   }
 
-  public void onRecordingStopped() {
+  public void onRecordingStopped(
+      AudioRecorder.RecordTime currentRecordTime) {
     try {
       os.close();
       updateWavHeader(mFile);
+      saveFileDetails(currentRecordTime);
       Log.i("Record Complete ", "Saving and closing");
     } catch (IOException e) {
+      mFile.deleteOnExit();
       e.printStackTrace();
     }
+  }
+
+  private void saveFileDetails(
+      AudioRecorder.RecordTime currentRecordTime) {
+    mDbHelper.addRecording(mFile.getName(), mFile.getPath(), currentRecordTime.millis);
   }
 
   /**

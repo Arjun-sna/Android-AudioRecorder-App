@@ -1,5 +1,6 @@
 package in.arjsna.voicerecorder.recording;
 
+import android.content.Context;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.util.Log;
@@ -40,9 +41,10 @@ public class AudioRecorder implements IAudioRecorder {
 
   private AtomicLong mRecordTimeCounter = new AtomicLong(0);
   private AtomicBoolean mIsPaused = new AtomicBoolean(false);
+  private RecordTime currentRecordTime;
 
-  public AudioRecorder() {
-    this.audioSaveHelper = new AudioSaveHelper();
+  public AudioRecorder(Context applicationContext) {
+    this.audioSaveHelper = new AudioSaveHelper(applicationContext);
   }
 
   @SuppressWarnings("ResultOfMethodCallIgnored") private void onRecordFailure() {
@@ -84,6 +86,7 @@ public class AudioRecorder implements IAudioRecorder {
           recordTime.minutes = seconds / 60;
           seconds = seconds % 60;
           recordTime.seconds = seconds;
+          currentRecordTime = recordTime;
           return recordTime;
         });
   }
@@ -166,7 +169,7 @@ public class AudioRecorder implements IAudioRecorder {
         } while (recorderStateLocal == RECORDER_STATE_STOPPING);
       }
     }
-    audioSaveHelper.onRecordingStopped();
+    audioSaveHelper.onRecordingStopped(currentRecordTime);
     compositeDisposable.dispose();
   }
 
