@@ -26,18 +26,18 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.RecordingsViewHolder>
+public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.RecordingsViewHolder>
     implements OnDatabaseChangedListener {
 
-  private static final String LOG_TAG = "RecordListAdapter";
+  private static final String LOG_TAG = "PlayListAdapter";
 
   private DBHelper mDatabase;
 
-  RecordingItem item;
-  Context mContext;
-  LinearLayoutManager llm;
+  private RecordingItem item;
+  private Context mContext;
+  private LinearLayoutManager llm;
 
-  public RecordListAdapter(Context context, LinearLayoutManager linearLayoutManager) {
+  public PlayListAdapter(Context context, LinearLayoutManager linearLayoutManager) {
     super();
     mContext = context;
     mDatabase = new DBHelper(mContext);
@@ -91,12 +91,12 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.Re
       builder.setTitle(mContext.getString(R.string.dialog_title_options));
       builder.setItems(items, (dialog, item) -> {
         if (item == 0) {
-          shareFileDialog(holder.getPosition());
+          shareFileDialog(holder.getAdapterPosition());
         }
         if (item == 1) {
-          renameFileDialog(holder.getPosition());
+          renameFileDialog(holder.getAdapterPosition());
         } else if (item == 2) {
-          deleteFileDialog(holder.getPosition());
+          deleteFileDialog(holder.getAdapterPosition());
         }
       });
       builder.setCancelable(true);

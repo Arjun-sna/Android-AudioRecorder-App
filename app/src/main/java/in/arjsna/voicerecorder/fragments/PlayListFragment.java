@@ -11,12 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import in.arjsna.voicerecorder.R;
-import in.arjsna.voicerecorder.adapters.RecordListAdapter;
+import in.arjsna.voicerecorder.adapters.PlayListAdapter;
 
 public class PlayListFragment extends Fragment {
   private static final String LOG_TAG = "PlayListFragment";
 
-  private RecordListAdapter mRecordListAdapter;
+  private PlayListAdapter mPlayListAdapter;
 
   public static PlayListFragment newInstance() {
     return new PlayListFragment();
@@ -30,7 +30,11 @@ public class PlayListFragment extends Fragment {
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     View v = inflater.inflate(R.layout.fragment_file_viewer, container, false);
+    initViews(v);
+    return v;
+  }
 
+  private void initViews(View v) {
     RecyclerView mRecyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
     mRecyclerView.setHasFixedSize(true);
     LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -43,10 +47,8 @@ public class PlayListFragment extends Fragment {
     mRecyclerView.setLayoutManager(llm);
     mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-    mRecordListAdapter = new RecordListAdapter(getActivity(), llm);
-    mRecyclerView.setAdapter(mRecordListAdapter);
-
-    return v;
+    mPlayListAdapter = new PlayListAdapter(getActivity(), llm);
+    mRecyclerView.setAdapter(mPlayListAdapter);
   }
 
   FileObserver observer = new FileObserver(
@@ -68,7 +70,7 @@ public class PlayListFragment extends Fragment {
             + "]");
 
         // remove file from database and recyclerview
-        mRecordListAdapter.removeOutOfApp(filePath);
+        mPlayListAdapter.removeOutOfApp(filePath);
       }
     }
   };

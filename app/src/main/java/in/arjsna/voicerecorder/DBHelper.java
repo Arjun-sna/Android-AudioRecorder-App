@@ -14,7 +14,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
   private static final String LOG_TAG = "DBHelper";
 
-  private static OnDatabaseChangedListener mOnDatabaseChangedListener;
+  private OnDatabaseChangedListener mOnDatabaseChangedListener;
 
   public static final String DATABASE_NAME = "saved_recordings.db";
   private static final int DATABASE_VERSION = 1;
@@ -65,7 +65,7 @@ public class DBHelper extends SQLiteOpenHelper {
     mContext = context;
   }
 
-  public static void setOnDatabaseChangedListener(OnDatabaseChangedListener listener) {
+  public void setOnDatabaseChangedListener(OnDatabaseChangedListener listener) {
     mOnDatabaseChangedListener = listener;
   }
 
@@ -92,13 +92,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
   public void removeItemWithId(int id) {
     SQLiteDatabase db = getWritableDatabase();
-    String[] whereArgs = { String.valueOf(id) };
+    String[] whereArgs = {String.valueOf(id)};
     db.delete(DBHelperItem.TABLE_NAME, "_ID=?", whereArgs);
   }
 
   public int getCount() {
     SQLiteDatabase db = getReadableDatabase();
-    String[] projection = { DBHelperItem._ID };
+    String[] projection = {DBHelperItem._ID};
     Cursor c = db.query(DBHelperItem.TABLE_NAME, projection, null, null, null, null, null);
     int count = c.getCount();
     c.close();
