@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="in.arjsna.voicerecorder">
+    package="in.arjsna.audiorecorder">
 
   <uses-permission android:name="android.permission.RECORD_AUDIO"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -14,7 +14,7 @@
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
     <activity
-        android:name=".activities.MainActivity"
+        android:name="in.arjsna.audiorecorder.activities.MainActivity"
         android:launchMode="singleTop">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -23,18 +23,18 @@
       </intent-filter>
     </activity>
     <activity
-        android:name=".activities.SettingsActivity"
+        android:name="in.arjsna.audiorecorder.activities.SettingsActivity"
         android:label="@string/action_settings"
-        android:parentActivityName=".activities.MainActivity"
+        android:parentActivityName="in.arjsna.audiorecorder.activities.MainActivity"
         android:screenOrientation="portrait">
       <meta-data
           android:name="android.support.PARENT_ACTIVITY"
-          android:value=".activities.MainActivity"/>
+          android:value="in.arjsna.audiorecorder.activities.MainActivity"/>
     </activity>
 
     <provider
         android:name="android.support.v4.content.FileProvider"
-        android:authorities="in.arjsna.voicerecorder.fileprovider"
+        android:authorities="in.arjsna.audiorecorder.fileprovider"
         android:exported="false"
         android:grantUriPermissions="true">
       <meta-data
@@ -42,9 +42,9 @@
           android:resource="@xml/filepaths"/>
     </provider>
 
-    <service android:name=".recording.AudioRecordService"/>
+    <service android:name="in.arjsna.audiorecorder.recording.AudioRecordService"/>
 
-    <activity android:name=".activities.PlayListActivity">
+    <activity android:name="in.arjsna.audiorecorder.activities.PlayListActivity">
     </activity>
   </application>
 

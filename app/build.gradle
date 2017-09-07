@@ -4,7 +4,7 @@ android {
   compileSdkVersion 25
   buildToolsVersion "25.0.3"
   defaultConfig {
-    applicationId "in.arjsna.voicerecorder"
+    applicationId "in.arjsna.audiorecorder"
     minSdkVersion 15
     targetSdkVersion 25
     versionCode 1
