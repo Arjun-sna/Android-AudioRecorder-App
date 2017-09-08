@@ -37,6 +37,7 @@ public class SettingsFragment extends ThemedFragment {
             @Override
             public void onColorSelected(int color) {
               Hawk.put(getString(R.string.preference_primary_color), color);
+              Hawk.put(getString(R.string.preference_accent_color), color);
               parent.updateTheme();
               parent.updateUiElements();
             }
@@ -44,6 +45,7 @@ public class SettingsFragment extends ThemedFragment {
             @Override
             public void onDialogDismiss() {
               Hawk.put(getString(R.string.preference_primary_color), originalColor);
+              Hawk.put(getString(R.string.preference_accent_color), originalColor);
               parent.updateTheme();
               parent.updateUiElements();
             }
@@ -51,6 +53,7 @@ public class SettingsFragment extends ThemedFragment {
             @Override
             public void onColorChanged(int color) {
               Hawk.put(getString(R.string.preference_primary_color), color);
+              Hawk.put(getString(R.string.preference_accent_color), color);
               parent.updateTheme();
               parent.updateUiElements();
             }
