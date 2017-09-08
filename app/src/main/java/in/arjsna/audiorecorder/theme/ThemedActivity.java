@@ -51,6 +51,7 @@ public abstract class ThemedActivity extends AppCompatActivity implements UiElem
   @CallSuper
   @Override
   public void updateUiElements() {
+    setStatusBarColor();
     for (View view : ViewUtil.getAllChildren(findViewById(android.R.id.content))) {
       if (view instanceof Themed) ((Themed) view).refreshTheme(getThemeHelper());
     }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+  <in.arjsna.audiorecorder.SettingWithSwitchView
+      android:id="@+id/audio_quality_settings"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:settingTitle="@string/pref_high_quality_title"
+      app:settingCaption="@string/pref_high_quality_desc"
+      app:settingPreferenceKey="@string/pref_high_quality_key"
+  />
+  <in.arjsna.audiorecorder.SettingBasic
+      android:id="@+id/theme_settings"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:settingTitle="@string/pref_theme_title"
+      app:settingCaption="@string/pref_theme_desc"/>
+</LinearLayout>

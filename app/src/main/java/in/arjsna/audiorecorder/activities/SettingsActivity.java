@@ -14,7 +14,6 @@ public class SettingsActivity extends ThemedActivity {
     setContentView(R.layout.activity_preferences);
 
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    toolbar.setPopupTheme(R.style.ThemeOverlay_AppCompat_Light);
     setSupportActionBar(toolbar);
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
@@ -23,7 +22,7 @@ public class SettingsActivity extends ThemedActivity {
       actionBar.setDisplayShowHomeEnabled(true);
     }
 
-    getFragmentManager().beginTransaction()
+    getSupportFragmentManager().beginTransaction()
         .replace(R.id.container, new SettingsFragment())
         .commit();
   }

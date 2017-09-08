@@ -92,6 +92,8 @@ public class SettingWithSwitchView extends FrameLayout implements View.OnClickLi
   @Override
   public void refreshTheme(ThemeHelper themeHelper) {
     themeHelper.setSwitchCompactColor(toggle, themeHelper.getAccentColor());
+    title.setTextColor(themeHelper.getTextColor());
+    caption.setTextColor(themeHelper.getTextColor());
   }
 
   public boolean isChecked() {
