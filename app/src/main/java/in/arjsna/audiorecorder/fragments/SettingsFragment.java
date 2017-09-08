@@ -35,9 +35,9 @@ public class SettingsFragment extends ThemedFragment {
       new ColorsSetting((ThemedActivity) getActivity()).chooseColor(R.string.primary_color,
           new ColorsSetting.ColorChooser() {
             @Override
-            public void onColorSelected(int color) {
-              Hawk.put(getString(R.string.preference_primary_color), color);
-              Hawk.put(getString(R.string.preference_accent_color), color);
+            public void onColorSelected(ColorsSetting.SelectedColor color) {
+              Hawk.put(getString(R.string.preference_primary_color), color.colorPrimary);
+              Hawk.put(getString(R.string.preference_accent_color), color.colorPrimary);
               parent.updateTheme();
               parent.updateUiElements();
             }

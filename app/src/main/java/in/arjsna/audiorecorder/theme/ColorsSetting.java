@@ -2,7 +2,6 @@ package in.arjsna.audiorecorder.theme;
 
 import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -15,8 +14,13 @@ public class ColorsSetting extends ThemedSetting {
     super(activity);
   }
 
+  public static class SelectedColor {
+    public int colorPrimary;
+    public int[] shades;
+  }
+
   public interface ColorChooser {
-    void onColorSelected(int color);
+    void onColorSelected(SelectedColor color);
 
     void onDialogDismiss();
 
@@ -34,17 +38,16 @@ public class ColorsSetting extends ThemedSetting {
         (LineColorPicker) dialogLayout.findViewById(R.id.color_picker_primary_2);
     final TextView dialogTitle = (TextView) dialogLayout.findViewById(R.id.dialog_title);
     dialogTitle.setText(title);
-    ((CardView) dialogLayout.findViewById(R.id.dialog_card)).setCardBackgroundColor(
-        getActivity().getCardBackgroundColor());
-
-    colorPicker2.setOnColorChangedListener(c -> {
-      dialogTitle.setBackgroundColor(c);
-      chooser.onColorChanged(c);
-    });
+    //colorPicker2.setOnColorChangedListener(c -> {
+    //  dialogTitle.setBackgroundColor(c);
+    //  chooser.onColorChanged(c);
+    //});
 
     colorPicker.setOnColorChangedListener(c -> {
       colorPicker2.setColors(ColorPalette.getColors(getActivity(), colorPicker.getColor()));
       colorPicker2.setSelectedColor(colorPicker.getColor());
+      dialogTitle.setBackgroundColor(colorPicker2.getColors()[0]);
+      chooser.onColorChanged(colorPicker2.getColors()[0]);
     });
 
     int[] baseColors = ColorPalette.getBaseColors(getActivity());
@@ -74,7 +77,10 @@ public class ColorsSetting extends ThemedSetting {
         (dialog, which) -> {
           AlertDialog alertDialog = (AlertDialog) dialog;
           alertDialog.setOnDismissListener(null);
-          chooser.onColorSelected(colorPicker2.getColor());
+          SelectedColor selectedColor = new SelectedColor();
+          selectedColor.colorPrimary = colorPicker2.getColors()[0];
+          selectedColor.shades = colorPicker2.getColors();
+          chooser.onColorSelected(selectedColor);
         });
 
     dialogBuilder.setOnDismissListener(dialog -> chooser.onDialogDismiss());

@@ -25,7 +25,7 @@ import in.arjsna.audiorecorder.AppConstants;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.activities.PlayListActivity;
 import in.arjsna.audiorecorder.activities.SettingsActivity;
-import in.arjsna.audiorecorder.audiovisualization.AudioVisualization;
+import in.arjsna.audiorecorder.audiovisualization.GLAudioVisualizationView;
 import in.arjsna.audiorecorder.recording.AudioRecordService;
 import in.arjsna.audiorecorder.recording.AudioRecorder;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
@@ -45,7 +45,7 @@ public class RecordFragment extends ThemedFragment {
   private static final String LOG_TAG = RecordFragment.class.getSimpleName();
   private FloatingActionButton mRecordButton = null;
   private FloatingActionButton mPauseButton = null;
-  private AudioVisualization audioVisualization;
+  private GLAudioVisualizationView audioVisualization;
 
   private boolean mIsRecording = false;
   private boolean mIsRecordingPaused = true;
@@ -97,7 +97,7 @@ public class RecordFragment extends ThemedFragment {
     chronometer = (TextView) recordView.findViewById(R.id.chronometer);
     setChronometer(new AudioRecorder.RecordTime());
 
-    audioVisualization = (AudioVisualization) recordView.findViewById(R.id.visualizer_view);
+    audioVisualization = (GLAudioVisualizationView) recordView.findViewById(R.id.visualizer_view);
 
     mSettingsButton = (FloatingActionButton) recordView.findViewById(R.id.settings_btn);
     mPlayListBtn = (FloatingActionButton) recordView.findViewById(R.id.play_list_btn);
@@ -255,6 +255,9 @@ public class RecordFragment extends ThemedFragment {
   }
 
   @Override public void refreshTheme(ThemeHelper themeHelper) {
-
+    //GLAudioVisualizationView.ColorsBuilder colorsBuilder =
+    //    new GLAudioVisualizationView.Builder(getActivity());
+    //colorsBuilder.setBackgroundColor(themeHelper.getPrimaryColor());
+    //colorsBuilder.setLayerColors(themeHelper.getLayerColorArray());
   }
 }
