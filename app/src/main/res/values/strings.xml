@@ -48,7 +48,10 @@
   <string name="pref_high_quality_title">Enable High Quality Recording</string>
   <string name="pref_high_quality_desc">Record in CD Quality</string>
   <string name="pref_about_key">pref_about</string>
+  <string name="pref_theme">pref_theme</string>
+  <string name="pref_theme_title">Theme</string>
   <string name="pref_about_title">About</string>
+  <string name="pref_theme_desc">Theme color to be used across the application</string>
   <string name="pref_about_desc">v%s</string>
   <string name="stop_recording">Stop</string>
   <string name="record_time_format">%02d:%02d:%02d</string>

@@ -11,4 +11,18 @@
     <attr name="av_layersCount" format="integer"/>
     <attr name="av_backgroundColor" format="color|reference"/>
   </declare-styleable>
+  <declare-styleable name="SettingBasic">
+    <attr name="settingIcon" format="string"/>
+    <attr name="settingTitle" format="reference"/>
+    <attr name="settingCaption" format="reference"/>
+    <attr name="settingMinApi" format="integer"/>
+  </declare-styleable>
+  <declare-styleable name="SettingWithSwitchView">
+    <attr name="settingIcon"/>
+    <attr name="settingTitle"/>
+    <attr name="settingCaption"/>
+    <attr name="settingMinApi"/>
+    <attr name="settingDefaultValue" format="boolean"/>
+    <attr name="settingPreferenceKey" format="reference"/>
+  </declare-styleable>
 </resources>

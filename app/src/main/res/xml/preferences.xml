@@ -5,6 +5,10 @@
       android:title="@string/pref_high_quality_title"
       android:summary="@string/pref_high_quality_desc"/>
   <Preference
+      android:key="@string/pref_theme"
+      android:title="@string/pref_theme_title"
+      android:summary="@string/pref_theme_desc"/>
+  <Preference
       android:key="@string/pref_about_key"
       android:title="@string/pref_about_title"
       android:summary="@string/pref_about_desc"/>
