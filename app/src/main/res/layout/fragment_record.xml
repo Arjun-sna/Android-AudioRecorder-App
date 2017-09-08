@@ -16,7 +16,6 @@
       app:layout_constraintRight_toRightOf="parent"
       app:layout_constraintBottom_toTopOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:av_backgroundColor="@color/av_color_bg"
       app:av_bubblesRandomizeSizes="true"
       app:av_bubblesSize="@dimen/bubble_size"
       app:av_layersCount="4"

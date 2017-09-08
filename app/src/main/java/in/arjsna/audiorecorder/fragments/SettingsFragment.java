@@ -38,6 +38,7 @@ public class SettingsFragment extends ThemedFragment {
             public void onColorSelected(ColorsSetting.SelectedColor color) {
               Hawk.put(getString(R.string.preference_primary_color), color.colorPrimary);
               Hawk.put(getString(R.string.preference_accent_color), color.colorPrimary);
+              Hawk.put(getString(R.string.preference_layer_colors), color.shades);
               parent.updateTheme();
               parent.updateUiElements();
             }

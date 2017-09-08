@@ -30,6 +30,7 @@ public class ThemeHelper {
   Theme baseTheme;
   private int primaryColor;
   private int accentColor;
+  private int[] layerColor;
 
   private ThemeHelper(Context context) {
     this.context = context;
@@ -50,7 +51,14 @@ public class ThemeHelper {
         getColor(R.color.md_indigo_500));
     this.accentColor = Hawk.get(context.getString(R.string.preference_accent_color),
         getColor(R.color.md_light_blue_500));
+    this.layerColor = Hawk.get(context.getString(R.string.preference_layer_colors),
+        new int[] {R.color.av_color4, R.color.av_color3, R.color.av_color2,
+            R.color.av_color1});
     baseTheme = Theme.fromValue(Hawk.get(context.getString(R.string.preference_base_theme), 1));
+  }
+
+  public int[] getLayerColor() {
+    return layerColor;
   }
 
   public int getPrimaryColor() {

@@ -255,9 +255,10 @@ public class RecordFragment extends ThemedFragment {
   }
 
   @Override public void refreshTheme(ThemeHelper themeHelper) {
-    //GLAudioVisualizationView.ColorsBuilder colorsBuilder =
-    //    new GLAudioVisualizationView.Builder(getActivity());
-    //colorsBuilder.setBackgroundColor(themeHelper.getPrimaryColor());
-    //colorsBuilder.setLayerColors(themeHelper.getLayerColorArray());
+    GLAudioVisualizationView.ColorsBuilder colorsBuilder =
+        new GLAudioVisualizationView.Builder(getActivity());
+    colorsBuilder.setBackgroundColor(themeHelper.getPrimaryColor());
+    colorsBuilder.setLayerColors(themeHelper.getLayerColor());
+    audioVisualization.updateConfig(colorsBuilder);
   }
 }

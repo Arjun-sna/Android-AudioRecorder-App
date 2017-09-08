@@ -78,7 +78,7 @@ public class ColorsSetting extends ThemedSetting {
           AlertDialog alertDialog = (AlertDialog) dialog;
           alertDialog.setOnDismissListener(null);
           SelectedColor selectedColor = new SelectedColor();
-          selectedColor.colorPrimary = colorPicker2.getColors()[0];
+          selectedColor.colorPrimary = colorPicker.getColor();
           selectedColor.shades = colorPicker2.getColors();
           chooser.onColorSelected(selectedColor);
         });

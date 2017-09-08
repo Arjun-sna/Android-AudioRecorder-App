@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import com.orhanobut.hawk.Hawk;
 import in.arjsna.audiorecorder.R;
 
 /**
@@ -101,6 +102,10 @@ public class GLAudioVisualizationView extends GLSurfaceView
     renderer.onDataReceived(dBmArray, ampsArray);
   }
 
+  public void updateConfig(ColorsBuilder colorsBuilder) {
+    renderer.updateConfiguration(colorsBuilder);
+  }
+
   /**
    * Configuration holder class.
    */
@@ -156,21 +161,22 @@ public class GLAudioVisualizationView extends GLSurfaceView
         if (bgColor == Color.TRANSPARENT) {
           bgColor = ContextCompat.getColor(context, R.color.av_color_bg);
         }
-        int arrayId = array.getResourceId(R.styleable.GLAudioVisualizationView_av_wavesColors,
-            R.array.av_colors);
-        if (isInEditMode) {
-          colors = new int[layersCount];
-        } else {
-          TypedArray colorsArray = array.getResources().obtainTypedArray(arrayId);
-          colors = new int[colorsArray.length()];
-          for (int i = 0; i < colorsArray.length(); i++) {
-            colors[i] = colorsArray.getColor(i, Color.TRANSPARENT);
-          }
-          colorsArray.recycle();
-        }
+        //int arrayId = array.getResourceId(R.styleable.GLAudioVisualizationView_av_wavesColors,
+        //    R.array.av_colors);
+        //if (isInEditMode) {
+        //  colors = new int[layersCount];
+        //} else {
+        //  TypedArray colorsArray = array.getResources().obtainTypedArray(arrayId);
+        //  colors = new int[colorsArray.length()];
+        //  for (int i = 0; i < colorsArray.length(); i++) {
+        //    colors[i] = colorsArray.getColor(i, Color.TRANSPARENT);
+        //  }
+        //  colorsArray.recycle();
+        //}
       } finally {
         array.recycle();
       }
+      colors = Hawk.get(context.getString(R.string.preference_layer_colors));
       if (colors.length < layersCount) {
         throw new IllegalArgumentException("You specified more layers than colors.");
       }
