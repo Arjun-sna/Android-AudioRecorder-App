@@ -15,7 +15,6 @@ public class PlayListActivity extends ThemedActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_record_list);
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    toolbar.setPopupTheme(R.style.ThemeOverlay_AppCompat_Light);
     setSupportActionBar(toolbar);
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
@@ -23,6 +22,7 @@ public class PlayListActivity extends ThemedActivity {
       actionBar.setDisplayHomeAsUpEnabled(true);
       actionBar.setDisplayShowHomeEnabled(true);
     }
+    setNavBarColor();
 
     if (savedInstanceState == null) {
       getSupportFragmentManager().beginTransaction()

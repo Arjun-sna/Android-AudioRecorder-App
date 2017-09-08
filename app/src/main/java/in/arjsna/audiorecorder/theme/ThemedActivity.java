@@ -95,16 +95,6 @@ public abstract class ThemedActivity extends AppCompatActivity implements UiElem
     return applyThemeSingleImgAct;
   }
 
-  protected boolean isTransparencyZero() {
-    return true;
-       /* return 255 - (getString(R.string.preference_transparency), 0) == 255;*/
-  }
-
-  public int getTransparency() {
-    return 0;
-        /*return 255 - SP.getInt(getString(org.horaapps.leafpic.R.string.preference_transparency), 0);*/
-  }
-
   public void setBaseTheme(Theme baseTheme) {
     themeHelper.setBaseTheme(baseTheme);
   }
