@@ -28,6 +28,8 @@ import in.arjsna.audiorecorder.activities.SettingsActivity;
 import in.arjsna.audiorecorder.audiovisualization.AudioVisualization;
 import in.arjsna.audiorecorder.recording.AudioRecordService;
 import in.arjsna.audiorecorder.recording.AudioRecorder;
+import in.arjsna.audiorecorder.theme.ThemeHelper;
+import in.arjsna.audiorecorder.theme.ThemedFragment;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import java.util.Locale;
@@ -39,7 +41,7 @@ import java.util.Locale;
  * Use the {@link RecordFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RecordFragment extends Fragment {
+public class RecordFragment extends ThemedFragment {
   private static final String LOG_TAG = RecordFragment.class.getSimpleName();
   private FloatingActionButton mRecordButton = null;
   private FloatingActionButton mPauseButton = null;
@@ -250,5 +252,9 @@ public class RecordFragment extends Fragment {
       mIsServiceBound = false;
       getActivity().unbindService(serviceConnection);
     }
+  }
+
+  @Override public void refreshTheme(ThemeHelper themeHelper) {
+
   }
 }

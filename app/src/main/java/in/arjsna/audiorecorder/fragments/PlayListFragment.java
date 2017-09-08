@@ -2,7 +2,6 @@ package in.arjsna.audiorecorder.fragments;
 
 import android.os.Bundle;
 import android.os.FileObserver;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,8 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.adapters.PlayListAdapter;
+import in.arjsna.audiorecorder.theme.ThemeHelper;
+import in.arjsna.audiorecorder.theme.ThemedFragment;
 
-public class PlayListFragment extends Fragment {
+public class PlayListFragment extends ThemedFragment {
   private static final String LOG_TAG = "PlayListFragment";
 
   private PlayListAdapter mPlayListAdapter;
@@ -74,6 +75,10 @@ public class PlayListFragment extends Fragment {
       }
     }
   };
+
+  @Override public void refreshTheme(ThemeHelper themeHelper) {
+
+  }
 }
 
 

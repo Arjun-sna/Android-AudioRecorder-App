@@ -7,11 +7,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.fragments.PlayListFragment;
+import in.arjsna.audiorecorder.theme.ThemedActivity;
 
-public class PlayListActivity extends AppCompatActivity {
+public class PlayListActivity extends ThemedActivity {
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_record_list);
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

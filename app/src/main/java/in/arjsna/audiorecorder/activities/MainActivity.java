@@ -9,18 +9,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.fragments.RecordFragment;
+import in.arjsna.audiorecorder.theme.ThemedActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends ThemedActivity {
 
   private static final String LOG_TAG = MainActivity.class.getSimpleName();
   private static final int PERMISSION_REQ = 222;
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
+  @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     if (savedInstanceState == null) {
