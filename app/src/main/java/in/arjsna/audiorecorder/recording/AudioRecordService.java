@@ -10,8 +10,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import com.orhanobut.hawk.Hawk;
 import in.arjsna.audiorecorder.AppConstants;
-import in.arjsna.audiorecorder.MySharedPreferences;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.activities.MainActivity;
 import io.reactivex.disposables.Disposable;
@@ -92,7 +92,8 @@ public class AudioRecordService extends Service {
   }
 
   public void startRecording() {
-    boolean prefHighQuality = MySharedPreferences.getPrefHighQuality(getApplicationContext());
+    boolean prefHighQuality =
+        Hawk.get(getApplicationContext().getString(R.string.pref_high_quality_key));
     audioRecorder.startRecord(
         prefHighQuality ? Constants.RECORDER_SAMPLE_RATE_HIGH : Constants.RECORDER_SAMPLE_RATE_LOW);
     handler.startDbmThread();

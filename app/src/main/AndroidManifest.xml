@@ -12,7 +12,7 @@
       android:label="@string/app_name"
       android:roundIcon="@mipmap/ic_launcher_round"
       android:supportsRtl="true"
-      android:name=".AudioRecorder"
+      android:name=".AudioRecorderApp"
       android:theme="@style/Theme.AppCompat.Light.NoActionBar">
     <activity
         android:name="in.arjsna.audiorecorder.activities.MainActivity"
