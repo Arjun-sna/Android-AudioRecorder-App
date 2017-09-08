@@ -53,5 +53,8 @@
   <string name="stop_recording">Stop</string>
   <string name="record_time_format">%02d:%02d:%02d</string>
   <string name="play_time_format">%02d:%02d</string>
+  <string name="preference_primary_color">primary_color</string>
+  <string name="preference_base_theme">base_theme</string>
+  <string name="preference_accent_color">accent_color</string>
 
 </resources>
