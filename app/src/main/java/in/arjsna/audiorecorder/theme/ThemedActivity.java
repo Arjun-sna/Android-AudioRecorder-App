@@ -22,7 +22,6 @@ public abstract class ThemedActivity extends AppCompatActivity implements UiElem
   private ThemeHelper themeHelper;
 
   private boolean coloredNavBar;
-  private boolean obscuredStatusBar;
   private boolean applyThemeSingleImgAct;
   private boolean customIconColor;
 
@@ -37,6 +36,7 @@ public abstract class ThemedActivity extends AppCompatActivity implements UiElem
     super.onResume();
     updateTheme();
     updateUiElements();
+    setStatusBarColor();
   }
 
   public ThemeHelper getThemeHelper() {
@@ -71,11 +71,7 @@ public abstract class ThemedActivity extends AppCompatActivity implements UiElem
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   protected void setStatusBarColor() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      if (isTranslucentStatusBar()) {
-        getWindow().setStatusBarColor(ColorPalette.getObscuredColor(getPrimaryColor()));
-      } else {
-        getWindow().setStatusBarColor(getPrimaryColor());
-      }
+      getWindow().setStatusBarColor(ColorPalette.getObscuredColor(getPrimaryColor()));
     }
   }
 
@@ -85,10 +81,6 @@ public abstract class ThemedActivity extends AppCompatActivity implements UiElem
 
   public boolean isNavigationBarColored() {
     return coloredNavBar;
-  }
-
-  public boolean isTranslucentStatusBar() {
-    return obscuredStatusBar;
   }
 
   public boolean themeOnSingleImgAct() {
