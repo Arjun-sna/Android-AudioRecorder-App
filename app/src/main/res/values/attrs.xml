@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <declare-styleable name="GLAudioVisualizationView" tools:ignore="ResourceName">
+    <attr name="av_wavesCount" format="integer"/>
+    <attr name="av_wavesColors" format="reference"/>
+    <attr name="av_wavesHeight" format="dimension"/>
+    <attr name="av_wavesFooterHeight" format="dimension"/>
+    <attr name="av_bubblesSize" format="dimension"/>
+    <attr name="av_bubblesRandomizeSizes" format="boolean"/>
+    <attr name="av_bubblesPerLayer" format="integer"/>
+    <attr name="av_layersCount" format="integer"/>
+    <attr name="av_backgroundColor" format="color|reference"/>
+  </declare-styleable>
+  <declare-styleable name="SettingBasic">
+    <attr name="settingIcon" format="string"/>
+    <attr name="settingTitle" format="reference"/>
+    <attr name="settingCaption" format="reference"/>
+    <attr name="settingMinApi" format="integer"/>
+  </declare-styleable>
+  <declare-styleable name="SettingWithSwitchView">
+    <attr name="settingIcon"/>
+    <attr name="settingTitle"/>
+    <attr name="settingCaption"/>
+    <attr name="settingMinApi"/>
+    <attr name="settingDefaultValue" format="boolean"/>
+    <attr name="settingPreferenceKey" format="reference"/>
+  </declare-styleable>
+</resources>

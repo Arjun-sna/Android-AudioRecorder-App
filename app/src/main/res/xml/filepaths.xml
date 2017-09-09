@@ -1,3 +1,5 @@
 <paths>
-    <external-path path="SoundRecorder/" name="SoundRecorder" />
+  <external-path
+      path="SoundRecorder/"
+      name="SoundRecorder"/>
 </paths>
