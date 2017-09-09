@@ -23,6 +23,11 @@ import in.arjsna.audiorecorder.RecordingItem;
 import in.arjsna.audiorecorder.fragments.PlaybackFragment;
 import in.arjsna.audiorecorder.listeners.OnDatabaseChangedListener;
 import in.arjsna.audiorecorder.recording.Constants;
+import io.reactivex.Single;
+import io.reactivex.SingleOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -170,7 +175,8 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     file.delete();
 
     Toast.makeText(mContext,
-        String.format(mContext.getString(R.string.toast_file_delete), recordingItems.get(position).getName()),
+        String.format(mContext.getString(R.string.toast_file_delete),
+            recordingItems.get(position).getName()),
         Toast.LENGTH_SHORT).show();
 
     mDatabase.removeItemWithId(recordingItems.get(position).getId());
@@ -183,24 +189,23 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     //user deletes a saved recording out of the application through another application
   }
 
-  private void rename(int position, String name) {
-    //rename a file
+  private Single<Integer> rename(int position, String name) {
+    return Single.create((SingleOnSubscribe<Integer>) e -> {
+      String mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+      mFilePath += "/SoundRecorder/" + name;
+      File f = new File(mFilePath);
 
-    String mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-    mFilePath += "/SoundRecorder/" + name;
-    File f = new File(mFilePath);
-
-    if (f.exists() && !f.isDirectory()) {
-      //file name is not unique, cannot rename file.
-      Toast.makeText(mContext, String.format(mContext.getString(R.string.toast_file_exists), name),
-          Toast.LENGTH_SHORT).show();
-    } else {
-      //file name is unique, rename file
-      File oldFilePath = new File(recordingItems.get(position).getFilePath());
-      oldFilePath.renameTo(f);
-      mDatabase.renameItem(recordingItems.get(position), name, mFilePath);
-      notifyItemChanged(position);
-    }
+      if (f.exists() && !f.isDirectory()) {
+        e.onError(new Exception(mContext.getString(R.string.toast_file_exists)));
+      } else {
+        RecordingItem currentItem = recordingItems.get(position);
+        File oldFilePath = new File(currentItem.getFilePath());
+        oldFilePath.renameTo(f);
+        mDatabase.renameItem(currentItem, name, mFilePath);
+        currentItem.setName(name);
+        e.onSuccess(position);
+      }
+    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
   }
 
   private void shareFileDialog(int position) {
@@ -225,14 +230,17 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     renameFileBuilder.setCancelable(true);
     renameFileBuilder.setPositiveButton(mContext.getString(R.string.dialog_action_ok),
         (dialog, id) -> {
-          try {
-            String value =
-                input.getText().toString().trim() + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
-            rename(position, value);
-          } catch (Exception e) {
-            Log.e(LOG_TAG, "exception", e);
-          }
+          String value =
+              input.getText().toString().trim() + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
+          rename(position, value).subscribe(new DisposableSingleObserver<Integer>() {
+            @Override public void onSuccess(Integer removedPosition) {
+              notifyItemChanged(removedPosition);
+            }
 
+            @Override public void onError(Throwable e) {
+              Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+          });
           dialog.cancel();
         });
     renameFileBuilder.setNegativeButton(mContext.getString(R.string.dialog_action_cancel),
