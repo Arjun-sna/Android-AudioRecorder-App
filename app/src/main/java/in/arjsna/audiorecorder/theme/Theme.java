@@ -3,7 +3,7 @@ package in.arjsna.audiorecorder.theme;
 public enum Theme {
   LIGHT(1), DARK(2), AMOLED(3);
 
-  int value;
+  final int value;
 
   Theme(int value) {
     this.value = value;

@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class DBHelper extends SQLiteOpenHelper {
-  private final Context mContext;
 
   private static final String LOG_TAG = "DBHelper";
 
@@ -65,32 +64,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
   public DBHelper(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    mContext = context;
   }
 
   public void setOnDatabaseChangedListener(OnDatabaseChangedListener listener) {
     mOnDatabaseChangedListener = listener;
-  }
-
-  public RecordingItem getItemAt(int position) {
-    SQLiteDatabase db = getReadableDatabase();
-    String[] projection = {
-        DBHelperItem._ID, DBHelperItem.COLUMN_NAME_RECORDING_NAME,
-        DBHelperItem.COLUMN_NAME_RECORDING_FILE_PATH, DBHelperItem.COLUMN_NAME_RECORDING_LENGTH,
-        DBHelperItem.COLUMN_NAME_TIME_ADDED
-    };
-    Cursor c = db.query(DBHelperItem.TABLE_NAME, projection, null, null, null, null, null);
-    if (c.moveToPosition(position)) {
-      RecordingItem item = new RecordingItem();
-      item.setId(c.getInt(c.getColumnIndex(DBHelperItem._ID)));
-      item.setName(c.getString(c.getColumnIndex(DBHelperItem.COLUMN_NAME_RECORDING_NAME)));
-      item.setFilePath(c.getString(c.getColumnIndex(DBHelperItem.COLUMN_NAME_RECORDING_FILE_PATH)));
-      item.setLength(c.getInt(c.getColumnIndex(DBHelperItem.COLUMN_NAME_RECORDING_LENGTH)));
-      item.setTime(c.getLong(c.getColumnIndex(DBHelperItem.COLUMN_NAME_TIME_ADDED)));
-      c.close();
-      return item;
-    }
-    return null;
   }
 
   public Observable<ArrayList<RecordingItem>> getAllRecordings() {

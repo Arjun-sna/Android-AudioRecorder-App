@@ -291,7 +291,7 @@ public class GLAudioVisualizationView extends GLSurfaceView
 
   public static class Builder extends ColorsBuilder<Builder> {
 
-    private Context context;
+    private final Context context;
     private int wavesCount;
     private int layersCount;
     private float bubbleSize;

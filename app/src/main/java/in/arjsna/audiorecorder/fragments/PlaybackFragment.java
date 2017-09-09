@@ -45,8 +45,8 @@ public class PlaybackFragment extends ThemedDialogFragment {
   private boolean isPlaying = false;
 
   //stores minutes and seconds of the length of the file.
-  long minutes = 0;
-  long seconds = 0;
+  private long minutes = 0;
+  private long seconds = 0;
 
   public PlaybackFragment newInstance(RecordingItem item) {
     PlaybackFragment f = new PlaybackFragment();

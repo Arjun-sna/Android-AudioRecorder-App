@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 
 public class ThemeHelper {
 
-  private Context context;
+  private final Context context;
 
   Theme baseTheme;
   private int primaryColor;

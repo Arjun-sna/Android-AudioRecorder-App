@@ -2,55 +2,49 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-  <LinearLayout
+    android:layout_height="wrap_content"
+    >
+  <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:gravity="center_vertical"
       android:orientation="horizontal"
-      android:paddingBottom="10dp"
-      android:paddingTop="10dp"
-      android:paddingRight="16dp"
-      android:paddingEnd="16dp"
-      android:paddingStart="16dp"
-      android:paddingLeft="16dp"
-
-  >
-    <RelativeLayout
+      android:padding="16dp"
+      >
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-      <LinearLayout
+        android:layout_marginEnd="44dp"
+        android:layout_marginRight="44dp"
+        android:orientation="vertical"
+        >
+      <TextView
+          android:id="@+id/title"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:orientation="vertical"
-          android:layout_marginEnd="44dp"
-          android:layout_marginRight="44dp">
-        <TextView
-            android:id="@+id/title"
-            style="@style/Base.TextAppearance.AppCompat.Subhead"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/md_grey_200"
-            tools:text="title text goes here"/>
-        <TextView
-            android:id="@+id/caption"
-            style="@style/TextAppearance.AppCompat.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/md_grey_400"
-            tools:text="caption text goes here"/>
-      </LinearLayout>
-      <android.support.v7.widget.SwitchCompat
-          android:id="@+id/toggle"
-          android:layout_width="wrap_content"
+          android:textColor="@color/md_grey_200"
+          tools:text="title text goes here"
+          style="@style/Base.TextAppearance.AppCompat.Subhead"
+          />
+      <TextView
+          android:id="@+id/caption"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:clickable="false"
-          android:layout_gravity="end|center_vertical"
-          android:hapticFeedbackEnabled="true"
-          android:layout_centerVertical="true"
-          android:layout_alignParentRight="true"
-          android:layout_alignParentEnd="true"/>
-    </RelativeLayout>
-  </LinearLayout>
+          android:textColor="@color/md_grey_400"
+          tools:text="caption text goes here"
+          style="@style/TextAppearance.AppCompat.Caption"
+          />
+    </LinearLayout>
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="end|center_vertical"
+        android:clickable="false"
+        android:hapticFeedbackEnabled="true"
+        />
+  </RelativeLayout>
 </merge>

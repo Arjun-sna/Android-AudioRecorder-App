@@ -22,9 +22,9 @@ public class SettingWithSwitchView extends FrameLayout implements View.OnClickLi
   @StringRes private final int titleRes;
   @StringRes private final int captionRes;
   private final boolean defaultValue;
-  TextView title;
-  TextView caption;
-  SwitchCompat toggle;
+  private TextView title;
+  private TextView caption;
+  private SwitchCompat toggle;
   @Nullable private OnClickListener clickListener;
 
   public SettingWithSwitchView(Context context) {

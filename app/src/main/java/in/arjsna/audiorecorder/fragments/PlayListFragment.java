@@ -24,7 +24,6 @@ public class PlayListFragment extends ThemedFragment {
   private PlayListAdapter mPlayListAdapter;
   private DBHelper dbHelper;
   private RecyclerView mRecordingsListView;
-  private LinearLayoutManager llm;
   private TextView emptyListLabel;
 
   public static PlayListFragment newInstance() {
@@ -48,7 +47,7 @@ public class PlayListFragment extends ThemedFragment {
     emptyListLabel = (TextView) v.findViewById(R.id.empty_list_label);
     mRecordingsListView = (RecyclerView) v.findViewById(R.id.recyclerView);
     mRecordingsListView.setHasFixedSize(true);
-    llm = new LinearLayoutManager(getActivity());
+    LinearLayoutManager llm = new LinearLayoutManager(getActivity());
     llm.setOrientation(LinearLayoutManager.VERTICAL);
 
     //newest to oldest order (database stores from oldest to newest)
@@ -57,7 +56,7 @@ public class PlayListFragment extends ThemedFragment {
 
     mRecordingsListView.setLayoutManager(llm);
     mRecordingsListView.setItemAnimator(new DefaultItemAnimator());
-    mPlayListAdapter = new PlayListAdapter(getActivity(), llm, new ArrayList<>());
+    mPlayListAdapter = new PlayListAdapter(getActivity(), new ArrayList<>());
     mRecordingsListView.setAdapter(mPlayListAdapter);
     fillAdapter();
   }
@@ -75,7 +74,7 @@ public class PlayListFragment extends ThemedFragment {
         });
   }
 
-  final FileObserver observer = new FileObserver(
+  private final FileObserver observer = new FileObserver(
       android.os.Environment.getExternalStorageDirectory().toString() + "/SoundRecorder") {
     // set up a file observer to watch this directory on sd card
     @Override public void onEvent(int event, String file) {

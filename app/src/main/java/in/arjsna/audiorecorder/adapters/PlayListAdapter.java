@@ -21,7 +21,6 @@ import in.arjsna.audiorecorder.DBHelper;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.RecordingItem;
 import in.arjsna.audiorecorder.fragments.PlaybackFragment;
-import in.arjsna.audiorecorder.listeners.OnDatabaseChangedListener;
 import in.arjsna.audiorecorder.recording.Constants;
 import io.reactivex.Single;
 import io.reactivex.SingleOnSubscribe;
@@ -32,33 +31,28 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.RecordingsViewHolder>
-    implements OnDatabaseChangedListener {
+public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.RecordingsViewHolder> {
 
   private static final String LOG_TAG = "PlayListAdapter";
 
   private final DBHelper mDatabase;
+  private final LayoutInflater inflater;
 
-  private RecordingItem item;
-  private Context mContext;
-  private final LinearLayoutManager llm;
-  private ArrayList<RecordingItem> recordingItems;
+  private final Context mContext;
+  private final ArrayList<RecordingItem> recordingItems;
 
-  public PlayListAdapter(Context context, LinearLayoutManager linearLayoutManager,
-      ArrayList<RecordingItem> recordingItems) {
+  public PlayListAdapter(Context context, ArrayList<RecordingItem> recordingItems) {
     super();
     mContext = context;
     mDatabase = new DBHelper(mContext);
-    mDatabase.setOnDatabaseChangedListener(this);
     this.recordingItems = recordingItems;
-    llm = linearLayoutManager;
+    inflater = LayoutInflater.from(mContext);
   }
 
   @Override public void onBindViewHolder(final RecordingsViewHolder holder, int position) {
 
-    item = recordingItems.get(position);
+    RecordingItem item = recordingItems.get(position);
     long itemDuration = item.getLength();
-
     long minutes = TimeUnit.MILLISECONDS.toMinutes(itemDuration);
     long seconds =
         TimeUnit.MILLISECONDS.toSeconds(itemDuration) - TimeUnit.MINUTES.toSeconds(minutes);
@@ -72,15 +66,12 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
             | DateUtils.FORMAT_SHOW_TIME
             | DateUtils.FORMAT_SHOW_YEAR));
 
-    // define an on click listener to open PlaybackFragment
     holder.cardView.setOnClickListener(view -> {
       try {
         PlaybackFragment playbackFragment =
-            new PlaybackFragment().newInstance(recordingItems.get(holder.getAdapterPosition()));
-
+            new PlaybackFragment().newInstance(recordingItems.get(position));
         FragmentTransaction transaction =
             ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction();
-
         playbackFragment.show(transaction, "dialog_playback");
       } catch (Exception e) {
         Log.e(LOG_TAG, "exception", e);
@@ -99,13 +90,13 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
       // File delete confirm
       AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
       builder.setTitle(mContext.getString(R.string.dialog_title_options));
-      builder.setItems(items, (dialog, item) -> {
-        if (item == 0) {
+      builder.setItems(items, (dialog, listItem) -> {
+        if (listItem == 0) {
           shareFileDialog(holder.getAdapterPosition());
         }
-        if (item == 1) {
+        if (listItem == 1) {
           renameFileDialog(holder.getAdapterPosition());
-        } else if (item == 2) {
+        } else if (listItem == 2) {
           deleteFileDialog(holder.getAdapterPosition());
         }
       });
@@ -121,13 +112,8 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   }
 
   @Override public RecordingsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-    View itemView = LayoutInflater.
-        from(parent.getContext()).
+    View itemView = inflater.
         inflate(R.layout.card_view, parent, false);
-
-    mContext = parent.getContext();
-
     return new RecordingsViewHolder(itemView);
   }
 
@@ -153,18 +139,6 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
 
   @Override public int getItemCount() {
     return recordingItems.size();
-  }
-
-  @Override public void onNewDatabaseEntryAdded() {
-    //item added to top of the list
-    notifyItemInserted(getItemCount() - 1);
-    llm.scrollToPosition(getItemCount() - 1);
-  }
-
-  @Override
-  //TODO
-  public void onDatabaseEntryRenamed() {
-
   }
 
   private Single<String> remove(int position) {
@@ -218,7 +192,6 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     // File rename dialog
     AlertDialog.Builder renameFileBuilder = new AlertDialog.Builder(mContext);
 
-    LayoutInflater inflater = LayoutInflater.from(mContext);
     View view = inflater.inflate(R.layout.dialog_rename_file, null);
 
     final EditText input = (EditText) view.findViewById(R.id.new_name);
@@ -227,8 +200,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     renameFileBuilder.setCancelable(true);
     renameFileBuilder.setPositiveButton(mContext.getString(R.string.dialog_action_ok),
         (dialog, id) -> {
-          String value =
-              input.getText().toString().trim() + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
+          String value = input.getText().toString().trim() + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
           rename(position, value).subscribe(new DisposableSingleObserver<Integer>() {
             @Override public void onSuccess(Integer removedPosition) {
               notifyItemChanged(removedPosition);
@@ -260,8 +232,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
             remove(position).subscribe(new DisposableSingleObserver<String>() {
               @Override public void onSuccess(String removedFileName) {
                 Toast.makeText(mContext,
-                    String.format(mContext.getString(R.string.toast_file_delete),
-                        removedFileName),
+                    String.format(mContext.getString(R.string.toast_file_delete), removedFileName),
                     Toast.LENGTH_SHORT).show();
                 notifyItemRemoved(position);
               }

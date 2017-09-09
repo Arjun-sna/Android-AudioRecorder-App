@@ -21,8 +21,6 @@ import java.util.Locale;
 public class AudioRecordService extends Service {
   private static final String LOG_TAG = "RecordingService";
 
-  private long mElapsedMillis = 0;
-
   private AudioRecorder audioRecorder;
   private AudioRecordingDbmHandler handler;
   private ServiceBinder mIBinder;
@@ -91,7 +89,7 @@ public class AudioRecordService extends Service {
     handler.stop();
   }
 
-  public void startRecording() {
+  private void startRecording() {
     boolean prefHighQuality =
         Hawk.get(getApplicationContext().getString(R.string.pref_high_quality_key), false);
     audioRecorder.startRecord(
@@ -105,7 +103,6 @@ public class AudioRecordService extends Service {
   }
 
   private void updateNotification(AudioRecorder.RecordTime recordTime) {
-    mElapsedMillis = recordTime.millis;
     mNotificationManager.notify(NOTIFY_ID, createNotification(recordTime));
   }
 

@@ -15,11 +15,10 @@ import in.arjsna.audiorecorder.theme.ThemeHelper;
 import in.arjsna.audiorecorder.theme.Themed;
 
 public class SettingBasic extends FrameLayout implements Themed {
-  private final String iconString;
   @StringRes private final int titleRes;
   @StringRes private final int captionRes;
-  TextView title;
-  TextView caption;
+  private TextView title;
+  private TextView caption;
 
   public SettingBasic(Context context) {
     this(context, null);
@@ -38,7 +37,6 @@ public class SettingBasic extends FrameLayout implements Themed {
     View rootView = inflater.inflate(R.layout.view_setting_basic, this);
     initViews(rootView);
     TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.SettingBasic);
-    iconString = a.getString(R.styleable.SettingBasic_settingIcon);
     titleRes = a.getResourceId(R.styleable.SettingBasic_settingTitle, 0);
     captionRes = a.getResourceId(R.styleable.SettingBasic_settingCaption, 0);
     int minimumApi = a.getInteger(R.styleable.SettingBasic_settingMinApi, 0);

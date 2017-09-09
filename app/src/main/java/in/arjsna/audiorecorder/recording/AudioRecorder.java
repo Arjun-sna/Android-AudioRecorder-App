@@ -30,7 +30,7 @@ public class AudioRecorder implements IAudioRecorder {
 
   private int mRecorderSampleRate = 8000;
 
-  private AudioSaveHelper audioSaveHelper;
+  private AudioSaveHelper audioSaveHelper = null;
 
   private final Object recorderStateMonitor = new Object();
 
