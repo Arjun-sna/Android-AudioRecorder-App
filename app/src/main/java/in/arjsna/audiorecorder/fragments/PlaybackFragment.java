@@ -2,14 +2,15 @@ package in.arjsna.audiorecorder.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.res.ColorStateList;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.AppCompatSeekBar;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -18,10 +19,13 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.RecordingItem;
+import in.arjsna.audiorecorder.theme.ThemeHelper;
+import in.arjsna.audiorecorder.theme.ThemedDialogFragment;
+import in.arjsna.audiorecorder.theme.ThemedFab;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-public class PlaybackFragment extends DialogFragment {
+public class PlaybackFragment extends ThemedDialogFragment {
 
   private static final String LOG_TAG = "PlaybackFragment";
 
@@ -32,8 +36,8 @@ public class PlaybackFragment extends DialogFragment {
 
   private MediaPlayer mMediaPlayer = null;
 
-  private SeekBar mSeekBar = null;
-  private FloatingActionButton mPlayButton = null;
+  private AppCompatSeekBar mSeekBar = null;
+  private ThemedFab mPlayButton = null;
   private TextView mCurrentProgressTextView = null;
   private TextView mFileLengthTextView = null;
 
@@ -73,13 +77,13 @@ public class PlaybackFragment extends DialogFragment {
     mFileLengthTextView = (TextView) view.findViewById(R.id.file_length_text_view);
     mCurrentProgressTextView = (TextView) view.findViewById(R.id.current_progress_text_view);
 
-    mSeekBar = (SeekBar) view.findViewById(R.id.seekbar);
+    mSeekBar = (AppCompatSeekBar) view.findViewById(R.id.seekbar);
     ColorFilter filter = new LightingColorFilter(getResources().getColor(R.color.primary),
         getResources().getColor(R.color.primary));
     mSeekBar.getProgressDrawable().setColorFilter(filter);
     mSeekBar.getThumb().setColorFilter(filter);
 
-    mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+    mSeekBar.setOnSeekBarChangeListener(new AppCompatSeekBar.OnSeekBarChangeListener() {
       @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (mMediaPlayer != null && fromUser) {
           mMediaPlayer.seekTo(progress);
@@ -88,7 +92,8 @@ public class PlaybackFragment extends DialogFragment {
           long minutes = TimeUnit.MILLISECONDS.toMinutes(mMediaPlayer.getCurrentPosition());
           long seconds = TimeUnit.MILLISECONDS.toSeconds(mMediaPlayer.getCurrentPosition())
               - TimeUnit.MINUTES.toSeconds(minutes);
-          mCurrentProgressTextView.setText(String.format(getString(R.string.play_time_format), minutes, seconds));
+          mCurrentProgressTextView.setText(
+              String.format(getString(R.string.play_time_format), minutes, seconds));
 
           updateSeekBar();
         } else if (mMediaPlayer == null && fromUser) {
@@ -112,20 +117,22 @@ public class PlaybackFragment extends DialogFragment {
           long minutes = TimeUnit.MILLISECONDS.toMinutes(mMediaPlayer.getCurrentPosition());
           long seconds = TimeUnit.MILLISECONDS.toSeconds(mMediaPlayer.getCurrentPosition())
               - TimeUnit.MINUTES.toSeconds(minutes);
-          mCurrentProgressTextView.setText(String.format(getString(R.string.play_time_format), minutes, seconds));
+          mCurrentProgressTextView.setText(
+              String.format(getString(R.string.play_time_format), minutes, seconds));
           updateSeekBar();
         }
       }
     });
 
-    mPlayButton = (FloatingActionButton) view.findViewById(R.id.fab_play);
+    mPlayButton = (ThemedFab) view.findViewById(R.id.fab_play);
     mPlayButton.setOnClickListener(v -> {
       onPlay(isPlaying);
       isPlaying = !isPlaying;
     });
 
     mFileNameTextView.setText(item.getName());
-    mFileLengthTextView.setText(String.format(getString(R.string.play_time_format), minutes, seconds));
+    mFileLengthTextView.setText(
+        String.format(getString(R.string.play_time_format), minutes, seconds));
 
     builder.setView(view);
 
@@ -263,7 +270,8 @@ public class PlaybackFragment extends DialogFragment {
       long minutes = TimeUnit.MILLISECONDS.toMinutes(mCurrentPosition);
       long seconds =
           TimeUnit.MILLISECONDS.toSeconds(mCurrentPosition) - TimeUnit.MINUTES.toSeconds(minutes);
-      mCurrentProgressTextView.setText(String.format(getString(R.string.play_time_format), minutes, seconds));
+      mCurrentProgressTextView.setText(
+          String.format(getString(R.string.play_time_format), minutes, seconds));
 
       updateSeekBar();
     }
@@ -271,5 +279,13 @@ public class PlaybackFragment extends DialogFragment {
 
   private void updateSeekBar() {
     mHandler.postDelayed(mRunnable, 1000);
+  }
+
+  @Override public void refreshTheme(ThemeHelper themeHelper) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      this.mSeekBar.setThumbTintList(ColorStateList.valueOf(themeHelper.getAccentColor()));
+      this.mSeekBar.setProgressTintList(ColorStateList.valueOf(themeHelper.getAccentColor()));
+    }
+    this.mPlayButton.setBackgroundTintList(ColorStateList.valueOf(themeHelper.getAccentColor()));
   }
 }
