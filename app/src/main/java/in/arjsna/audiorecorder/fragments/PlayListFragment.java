@@ -9,15 +9,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import in.arjsna.audiorecorder.DBHelper;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.adapters.PlayListAdapter;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
 import in.arjsna.audiorecorder.theme.ThemedFragment;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import java.util.ArrayList;
 
 public class PlayListFragment extends ThemedFragment {
   private static final String LOG_TAG = "PlayListFragment";
 
   private PlayListAdapter mPlayListAdapter;
+  private DBHelper dbHelper;
+  private RecyclerView mRecordingsListView;
+  private LinearLayoutManager llm;
+  private TextView emptyListLabel;
 
   public static PlayListFragment newInstance() {
     return new PlayListFragment();
@@ -26,6 +34,7 @@ public class PlayListFragment extends ThemedFragment {
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     observer.startWatching();
+    dbHelper = new DBHelper(getActivity());
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,20 +45,34 @@ public class PlayListFragment extends ThemedFragment {
   }
 
   private void initViews(View v) {
-    RecyclerView mRecyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
-    mRecyclerView.setHasFixedSize(true);
-    LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+    emptyListLabel = (TextView) v.findViewById(R.id.empty_list_label);
+    mRecordingsListView = (RecyclerView) v.findViewById(R.id.recyclerView);
+    mRecordingsListView.setHasFixedSize(true);
+    llm = new LinearLayoutManager(getActivity());
     llm.setOrientation(LinearLayoutManager.VERTICAL);
 
     //newest to oldest order (database stores from oldest to newest)
     llm.setReverseLayout(true);
     llm.setStackFromEnd(true);
 
-    mRecyclerView.setLayoutManager(llm);
-    mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+    mRecordingsListView.setLayoutManager(llm);
+    mRecordingsListView.setItemAnimator(new DefaultItemAnimator());
+    mPlayListAdapter = new PlayListAdapter(getActivity(), llm, new ArrayList<>());
+    mRecordingsListView.setAdapter(mPlayListAdapter);
+    fillAdapter();
+  }
 
-    mPlayListAdapter = new PlayListAdapter(getActivity(), llm);
-    mRecyclerView.setAdapter(mPlayListAdapter);
+  private void fillAdapter() {
+    dbHelper.getAllRecordings()
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(recordingItems -> {
+          if (recordingItems.size() > 0) {
+            mPlayListAdapter.addAllAndNotify(recordingItems);
+          } else {
+            emptyListLabel.setVisibility(View.VISIBLE);
+            mRecordingsListView.setVisibility(View.GONE);
+          }
+        });
   }
 
   final FileObserver observer = new FileObserver(

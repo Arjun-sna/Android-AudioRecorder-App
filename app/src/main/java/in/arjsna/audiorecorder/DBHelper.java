@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import in.arjsna.audiorecorder.listeners.OnDatabaseChangedListener;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
+import java.util.ArrayList;
 import java.util.Comparator;
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -88,6 +91,31 @@ public class DBHelper extends SQLiteOpenHelper {
       return item;
     }
     return null;
+  }
+
+  public Observable<ArrayList<RecordingItem>> getAllRecordings() {
+    return Observable.fromCallable(() -> {
+      SQLiteDatabase db = getReadableDatabase();
+      ArrayList<RecordingItem> recordingItems = new ArrayList<>();
+      String[] projection = {
+          DBHelperItem._ID, DBHelperItem.COLUMN_NAME_RECORDING_NAME,
+          DBHelperItem.COLUMN_NAME_RECORDING_FILE_PATH, DBHelperItem.COLUMN_NAME_RECORDING_LENGTH,
+          DBHelperItem.COLUMN_NAME_TIME_ADDED
+      };
+      Cursor c = db.query(DBHelperItem.TABLE_NAME, projection, null, null, null, null, null);
+      while (c.moveToNext()) {
+        RecordingItem item = new RecordingItem();
+        item.setId(c.getInt(c.getColumnIndex(DBHelperItem._ID)));
+        item.setName(c.getString(c.getColumnIndex(DBHelperItem.COLUMN_NAME_RECORDING_NAME)));
+        item.setFilePath(
+            c.getString(c.getColumnIndex(DBHelperItem.COLUMN_NAME_RECORDING_FILE_PATH)));
+        item.setLength(c.getInt(c.getColumnIndex(DBHelperItem.COLUMN_NAME_RECORDING_LENGTH)));
+        item.setTime(c.getLong(c.getColumnIndex(DBHelperItem.COLUMN_NAME_TIME_ADDED)));
+        recordingItems.add(item);
+      }
+      c.close();
+      return recordingItems;
+    }).subscribeOn(Schedulers.io());
   }
 
   public void removeItemWithId(int id) {

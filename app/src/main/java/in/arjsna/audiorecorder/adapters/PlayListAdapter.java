@@ -37,18 +37,21 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   private RecordingItem item;
   private Context mContext;
   private final LinearLayoutManager llm;
+  private ArrayList<RecordingItem> recordingItems;
 
-  public PlayListAdapter(Context context, LinearLayoutManager linearLayoutManager) {
+  public PlayListAdapter(Context context, LinearLayoutManager linearLayoutManager,
+      ArrayList<RecordingItem> recordingItems) {
     super();
     mContext = context;
     mDatabase = new DBHelper(mContext);
     mDatabase.setOnDatabaseChangedListener(this);
+    this.recordingItems = recordingItems;
     llm = linearLayoutManager;
   }
 
   @Override public void onBindViewHolder(final RecordingsViewHolder holder, int position) {
 
-    item = getItem(position);
+    item = recordingItems.get(position);
     long itemDuration = item.getLength();
 
     long minutes = TimeUnit.MILLISECONDS.toMinutes(itemDuration);
@@ -68,7 +71,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     holder.cardView.setOnClickListener(view -> {
       try {
         PlaybackFragment playbackFragment =
-            new PlaybackFragment().newInstance(getItem(holder.getAdapterPosition()));
+            new PlaybackFragment().newInstance(recordingItems.get(holder.getAdapterPosition()));
 
         FragmentTransaction transaction =
             ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction();
@@ -123,6 +126,11 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     return new RecordingsViewHolder(itemView);
   }
 
+  public void addAllAndNotify(ArrayList<RecordingItem> recordingItems) {
+    this.recordingItems.addAll(recordingItems);
+    notifyDataSetChanged();
+  }
+
   static class RecordingsViewHolder extends RecyclerView.ViewHolder {
     final TextView vName;
     final TextView vLength;
@@ -139,11 +147,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   }
 
   @Override public int getItemCount() {
-    return mDatabase.getCount();
-  }
-
-  private RecordingItem getItem(int position) {
-    return mDatabase.getItemAt(position);
+    return recordingItems.size();
   }
 
   @Override public void onNewDatabaseEntryAdded() {
@@ -162,14 +166,15 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     //remove item from database, recyclerview and storage
 
     //delete file from storage
-    File file = new File(getItem(position).getFilePath());
+    File file = new File(recordingItems.get(position).getFilePath());
     file.delete();
 
     Toast.makeText(mContext,
-        String.format(mContext.getString(R.string.toast_file_delete), getItem(position).getName()),
+        String.format(mContext.getString(R.string.toast_file_delete), recordingItems.get(position).getName()),
         Toast.LENGTH_SHORT).show();
 
-    mDatabase.removeItemWithId(getItem(position).getId());
+    mDatabase.removeItemWithId(recordingItems.get(position).getId());
+    recordingItems.remove(position);
     notifyItemRemoved(position);
   }
 
@@ -191,9 +196,9 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
           Toast.LENGTH_SHORT).show();
     } else {
       //file name is unique, rename file
-      File oldFilePath = new File(getItem(position).getFilePath());
+      File oldFilePath = new File(recordingItems.get(position).getFilePath());
       oldFilePath.renameTo(f);
-      mDatabase.renameItem(getItem(position), name, mFilePath);
+      mDatabase.renameItem(recordingItems.get(position), name, mFilePath);
       notifyItemChanged(position);
     }
   }
@@ -202,7 +207,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     Intent shareIntent = new Intent();
     shareIntent.setAction(Intent.ACTION_SEND);
     shareIntent.putExtra(Intent.EXTRA_STREAM,
-        Uri.fromFile(new File(getItem(position).getFilePath())));
+        Uri.fromFile(new File(recordingItems.get(position).getFilePath())));
     shareIntent.setType("audio/mp4");
     mContext.startActivity(Intent.createChooser(shareIntent, mContext.getText(R.string.send_to)));
   }
