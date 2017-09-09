@@ -77,7 +77,8 @@ public class ColorPalette {
         ContextCompat.getColor(context, R.color.md_deep_orange_500),
         ContextCompat.getColor(context, R.color.md_brown_500),
         ContextCompat.getColor(context, R.color.md_blue_grey_500),
-        ContextCompat.getColor(context, R.color.md_grey_500)
+        ContextCompat.getColor(context, R.color.md_grey_500),
+        ContextCompat.getColor(context, R.color.av_color5)
     };
   }
 
@@ -95,6 +96,13 @@ public class ColorPalette {
           //ContextCompat.getColor(context, R.color.md_red_A200),
           //ContextCompat.getColor(context, R.color.md_red_A400),
           //ContextCompat.getColor(context, R.color.md_red_A700)
+      };
+    } else if (c == ContextCompat.getColor(context, R.color.av_color5)) {
+      return new int[] {
+          ContextCompat.getColor(context, R.color.av_color4),
+          ContextCompat.getColor(context, R.color.av_color3),
+          ContextCompat.getColor(context, R.color.av_color2),
+          ContextCompat.getColor(context, R.color.av_color1),
       };
     } else if (c == ContextCompat.getColor(context, R.color.md_pink_500)) {
       return new int[] {

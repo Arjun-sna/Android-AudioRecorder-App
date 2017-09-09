@@ -93,7 +93,7 @@ public class AudioRecordService extends Service {
 
   public void startRecording() {
     boolean prefHighQuality =
-        Hawk.get(getApplicationContext().getString(R.string.pref_high_quality_key));
+        Hawk.get(getApplicationContext().getString(R.string.pref_high_quality_key), false);
     audioRecorder.startRecord(
         prefHighQuality ? Constants.RECORDER_SAMPLE_RATE_HIGH : Constants.RECORDER_SAMPLE_RATE_LOW);
     handler.startDbmThread();

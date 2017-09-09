@@ -4,10 +4,7 @@
   <color name="primary_dark">#bc428b</color>
   <color name="primary_light">#FFCDD2</color>
   <color name="accent">#bc428b</color>
-  <color name="av_color1">#f7b09e</color>
-  <color name="av_color2">#f0979b</color>
-  <color name="av_color3">#e36a97</color>
-  <color name="av_color4">#bc428b</color>
+
 
   <color name="av_color_bg">#8f367c</color>
 
@@ -65,6 +62,12 @@
   <color name="md_dark_statusbar">@color/md_black_1000</color>
 
   <!--ALL COLOURS-->
+  <color name="av_color1">#f7b09e</color>
+  <color name="av_color2">#f0979b</color>
+  <color name="av_color3">#e36a97</color>
+  <color name="av_color4">#c35497</color>
+  <color name="av_color5">#bc428b</color>
+
   <color name="md_amber_100">#FFECB3</color>
   <color name="md_amber_200">#FFE082</color>
   <color name="md_amber_300">#FFD54F</color>

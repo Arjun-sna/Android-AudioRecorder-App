@@ -260,5 +260,10 @@ public class RecordFragment extends ThemedFragment {
     colorsBuilder.setBackgroundColor(themeHelper.getPrimaryColor());
     colorsBuilder.setLayerColors(themeHelper.getLayerColor());
     audioVisualization.updateConfig(colorsBuilder);
+    chronometer.setTextColor(themeHelper.getLayerColor()[3]);
+    mRecordButton.setRippleColor(themeHelper.getLayerColor()[3]);
+    mSettingsButton.setRippleColor(themeHelper.getLayerColor()[3]);
+    mPlayListBtn.setRippleColor(themeHelper.getLayerColor()[3]);
+    mPauseButton.setRippleColor(themeHelper.getLayerColor()[3]);
   }
 }

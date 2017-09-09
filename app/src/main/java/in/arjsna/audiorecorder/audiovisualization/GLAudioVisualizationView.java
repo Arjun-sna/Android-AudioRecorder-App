@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import com.orhanobut.hawk.Hawk;
 import in.arjsna.audiorecorder.R;
+import in.arjsna.audiorecorder.theme.ColorPalette;
 
 /**
  * Audio visualization view implementation for OpenGL.
@@ -161,6 +162,7 @@ public class GLAudioVisualizationView extends GLSurfaceView
         if (bgColor == Color.TRANSPARENT) {
           bgColor = ContextCompat.getColor(context, R.color.av_color_bg);
         }
+        // TODO: 9/9/17 fix this
         //int arrayId = array.getResourceId(R.styleable.GLAudioVisualizationView_av_wavesColors,
         //    R.array.av_colors);
         //if (isInEditMode) {
@@ -176,7 +178,8 @@ public class GLAudioVisualizationView extends GLSurfaceView
       } finally {
         array.recycle();
       }
-      colors = Hawk.get(context.getString(R.string.preference_layer_colors));
+      colors = Hawk.get(context.getString(R.string.preference_layer_colors),
+          ColorPalette.getColors(context, ContextCompat.getColor(context, R.color.av_color5)));
       if (colors.length < layersCount) {
         throw new IllegalArgumentException("You specified more layers than colors.");
       }
