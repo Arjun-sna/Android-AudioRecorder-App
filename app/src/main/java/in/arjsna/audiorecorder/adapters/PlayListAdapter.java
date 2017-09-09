@@ -167,21 +167,18 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
 
   }
 
-  private void remove(int position) {
-    //remove item from database, recyclerview and storage
-
-    //delete file from storage
-    File file = new File(recordingItems.get(position).getFilePath());
-    file.delete();
-
-    Toast.makeText(mContext,
-        String.format(mContext.getString(R.string.toast_file_delete),
-            recordingItems.get(position).getName()),
-        Toast.LENGTH_SHORT).show();
-
-    mDatabase.removeItemWithId(recordingItems.get(position).getId());
-    recordingItems.remove(position);
-    notifyItemRemoved(position);
+  private Single<String> remove(int position) {
+    return Single.create((SingleOnSubscribe<String>) e -> {
+      RecordingItem recordingItem = recordingItems.get(position);
+      File file = new File(recordingItem.getFilePath());
+      if (file.delete()) {
+        mDatabase.removeItemWithId(recordingItem.getId());
+        recordingItems.remove(position);
+        e.onSuccess(recordingItem.getName());
+      } else {
+        e.onError(new Exception("File deletion failed"));
+      }
+    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
   }
 
   //TODO
@@ -260,8 +257,19 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     confirmDelete.setPositiveButton(mContext.getString(R.string.dialog_action_yes),
         (dialog, id) -> {
           try {
-            //remove item from database, recyclerview, and storage
-            remove(position);
+            remove(position).subscribe(new DisposableSingleObserver<String>() {
+              @Override public void onSuccess(String removedFileName) {
+                Toast.makeText(mContext,
+                    String.format(mContext.getString(R.string.toast_file_delete),
+                        removedFileName),
+                    Toast.LENGTH_SHORT).show();
+                notifyItemRemoved(position);
+              }
+
+              @Override public void onError(Throwable e) {
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+              }
+            });
           } catch (Exception e) {
             Log.e(LOG_TAG, "exception", e);
           }
