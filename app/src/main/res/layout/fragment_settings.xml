@@ -4,18 +4,39 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-  <in.arjsna.audiorecorder.SettingWithSwitchView
-      android:id="@+id/audio_quality_settings"
+  <android.support.v7.widget.CardView
+      android:layout_margin="3dp"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      app:settingTitle="@string/pref_high_quality_title"
-      app:settingCaption="@string/pref_high_quality_desc"
-      app:settingPreferenceKey="@string/pref_high_quality_key"
-  />
-  <in.arjsna.audiorecorder.SettingBasic
-      android:id="@+id/theme_settings"
+      android:layout_height="wrap_content">
+    <in.arjsna.audiorecorder.SettingWithSwitchView
+        android:id="@+id/audio_quality_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:settingTitle="@string/pref_high_quality_title"
+        app:settingCaption="@string/pref_high_quality_desc"
+        app:settingPreferenceKey="@string/pref_high_quality_key"
+    />
+  </android.support.v7.widget.CardView>
+  <android.support.v7.widget.CardView
+      android:layout_margin="3dp"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      app:settingTitle="@string/pref_theme_title"
-      app:settingCaption="@string/pref_theme_desc"/>
+      android:layout_height="wrap_content">
+    <in.arjsna.audiorecorder.SettingBasic
+        android:id="@+id/theme_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:settingTitle="@string/pref_theme_title"
+        app:settingCaption="@string/pref_theme_desc"/>
+  </android.support.v7.widget.CardView>
+  <android.support.v7.widget.CardView
+      android:layout_margin="3dp"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+    <in.arjsna.audiorecorder.SettingBasic
+        android:id="@+id/rate_app"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:settingTitle="@string/rate_app_title"
+        app:settingCaption="@string/rate_app_desc"/>
+  </android.support.v7.widget.CardView>
 </LinearLayout>

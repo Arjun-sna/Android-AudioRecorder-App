@@ -61,5 +61,7 @@
   <string name="preference_accent_color">accent_color</string>
   <string name="primary_color">Primary Color</string>
   <string name="preference_layer_colors">layer_colors_key</string>
+  <string name="rate_app_title">Rate Application</string>
+  <string name="rate_app_desc">Rate the application in Google Play Store</string>
 
 </resources>

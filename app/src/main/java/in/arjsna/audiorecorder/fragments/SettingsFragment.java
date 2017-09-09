@@ -1,5 +1,8 @@
 package in.arjsna.audiorecorder.fragments;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -18,6 +21,7 @@ public class SettingsFragment extends ThemedFragment {
   private View rootView;
   private SettingBasic themeSetting;
   private ThemedActivity parent;
+  private SettingBasic rateApp;
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -60,10 +64,25 @@ public class SettingsFragment extends ThemedFragment {
             }
           }, getPrimaryColor());
     });
+    rateApp.setOnClickListener(v -> {
+      Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
+      Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+      goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+          Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+          Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+      try {
+        startActivity(goToMarket);
+      } catch (ActivityNotFoundException e) {
+        startActivity(new Intent(Intent.ACTION_VIEW,
+            Uri.parse(
+                "http://play.google.com/store/apps/details?id=" + getActivity().getPackageName())));
+      }
+    });
   }
 
   private void initViews() {
     themeSetting = (SettingBasic) rootView.findViewById(R.id.theme_settings);
+    rateApp = (SettingBasic) rootView.findViewById(R.id.rate_app);
   }
 
   //Preference aboutPref = findPreference(getString(R.string.pref_about_key));
