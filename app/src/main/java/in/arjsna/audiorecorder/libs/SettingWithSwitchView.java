@@ -1,4 +1,4 @@
-package in.arjsna.audiorecorder;
+package in.arjsna.audiorecorder.libs;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.orhanobut.hawk.Hawk;
+import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
 import in.arjsna.audiorecorder.theme.Themed;
 import in.arjsna.audiorecorder.theme.ThemedActivity;

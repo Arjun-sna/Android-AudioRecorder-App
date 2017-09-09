@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.orhanobut.hawk.Hawk;
 import in.arjsna.audiorecorder.R;
-import in.arjsna.audiorecorder.SettingBasic;
+import in.arjsna.audiorecorder.libs.SettingBasic;
 import in.arjsna.audiorecorder.theme.ColorsSetting;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
 import in.arjsna.audiorecorder.theme.ThemedActivity;
