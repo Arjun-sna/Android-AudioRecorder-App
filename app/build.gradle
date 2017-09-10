@@ -54,4 +54,7 @@ dependencies {
   compile "android.arch.persistence.room:runtime:1.0.0-alpha9"
   annotationProcessor "android.arch.persistence.room:compiler:1.0.0-alpha9"
   compile "android.arch.persistence.room:rxjava2:1.0.0-alpha9"
+
+  compile 'com.google.dagger:dagger:2.11'
+  annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
 }
