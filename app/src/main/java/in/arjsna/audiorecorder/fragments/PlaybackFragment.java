@@ -18,7 +18,7 @@ import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import in.arjsna.audiorecorder.R;
-import in.arjsna.audiorecorder.RecordingItem;
+import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
 import in.arjsna.audiorecorder.theme.ThemedDialogFragment;
 import in.arjsna.audiorecorder.theme.ThemedFab;

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.listeners.OnDatabaseChangedListener;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;

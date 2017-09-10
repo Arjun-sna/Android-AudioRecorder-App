@@ -1,9 +1,14 @@
-package in.arjsna.audiorecorder;
+package in.arjsna.audiorecorder.db;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+@Entity
 public class RecordingItem implements Parcelable {
+  @PrimaryKey(autoGenerate = true)
+  private int id;
   private String mName; // file name
   private String mFilePath; //file path
   private int mId; //id in database
