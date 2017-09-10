@@ -16,8 +16,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import in.arjsna.audiorecorder.DBHelper;
 import in.arjsna.audiorecorder.R;
+import in.arjsna.audiorecorder.db.AppDataBase;
+import in.arjsna.audiorecorder.db.RecordItemDao;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.fragments.PlaybackFragment;
 import in.arjsna.audiorecorder.recording.Constants;
@@ -34,7 +35,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
 
   private static final String LOG_TAG = "PlayListAdapter";
 
-  private final DBHelper mDatabase;
+  private final RecordItemDao recordItemDao;
   private final LayoutInflater inflater;
 
   private final Context mContext;
@@ -43,7 +44,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   public PlayListAdapter(Context context, ArrayList<RecordingItem> recordingItems) {
     super();
     mContext = context;
-    mDatabase = new DBHelper(mContext);
+    recordItemDao = AppDataBase.getInstance(context).recordItemDao();
     this.recordingItems = recordingItems;
     inflater = LayoutInflater.from(mContext);
   }
@@ -145,7 +146,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
       RecordingItem recordingItem = recordingItems.get(position);
       File file = new File(recordingItem.getFilePath());
       if (file.delete()) {
-        mDatabase.removeItemWithId(recordingItem.getId());
+        recordItemDao.deleteRecordItem(recordingItem);
         recordingItems.remove(position);
         e.onSuccess(recordingItem.getName());
       } else {
@@ -171,8 +172,8 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
         RecordingItem currentItem = recordingItems.get(position);
         File oldFilePath = new File(currentItem.getFilePath());
         oldFilePath.renameTo(f);
-        mDatabase.renameItem(currentItem, name, mFilePath);
         currentItem.setName(name);
+        recordItemDao.updateRecordItem(currentItem);
         e.onSuccess(position);
       }
     }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());

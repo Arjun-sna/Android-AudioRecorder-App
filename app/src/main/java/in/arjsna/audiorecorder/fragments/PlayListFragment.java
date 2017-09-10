@@ -10,19 +10,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import in.arjsna.audiorecorder.DBHelper;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.adapters.PlayListAdapter;
+import in.arjsna.audiorecorder.db.AppDataBase;
+import in.arjsna.audiorecorder.db.RecordItemDao;
+import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
 import in.arjsna.audiorecorder.theme.ThemedFragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 
 public class PlayListFragment extends ThemedFragment {
   private static final String LOG_TAG = "PlayListFragment";
 
   private PlayListAdapter mPlayListAdapter;
-  private DBHelper dbHelper;
+  private RecordItemDao recordItemDao;
   private RecyclerView mRecordingsListView;
   private TextView emptyListLabel;
 
@@ -33,7 +36,7 @@ public class PlayListFragment extends ThemedFragment {
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     observer.startWatching();
-    dbHelper = new DBHelper(getActivity());
+    recordItemDao = AppDataBase.getInstance(getActivity()).recordItemDao();
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,8 +47,8 @@ public class PlayListFragment extends ThemedFragment {
   }
 
   private void initViews(View v) {
-    emptyListLabel = (TextView) v.findViewById(R.id.empty_list_label);
-    mRecordingsListView = (RecyclerView) v.findViewById(R.id.recyclerView);
+    emptyListLabel = v.findViewById(R.id.empty_list_label);
+    mRecordingsListView = v.findViewById(R.id.recyclerView);
     mRecordingsListView.setHasFixedSize(true);
     LinearLayoutManager llm = new LinearLayoutManager(getActivity());
     llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -62,9 +65,14 @@ public class PlayListFragment extends ThemedFragment {
   }
 
   private void fillAdapter() {
-    dbHelper.getAllRecordings()
+    ArrayList<RecordingItem> recordingItems = new ArrayList<>();
+    recordItemDao.getAllRecordings()
+        .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(recordingItems -> {
+        .subscribe((recordingItem) -> {
+          recordingItems.add(recordingItem);
+        }, (error) -> {
+        }, () -> {
           if (recordingItems.size() > 0) {
             mPlayListAdapter.addAllAndNotify(recordingItems);
           } else {

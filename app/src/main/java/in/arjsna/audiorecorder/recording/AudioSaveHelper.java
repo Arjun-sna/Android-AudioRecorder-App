@@ -4,7 +4,9 @@ import android.content.Context;
 import android.media.AudioFormat;
 import android.os.Environment;
 import android.util.Log;
-import in.arjsna.audiorecorder.DBHelper;
+import in.arjsna.audiorecorder.db.AppDataBase;
+import in.arjsna.audiorecorder.db.RecordItemDao;
+import in.arjsna.audiorecorder.db.RecordingItem;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,13 +17,13 @@ import java.nio.ByteOrder;
 
 class AudioSaveHelper {
 
-  private final DBHelper mDbHelper;
+  private final RecordItemDao recordItemDao;
   private FileOutputStream os;
   private File mFile;
   private int mRecordSampleRate;
 
   public AudioSaveHelper(Context applicationContext) {
-    mDbHelper = new DBHelper(applicationContext);
+    recordItemDao = AppDataBase.getInstance(applicationContext).recordItemDao();
   }
 
   public void createNewFile() {
@@ -35,8 +37,9 @@ class AudioSaveHelper {
     String fileName;
     do {
       count++;
-      fileName =
-          "AudioRecord_" + (mDbHelper.getCount() + count) + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
+      fileName = "AudioRecord_"
+          + (recordItemDao.getCount() + count)
+          + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
       String mFilePath = storeLocation + "/SoundRecorder/" + fileName;
       mFile = new File(mFilePath);
     } while (mFile.exists() && !mFile.isDirectory());
@@ -59,8 +62,7 @@ class AudioSaveHelper {
     }
   }
 
-  public void onRecordingStopped(
-      AudioRecorder.RecordTime currentRecordTime) {
+  public void onRecordingStopped(AudioRecorder.RecordTime currentRecordTime) {
     try {
       os.close();
       updateWavHeader(mFile);
@@ -72,9 +74,13 @@ class AudioSaveHelper {
     }
   }
 
-  private void saveFileDetails(
-      AudioRecorder.RecordTime currentRecordTime) {
-    mDbHelper.addRecording(mFile.getName(), mFile.getPath(), currentRecordTime.millis);
+  private void saveFileDetails(AudioRecorder.RecordTime currentRecordTime) {
+    RecordingItem recordingItem = new RecordingItem();
+    recordingItem.setName(mFile.getName());
+    recordingItem.setFilePath(mFile.getPath());
+    recordingItem.setLength(currentRecordTime.seconds);
+    recordingItem.setTime(System.currentTimeMillis());
+    recordItemDao.insertNewRecordItem(recordingItem);
   }
 
   /**

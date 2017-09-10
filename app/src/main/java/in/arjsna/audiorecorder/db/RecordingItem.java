@@ -5,14 +5,14 @@ import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-@Entity
+@Entity(tableName = "recordings")
 public class RecordingItem implements Parcelable {
   @PrimaryKey(autoGenerate = true)
   private int id;
   private String mName; // file name
   private String mFilePath; //file path
-  private int mId; //id in database
-  private int mLength; // length of recording in seconds
+  //private int mId; //id in database
+  private long mLength; // length of recording in seconds
   private long mTime; // date/time of the recording
 
   public RecordingItem() {
@@ -21,8 +21,8 @@ public class RecordingItem implements Parcelable {
   private RecordingItem(Parcel in) {
     mName = in.readString();
     mFilePath = in.readString();
-    mId = in.readInt();
-    mLength = in.readInt();
+    //mId = in.readInt();
+    mLength = in.readLong();
     mTime = in.readLong();
   }
 
@@ -34,20 +34,20 @@ public class RecordingItem implements Parcelable {
     mFilePath = filePath;
   }
 
-  public int getLength() {
+  public long getLength() {
     return mLength;
   }
 
-  public void setLength(int length) {
+  public void setLength(long length) {
     mLength = length;
   }
 
   public int getId() {
-    return mId;
+    return id;
   }
 
   public void setId(int id) {
-    mId = id;
+    this.id = id;
   }
 
   public String getName() {
@@ -78,8 +78,8 @@ public class RecordingItem implements Parcelable {
       };
 
   @Override public void writeToParcel(Parcel dest, int flags) {
-    dest.writeInt(mId);
-    dest.writeInt(mLength);
+    //dest.writeInt(mId);
+    dest.writeLong(mLength);
     dest.writeLong(mTime);
     dest.writeString(mFilePath);
     dest.writeString(mName);

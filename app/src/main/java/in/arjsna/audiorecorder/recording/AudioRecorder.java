@@ -70,7 +70,8 @@ public class AudioRecorder implements IAudioRecorder {
 
   private Flowable<RecordTime> getTimerObservable() {
     return Flowable.interval(1000, TimeUnit.MILLISECONDS)
-        .filter(timeElapsed -> !mIsPaused.get()).map(tick -> {
+        .filter(timeElapsed -> !mIsPaused.get())
+        .map(tick -> {
           long seconds = mRecordTimeCounter.incrementAndGet();
           RecordTime recordTime = new RecordTime();
           recordTime.millis = seconds * 1000;
@@ -87,9 +88,8 @@ public class AudioRecorder implements IAudioRecorder {
   private final Flowable<byte[]> audioDataFlowable = Flowable.create(emitter -> {
     int bufferSize = 4 * 1024;
 
-    AudioRecord recorder =
-        new AudioRecord(MediaRecorder.AudioSource.MIC, mRecorderSampleRate,
-            Constants.RECORDER_CHANNELS, Constants.RECORDER_AUDIO_ENCODING, bufferSize);
+    AudioRecord recorder = new AudioRecord(MediaRecorder.AudioSource.MIC, mRecorderSampleRate,
+        Constants.RECORDER_CHANNELS, Constants.RECORDER_AUDIO_ENCODING, bufferSize);
     audioSaveHelper.createNewFile();
 
     try {
@@ -113,6 +113,10 @@ public class AudioRecorder implements IAudioRecorder {
       recorder.release();
     }
     emitter.onComplete();
+    synchronized (recorderStateMonitor) {
+      recorderState = RECORDER_STATE_IDLE;
+      recorderStateMonitor.notifyAll();
+    }
   }, BackpressureStrategy.DROP);
 
   private final PublishProcessor<byte[]> recordDataPublishProcessor = PublishProcessor.create();
@@ -131,10 +135,7 @@ public class AudioRecorder implements IAudioRecorder {
           }
 
           @Override public void onComplete() {
-            synchronized (recorderStateMonitor) {
-              recorderState = RECORDER_STATE_IDLE;
-              recorderStateMonitor.notifyAll();
-            }
+            audioSaveHelper.onRecordingStopped(currentRecordTime);
           }
         }));
   }
@@ -162,7 +163,6 @@ public class AudioRecorder implements IAudioRecorder {
         } while (recorderStateLocal == RECORDER_STATE_STOPPING);
       }
     }
-    audioSaveHelper.onRecordingStopped(currentRecordTime);
     compositeDisposable.dispose();
   }
 
@@ -183,8 +183,8 @@ public class AudioRecorder implements IAudioRecorder {
   }
 
   public Disposable subscribeTimer(Consumer<RecordTime> timerConsumer) {
-    Disposable disposable = recordTimeProcessor.observeOn(AndroidSchedulers.mainThread())
-        .subscribe(timerConsumer);
+    Disposable disposable =
+        recordTimeProcessor.observeOn(AndroidSchedulers.mainThread()).subscribe(timerConsumer);
     compositeDisposable.add(disposable);
     return disposable;
   }

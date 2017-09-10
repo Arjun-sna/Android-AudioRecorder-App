@@ -5,17 +5,16 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
-import android.database.Observable;
-import java.util.List;
+import io.reactivex.Flowable;
 
 @Dao public interface RecordItemDao {
-  @Query("Select * from RecordingItem") Observable<List<RecordingItem>> getAllRecordings();
+  @Query("Select * from recordings") Flowable<RecordingItem> getAllRecordings();
 
-  @Insert long insertNewRecordItem(RecordingItem recordingItem);
+  @Insert void insertNewRecordItem(RecordingItem recordingItem);
 
-  @Update int updateRecordItem(RecordingItem recordingItem);
+  @Update void updateRecordItem(RecordingItem recordingItem);
 
-  @Delete int deleteRecordItem(RecordingItem recordingItem);
+  @Delete void deleteRecordItem(RecordingItem recordingItem);
 
-  @Query("Select count() from RecordingItem") int getCount();
+  @Query("Select count() from recordings") int getCount();
 }
