@@ -78,7 +78,7 @@ class AudioSaveHelper {
     RecordingItem recordingItem = new RecordingItem();
     recordingItem.setName(mFile.getName());
     recordingItem.setFilePath(mFile.getPath());
-    recordingItem.setLength(currentRecordTime.seconds);
+    recordingItem.setLength(currentRecordTime.millis);
     recordingItem.setTime(System.currentTimeMillis());
     recordItemDataSource.insertNewRecordItem(recordingItem);
   }
