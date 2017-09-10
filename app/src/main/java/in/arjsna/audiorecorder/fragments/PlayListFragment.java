@@ -13,11 +13,12 @@ import android.widget.TextView;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.adapters.PlayListAdapter;
 import in.arjsna.audiorecorder.db.AppDataBase;
-import in.arjsna.audiorecorder.db.RecordItemDao;
+import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
 import in.arjsna.audiorecorder.theme.ThemedFragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 
@@ -25,9 +26,10 @@ public class PlayListFragment extends ThemedFragment {
   private static final String LOG_TAG = "PlayListFragment";
 
   private PlayListAdapter mPlayListAdapter;
-  private RecordItemDao recordItemDao;
+  private RecordItemDataSource recordItemDataSource;
   private RecyclerView mRecordingsListView;
   private TextView emptyListLabel;
+  private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
   public static PlayListFragment newInstance() {
     return new PlayListFragment();
@@ -36,7 +38,7 @@ public class PlayListFragment extends ThemedFragment {
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     observer.startWatching();
-    recordItemDao = AppDataBase.getInstance(getActivity()).recordItemDao();
+    recordItemDataSource = AppDataBase.getInstance(getActivity()).getRecordItemDataSource();
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,21 +67,18 @@ public class PlayListFragment extends ThemedFragment {
   }
 
   private void fillAdapter() {
-    ArrayList<RecordingItem> recordingItems = new ArrayList<>();
-    recordItemDao.getAllRecordings()
+    //ArrayList<RecordingItem> recordingItems = new ArrayList<>();
+    compositeDisposable.add(recordItemDataSource.getAllRecordings()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe((recordingItem) -> {
-          recordingItems.add(recordingItem);
-        }, (error) -> {
-        }, () -> {
-          if (recordingItems.size() > 0) {
-            mPlayListAdapter.addAllAndNotify(recordingItems);
+          if (recordingItem.size() > 0) {
+            mPlayListAdapter.addAllAndNotify((ArrayList<RecordingItem>) recordingItem);
           } else {
             emptyListLabel.setVisibility(View.VISIBLE);
             mRecordingsListView.setVisibility(View.GONE);
           }
-        });
+        }));
   }
 
   private final FileObserver observer = new FileObserver(
@@ -108,6 +107,11 @@ public class PlayListFragment extends ThemedFragment {
 
   @Override public void refreshTheme(ThemeHelper themeHelper) {
 
+  }
+
+  @Override public void onDestroy() {
+    super.onDestroy();
+    compositeDisposable.dispose();
   }
 }
 

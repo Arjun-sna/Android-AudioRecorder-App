@@ -12,11 +12,17 @@ public abstract class AppDataBase extends RoomDatabase {
   private static final String DATABASE_NAME = "saved_recordings.db";
 
   private static AppDataBase appDataBaseInstance;
+  private RecordItemDataSource recordItemDataSource;
 
   public static AppDataBase getInstance(Context context) {
     if (appDataBaseInstance == null) {
       appDataBaseInstance = Room.databaseBuilder(context, AppDataBase.class, DATABASE_NAME).build();
-    }
-    return appDataBaseInstance;
+      appDataBaseInstance.recordItemDataSource =
+          new RecordItemDataSource(appDataBaseInstance.recordItemDao());
+    } return appDataBaseInstance;
+  }
+
+  public RecordItemDataSource getRecordItemDataSource() {
+    return recordItemDataSource;
   }
 }

@@ -5,7 +5,7 @@ import android.media.AudioFormat;
 import android.os.Environment;
 import android.util.Log;
 import in.arjsna.audiorecorder.db.AppDataBase;
-import in.arjsna.audiorecorder.db.RecordItemDao;
+import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,13 +17,13 @@ import java.nio.ByteOrder;
 
 class AudioSaveHelper {
 
-  private final RecordItemDao recordItemDao;
+  private final RecordItemDataSource recordItemDataSource;
   private FileOutputStream os;
   private File mFile;
   private int mRecordSampleRate;
 
   public AudioSaveHelper(Context applicationContext) {
-    recordItemDao = AppDataBase.getInstance(applicationContext).recordItemDao();
+    recordItemDataSource = AppDataBase.getInstance(applicationContext).getRecordItemDataSource();
   }
 
   public void createNewFile() {
@@ -38,7 +38,7 @@ class AudioSaveHelper {
     do {
       count++;
       fileName = "AudioRecord_"
-          + (recordItemDao.getCount() + count)
+          + (recordItemDataSource.getRecordingsCount() + count)
           + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
       String mFilePath = storeLocation + "/SoundRecorder/" + fileName;
       mFile = new File(mFilePath);
@@ -67,7 +67,7 @@ class AudioSaveHelper {
       os.close();
       updateWavHeader(mFile);
       saveFileDetails(currentRecordTime);
-      Log.i("Record Complete ", "Saving and closing");
+      System.out.println("Record Complete. Saving and closing");
     } catch (IOException e) {
       mFile.deleteOnExit();
       e.printStackTrace();
@@ -80,7 +80,7 @@ class AudioSaveHelper {
     recordingItem.setFilePath(mFile.getPath());
     recordingItem.setLength(currentRecordTime.seconds);
     recordingItem.setTime(System.currentTimeMillis());
-    recordItemDao.insertNewRecordItem(recordingItem);
+    recordItemDataSource.insertNewRecordItem(recordingItem);
   }
 
   /**

@@ -18,7 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.db.AppDataBase;
-import in.arjsna.audiorecorder.db.RecordItemDao;
+import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.fragments.PlaybackFragment;
 import in.arjsna.audiorecorder.recording.Constants;
@@ -35,7 +35,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
 
   private static final String LOG_TAG = "PlayListAdapter";
 
-  private final RecordItemDao recordItemDao;
+  private final RecordItemDataSource recordItemDataSource;
   private final LayoutInflater inflater;
 
   private final Context mContext;
@@ -44,7 +44,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   public PlayListAdapter(Context context, ArrayList<RecordingItem> recordingItems) {
     super();
     mContext = context;
-    recordItemDao = AppDataBase.getInstance(context).recordItemDao();
+    recordItemDataSource = AppDataBase.getInstance(context).getRecordItemDataSource();
     this.recordingItems = recordingItems;
     inflater = LayoutInflater.from(mContext);
   }
@@ -130,9 +130,9 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
 
     RecordingsViewHolder(View v) {
       super(v);
-      vName = (TextView) v.findViewById(R.id.file_name_text);
-      vLength = (TextView) v.findViewById(R.id.file_length_text);
-      vDateAdded = (TextView) v.findViewById(R.id.file_date_added_text);
+      vName = v.findViewById(R.id.file_name_text);
+      vLength = v.findViewById(R.id.file_length_text);
+      vDateAdded = v.findViewById(R.id.file_date_added_text);
       cardView = v.findViewById(R.id.card_view);
     }
   }
@@ -146,7 +146,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
       RecordingItem recordingItem = recordingItems.get(position);
       File file = new File(recordingItem.getFilePath());
       if (file.delete()) {
-        recordItemDao.deleteRecordItem(recordingItem);
+        recordItemDataSource.deleteRecordItem(recordingItem);
         recordingItems.remove(position);
         e.onSuccess(recordingItem.getName());
       } else {
@@ -173,7 +173,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
         File oldFilePath = new File(currentItem.getFilePath());
         oldFilePath.renameTo(f);
         currentItem.setName(name);
-        recordItemDao.updateRecordItem(currentItem);
+        recordItemDataSource.updateRecordItem(currentItem);
         e.onSuccess(position);
       }
     }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());

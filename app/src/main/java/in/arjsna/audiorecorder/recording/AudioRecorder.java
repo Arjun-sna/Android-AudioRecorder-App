@@ -113,10 +113,6 @@ public class AudioRecorder implements IAudioRecorder {
       recorder.release();
     }
     emitter.onComplete();
-    synchronized (recorderStateMonitor) {
-      recorderState = RECORDER_STATE_IDLE;
-      recorderStateMonitor.notifyAll();
-    }
   }, BackpressureStrategy.DROP);
 
   private final PublishProcessor<byte[]> recordDataPublishProcessor = PublishProcessor.create();
@@ -136,6 +132,10 @@ public class AudioRecorder implements IAudioRecorder {
 
           @Override public void onComplete() {
             audioSaveHelper.onRecordingStopped(currentRecordTime);
+            synchronized (recorderStateMonitor) {
+              recorderState = RECORDER_STATE_IDLE;
+              recorderStateMonitor.notifyAll();
+            }
           }
         }));
   }
