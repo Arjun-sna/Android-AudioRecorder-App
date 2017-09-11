@@ -19,6 +19,6 @@ public interface ActivityComponent {
   void inject(PlayListActivity mainActivity);
 
   void inject(PlayListFragment playListFragment);
-  //
-  //void inject(RecordFragment playListFragment);
+
+  void inject(RecordFragment recordFragment);
 }

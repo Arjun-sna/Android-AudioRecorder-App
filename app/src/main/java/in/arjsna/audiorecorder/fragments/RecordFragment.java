@@ -11,9 +11,11 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,13 +28,17 @@ import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.activities.PlayListActivity;
 import in.arjsna.audiorecorder.activities.SettingsActivity;
 import in.arjsna.audiorecorder.audiovisualization.GLAudioVisualizationView;
+import in.arjsna.audiorecorder.di.ActivityContext;
+import in.arjsna.audiorecorder.di.components.ActivityComponent;
 import in.arjsna.audiorecorder.recording.AudioRecordService;
 import in.arjsna.audiorecorder.recording.AudioRecorder;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
 import in.arjsna.audiorecorder.theme.ThemedFragment;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import java.util.Locale;
+import javax.inject.Inject;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,7 +47,7 @@ import java.util.Locale;
  * Use the {@link RecordFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RecordFragment extends ThemedFragment {
+public class RecordFragment extends BaseFragment {
   private static final String LOG_TAG = RecordFragment.class.getSimpleName();
   private FloatingActionButton mRecordButton = null;
   private FloatingActionButton mPauseButton = null;
@@ -57,6 +63,10 @@ public class RecordFragment extends ThemedFragment {
   private FloatingActionButton mSettingsButton;
   private FloatingActionButton mPlayListBtn;
 
+  @Inject
+  @ActivityContext
+  public AppCompatActivity mContext;
+
   /**
    * Use this factory method to create a new instance of
    * this fragment using the provided parameters.
@@ -65,6 +75,14 @@ public class RecordFragment extends ThemedFragment {
    */
   public static RecordFragment newInstance() {
     return new RecordFragment();
+  }
+
+  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    ActivityComponent activityComponent = getActivityComponent();
+    if (activityComponent != null) {
+      activityComponent.inject(this);
+    }
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,11 +97,11 @@ public class RecordFragment extends ThemedFragment {
   private void bindEvents() {
     RxView.clicks(mRecordButton).subscribe(o -> onChangeRecord());
     RxView.clicks(mSettingsButton).subscribe(o -> {
-      Intent settingsIntent = new Intent(getActivity(), SettingsActivity.class);
+      Intent settingsIntent = new Intent(mContext, SettingsActivity.class);
       startActivity(settingsIntent);
     });
     RxView.clicks(mPlayListBtn).subscribe(o -> {
-      Intent viewPlayListIntent = new Intent(getActivity(), PlayListActivity.class);
+      Intent viewPlayListIntent = new Intent(mContext, PlayListActivity.class);
       startActivity(viewPlayListIntent);
     });
 
@@ -114,26 +132,26 @@ public class RecordFragment extends ThemedFragment {
   }
 
   private void onChangeRecord() {
-    Intent intent = new Intent(getActivity(), AudioRecordService.class);
+    Intent intent = new Intent(mContext, AudioRecordService.class);
     if (!mIsRecording) {
       mIsRecording = true;
       mRecordButton.setImageResource(R.drawable.ic_media_stop);
-      getActivity().startService(intent);
+      mContext.startService(intent);
       bindToService();
       mPauseButton.setVisibility(View.VISIBLE);
-      getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+      mContext.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     } else {
       stopRecording();
     }
   }
 
   private void stopRecording() {
-    Intent intent = new Intent(getContext(), AudioRecordService.class);
+    Intent intent = new Intent(mContext, AudioRecordService.class);
     mIsRecording = false;
     mIsRecordingPaused = false;
     mRecordButton.setImageResource(R.drawable.ic_media_record);
-    getActivity().stopService(intent);
-    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    mContext.stopService(intent);
+    mContext.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     unbindService();
     setChronometer(new AudioRecorder.RecordTime());
     mPauseButton.setVisibility(View.GONE);
@@ -161,21 +179,21 @@ public class RecordFragment extends ThemedFragment {
   };
 
   private void unRegisterLocalBroadCastReceiver() {
-    LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(stopServiceReceiver);
+    LocalBroadcastManager.getInstance(mContext).unregisterReceiver(stopServiceReceiver);
   }
 
   private void registerLocalBroadCastReceiver() {
-    LocalBroadcastManager.getInstance(getActivity())
+    LocalBroadcastManager.getInstance(mContext)
         .registerReceiver(stopServiceReceiver, new IntentFilter(AppConstants.ACTION_IN_SERVICE));
   }
 
   private void bindToService() {
-    Intent intent = new Intent(getActivity(), AudioRecordService.class);
-    getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    Intent intent = new Intent(mContext, AudioRecordService.class);
+    mContext.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     registerLocalBroadCastReceiver();
   }
 
-  private Disposable timerDisposable;
+  public Disposable timerDisposable;
   private final ServiceConnection serviceConnection = new ServiceConnection() {
     @Override public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
       mAudioRecordService =
@@ -250,13 +268,13 @@ public class RecordFragment extends ThemedFragment {
     }
     if (mIsServiceBound) {
       mIsServiceBound = false;
-      getActivity().unbindService(serviceConnection);
+      mContext.unbindService(serviceConnection);
     }
   }
 
   @Override public void refreshTheme(ThemeHelper themeHelper) {
     GLAudioVisualizationView.ColorsBuilder colorsBuilder =
-        new GLAudioVisualizationView.Builder(getActivity());
+        new GLAudioVisualizationView.Builder(mContext);
     colorsBuilder.setBackgroundColor(themeHelper.getPrimaryColor());
     colorsBuilder.setLayerColors(themeHelper.getLayerColor());
     audioVisualization.updateConfig(colorsBuilder);

@@ -29,17 +29,19 @@ public class PlayListFragment extends BaseFragment {
   public PlayListAdapter mPlayListAdapter;
   @Inject
   public RecordItemDataSource recordItemDataSource;
-  private RecyclerView mRecordingsListView;
-  private TextView emptyListLabel;
-  private CompositeDisposable compositeDisposable = new CompositeDisposable();
+  @Inject
+  public CompositeDisposable compositeDisposable;
   @Inject
   public LinearLayoutManager llm;
+  private RecyclerView mRecordingsListView;
+  private TextView emptyListLabel;
 
   public static PlayListFragment newInstance() {
     return new PlayListFragment();
   }
 
-  @Override public void onCreate(Bundle savedInstanceState) {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ActivityComponent activityComponent = getActivityComponent();
     if (activityComponent != null) {

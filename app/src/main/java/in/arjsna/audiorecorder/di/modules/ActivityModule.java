@@ -22,7 +22,7 @@ public class ActivityModule {
 
   @Provides
   @ActivityContext
-  Context provideActivityContext() {
+  AppCompatActivity provideActivityContext() {
     return appCompatActivity;
   }
 
@@ -32,12 +32,12 @@ public class ActivityModule {
   }
 
   @Provides
-  LinearLayoutManager provideLinearLayoutManager(@ActivityContext Context context) {
+  LinearLayoutManager provideLinearLayoutManager(@ActivityContext AppCompatActivity context) {
     return new LinearLayoutManager(context);
   }
 
   @Provides
-  PlayListAdapter providesPlayListAdapter(@ActivityContext Context context,
+  PlayListAdapter providesPlayListAdapter(@ActivityContext AppCompatActivity context,
       RecordItemDataSource recordItemDataSource) {
     return new PlayListAdapter(context, recordItemDataSource, new ArrayList<RecordingItem>());
   }
