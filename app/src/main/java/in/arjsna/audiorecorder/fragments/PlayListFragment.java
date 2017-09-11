@@ -12,24 +12,28 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.adapters.PlayListAdapter;
-import in.arjsna.audiorecorder.db.AppDataBase;
 import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
+import in.arjsna.audiorecorder.di.components.ActivityComponent;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
-import in.arjsna.audiorecorder.theme.ThemedFragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
+import javax.inject.Inject;
 
-public class PlayListFragment extends ThemedFragment {
+public class PlayListFragment extends BaseFragment {
   private static final String LOG_TAG = "PlayListFragment";
 
-  private PlayListAdapter mPlayListAdapter;
-  private RecordItemDataSource recordItemDataSource;
+  @Inject
+  public PlayListAdapter mPlayListAdapter;
+  @Inject
+  public RecordItemDataSource recordItemDataSource;
   private RecyclerView mRecordingsListView;
   private TextView emptyListLabel;
   private CompositeDisposable compositeDisposable = new CompositeDisposable();
+  @Inject
+  public LinearLayoutManager llm;
 
   public static PlayListFragment newInstance() {
     return new PlayListFragment();
@@ -37,8 +41,11 @@ public class PlayListFragment extends ThemedFragment {
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    ActivityComponent activityComponent = getActivityComponent();
+    if (activityComponent != null) {
+      activityComponent.inject(this);
+    }
     observer.startWatching();
-    recordItemDataSource = AppDataBase.getInstance(getActivity()).getRecordItemDataSource();
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,7 +59,6 @@ public class PlayListFragment extends ThemedFragment {
     emptyListLabel = v.findViewById(R.id.empty_list_label);
     mRecordingsListView = v.findViewById(R.id.recyclerView);
     mRecordingsListView.setHasFixedSize(true);
-    LinearLayoutManager llm = new LinearLayoutManager(getActivity());
     llm.setOrientation(LinearLayoutManager.VERTICAL);
 
     //newest to oldest order (database stores from oldest to newest)
@@ -61,7 +67,6 @@ public class PlayListFragment extends ThemedFragment {
 
     mRecordingsListView.setLayoutManager(llm);
     mRecordingsListView.setItemAnimator(new DefaultItemAnimator());
-    mPlayListAdapter = new PlayListAdapter(getActivity(), new ArrayList<>());
     mRecordingsListView.setAdapter(mPlayListAdapter);
     fillAdapter();
   }

@@ -7,7 +7,7 @@ import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.fragments.PlayListFragment;
 import in.arjsna.audiorecorder.theme.ThemedActivity;
 
-public class PlayListActivity extends ThemedActivity {
+public class PlayListActivity extends BaseActivity {
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

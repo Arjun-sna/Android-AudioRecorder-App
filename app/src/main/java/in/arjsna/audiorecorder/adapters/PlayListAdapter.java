@@ -17,7 +17,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import in.arjsna.audiorecorder.R;
-import in.arjsna.audiorecorder.db.AppDataBase;
 import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.fragments.PlaybackFragment;
@@ -41,10 +40,10 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   private final Context mContext;
   private final ArrayList<RecordingItem> recordingItems;
 
-  public PlayListAdapter(Context context, ArrayList<RecordingItem> recordingItems) {
-    super();
+  public PlayListAdapter(Context context, RecordItemDataSource recordItemDataSource,
+      ArrayList<RecordingItem> recordingItems) {
     mContext = context;
-    recordItemDataSource = AppDataBase.getInstance(context).getRecordItemDataSource();
+    this.recordItemDataSource = recordItemDataSource;
     this.recordingItems = recordingItems;
     inflater = LayoutInflater.from(mContext);
   }

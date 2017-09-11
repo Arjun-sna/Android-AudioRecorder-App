@@ -15,7 +15,7 @@ import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.fragments.RecordFragment;
 import in.arjsna.audiorecorder.theme.ThemedActivity;
 
-public class MainActivity extends ThemedActivity {
+public class MainActivity extends BaseActivity {
 
   private static final String LOG_TAG = MainActivity.class.getSimpleName();
   private static final int PERMISSION_REQ = 222;

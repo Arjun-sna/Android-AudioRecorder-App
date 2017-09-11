@@ -8,7 +8,7 @@ import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.fragments.SettingsFragment;
 import in.arjsna.audiorecorder.theme.ThemedActivity;
 
-public class SettingsActivity extends ThemedActivity {
+public class SettingsActivity extends BaseActivity {
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_preferences);
