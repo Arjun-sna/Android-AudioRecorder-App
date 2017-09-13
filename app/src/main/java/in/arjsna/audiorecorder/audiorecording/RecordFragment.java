@@ -38,13 +38,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import javax.inject.Inject;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * to handle interaction events.
- * Use the {@link RecordFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
   private static final String LOG_TAG = RecordFragment.class.getSimpleName();
   private FloatingActionButton mRecordButton = null;
@@ -93,17 +86,14 @@ public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
   }
 
   private void bindEvents() {
-    RxView.clicks(mRecordButton).subscribe(o -> audioRecordPresenter.onToggleRecodingStatus());
-    RxView.clicks(mSettingsButton).subscribe(o -> {
-      Intent settingsIntent = new Intent(mContext, SettingsActivity.class);
-      startActivity(settingsIntent);
-    });
-    RxView.clicks(mPlayListBtn).subscribe(o -> {
-      Intent viewPlayListIntent = new Intent(mContext, PlayListActivity.class);
-      startActivity(viewPlayListIntent);
-    });
-
-    mPauseButton.setOnClickListener(v -> audioRecordPresenter.onTogglePauseStatus());
+    RxView.clicks(mRecordButton)
+        .subscribe(o -> audioRecordPresenter.onToggleRecodingStatus());
+    RxView.clicks(mSettingsButton)
+        .subscribe(o -> startActivity(new Intent(mContext, SettingsActivity.class)));
+    RxView.clicks(mPlayListBtn)
+        .subscribe(o -> startActivity(new Intent(mContext, PlayListActivity.class)));
+    RxView.clicks(mPauseButton)
+        .subscribe(o -> audioRecordPresenter.onTogglePauseStatus());
   }
 
   private void initViews(View recordView) {
