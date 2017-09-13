@@ -1,11 +1,13 @@
 package in.arjsna.audiorecorder.di.modules;
 
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import dagger.Module;
 import dagger.Provides;
 import in.arjsna.audiorecorder.adapters.PlayListAdapter;
+import in.arjsna.audiorecorder.audiorecording.AudioRecordMVPView;
+import in.arjsna.audiorecorder.audiorecording.AudioRecordPresenter;
+import in.arjsna.audiorecorder.audiorecording.AudioRecordPresenterImpl;
 import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.di.ActivityContext;
@@ -40,5 +42,10 @@ public class ActivityModule {
   PlayListAdapter providesPlayListAdapter(@ActivityContext AppCompatActivity context,
       RecordItemDataSource recordItemDataSource) {
     return new PlayListAdapter(context, recordItemDataSource, new ArrayList<RecordingItem>());
+  }
+
+  @Provides AudioRecordPresenter<AudioRecordMVPView> provideAudioRecordPresenter(
+      AudioRecordPresenterImpl<AudioRecordMVPView> audioRecordPresenter) {
+    return audioRecordPresenter;
   }
 }

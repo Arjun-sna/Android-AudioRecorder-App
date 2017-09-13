@@ -7,7 +7,6 @@ public class BasePresenter<V extends IMVPView> implements IMVPPresenter<V> {
   private V mAttachedView;
   private CompositeDisposable compositeDisposable;
 
-  @Inject
   public BasePresenter(CompositeDisposable compositeDisposable) {
     this.compositeDisposable = compositeDisposable;
   }

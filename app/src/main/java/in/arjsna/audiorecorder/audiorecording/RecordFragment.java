@@ -1,4 +1,4 @@
-package in.arjsna.audiorecorder.fragments;
+package in.arjsna.audiorecorder.audiorecording;
 
 import android.animation.FloatEvaluator;
 import android.animation.ObjectAnimator;
@@ -46,7 +46,7 @@ import javax.inject.Inject;
  * Use the {@link RecordFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RecordFragment extends BaseFragment {
+public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
   private static final String LOG_TAG = RecordFragment.class.getSimpleName();
   private FloatingActionButton mRecordButton = null;
   private FloatingActionButton mPauseButton = null;
@@ -66,6 +66,9 @@ public class RecordFragment extends BaseFragment {
   @ActivityContext
   public AppCompatActivity mContext;
 
+  @Inject
+  public AudioRecordPresenter<AudioRecordMVPView> audioRecordPresenter;
+
   /**
    * Use this factory method to create a new instance of
    * this fragment using the provided parameters.
@@ -81,6 +84,7 @@ public class RecordFragment extends BaseFragment {
     ActivityComponent activityComponent = getActivityComponent();
     if (activityComponent != null) {
       activityComponent.inject(this);
+      audioRecordPresenter.onAttach(this);
     }
   }
 

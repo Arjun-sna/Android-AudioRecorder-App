@@ -5,7 +5,7 @@ import in.arjsna.audiorecorder.di.components.ActivityComponent;
 import in.arjsna.audiorecorder.theme.ThemedFragment;
 
 public abstract class BaseFragment extends ThemedFragment implements IMVPView {
-  BaseActivity mActivity;
+  private BaseActivity mActivity;
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);
@@ -15,6 +15,9 @@ public abstract class BaseFragment extends ThemedFragment implements IMVPView {
   }
 
   public ActivityComponent getActivityComponent() {
-    return mActivity.getActivityComponent();
+    if (mActivity != null) {
+      return mActivity.getActivityComponent();
+    }
+    return null;
   }
 }

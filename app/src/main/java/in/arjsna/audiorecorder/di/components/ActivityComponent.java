@@ -7,7 +7,7 @@ import in.arjsna.audiorecorder.activities.SettingsActivity;
 import in.arjsna.audiorecorder.di.PerActivity;
 import in.arjsna.audiorecorder.di.modules.ActivityModule;
 import in.arjsna.audiorecorder.fragments.PlayListFragment;
-import in.arjsna.audiorecorder.fragments.RecordFragment;
+import in.arjsna.audiorecorder.audiorecording.RecordFragment;
 
 @PerActivity
 @Component(dependencies = ApplicationComponent.class, modules = ActivityModule.class)
