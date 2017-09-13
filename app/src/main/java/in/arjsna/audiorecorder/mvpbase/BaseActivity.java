@@ -1,4 +1,4 @@
-package in.arjsna.audiorecorder.activities;
+package in.arjsna.audiorecorder.mvpbase;
 
 import android.os.Bundle;
 import in.arjsna.audiorecorder.AudioRecorderApp;
@@ -7,7 +7,7 @@ import in.arjsna.audiorecorder.di.components.DaggerActivityComponent;
 import in.arjsna.audiorecorder.di.modules.ActivityModule;
 import in.arjsna.audiorecorder.theme.ThemedActivity;
 
-public abstract class BaseActivity extends ThemedActivity {
+public abstract class BaseActivity extends ThemedActivity implements IMVPView {
   private ActivityComponent activityComponent;
 
   @Override public void onCreate(Bundle savedInstanceState) {

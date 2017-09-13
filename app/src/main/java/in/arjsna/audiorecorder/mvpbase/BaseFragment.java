@@ -1,11 +1,10 @@
-package in.arjsna.audiorecorder.fragments;
+package in.arjsna.audiorecorder.mvpbase;
 
 import android.content.Context;
-import in.arjsna.audiorecorder.activities.BaseActivity;
 import in.arjsna.audiorecorder.di.components.ActivityComponent;
 import in.arjsna.audiorecorder.theme.ThemedFragment;
 
-public abstract class BaseFragment extends ThemedFragment {
+public abstract class BaseFragment extends ThemedFragment implements IMVPView {
   BaseActivity mActivity;
 
   @Override public void onAttach(Context context) {

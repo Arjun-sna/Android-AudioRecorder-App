@@ -15,6 +15,7 @@ import in.arjsna.audiorecorder.adapters.PlayListAdapter;
 import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.di.components.ActivityComponent;
+import in.arjsna.audiorecorder.mvpbase.BaseFragment;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
