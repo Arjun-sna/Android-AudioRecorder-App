@@ -3,18 +3,27 @@ package in.arjsna.audiorecorder.audiorecording;
 import android.animation.FloatEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 import com.jakewharton.rxbinding2.view.RxView;
+import in.arjsna.audiorecorder.AppConstants;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.activities.PlayListActivity;
 import in.arjsna.audiorecorder.activities.SettingsActivity;
@@ -22,8 +31,11 @@ import in.arjsna.audiorecorder.audiovisualization.GLAudioVisualizationView;
 import in.arjsna.audiorecorder.di.ActivityContext;
 import in.arjsna.audiorecorder.di.components.ActivityComponent;
 import in.arjsna.audiorecorder.mvpbase.BaseFragment;
-import in.arjsna.audiorecorder.recording.AudioRecordingDbmHandler;
+import in.arjsna.audiorecorder.recording.AudioRecordService;
+import in.arjsna.audiorecorder.recording.AudioRecorder;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import javax.inject.Inject;
 
 /**
@@ -39,12 +51,9 @@ public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
   private FloatingActionButton mPauseButton = null;
   private GLAudioVisualizationView audioVisualization;
 
-  //private boolean mIsRecording = false;
-  //private boolean mIsRecordingPaused = true;
-
   private TextView chronometer;
-  //private boolean mIsServiceBound = false;
-  //private AudioRecordService mAudioRecordService;
+  private boolean mIsServiceBound = false;
+  private AudioRecordService mAudioRecordService;
   private ObjectAnimator alphaAnimator;
   private FloatingActionButton mSettingsButton;
   private FloatingActionButton mPlayListBtn;
@@ -115,111 +124,6 @@ public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
     audioRecordPresenter.onViewInitialised();
   }
 
-  //private void onChangeRecord() {
-  //  Intent intent = new Intent(mContext, AudioRecordService.class);
-  //  if (!mIsRecording) {
-  //    mIsRecording = true;
-  //    mRecordButton.setImageResource(R.drawable.ic_media_stop);
-  //    mContext.startService(intent);
-  //    bindToService();
-  //    mPauseButton.setVisibility(View.VISIBLE);
-  //    mContext.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-  //  } else {
-  //    stopRecording();
-  //  }
-  //}
-
-  //private void stopRecording() {
-  //  Intent intent = new Intent(mContext, AudioRecordService.class);
-  //  mIsRecording = false;
-  //  mIsRecordingPaused = false;
-  //  mRecordButton.setImageResource(R.drawable.ic_media_record);
-  //  mContext.stopService(intent);
-  //  mContext.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-  //  unbindService();
-  //  setChronometer(new AudioRecorder.RecordTime());
-  //  mPauseButton.setVisibility(View.GONE);
-  //  togglePauseBtn();
-  //}
-
-  //private final BroadcastReceiver stopServiceReceiver = new BroadcastReceiver() {
-  //  @Override public void onReceive(Context context, Intent intent) {
-  //    if (!intent.hasExtra(AppConstants.ACTION_IN_SERVICE)) return;
-  //    String actionExtra = intent.getStringExtra(AppConstants.ACTION_IN_SERVICE);
-  //    switch (actionExtra) {
-  //      case AppConstants.ACTION_PAUSE:
-  //        mIsRecordingPaused = true;
-  //        togglePauseBtn();
-  //        break;
-  //      case AppConstants.ACTION_RESUME:
-  //        mIsRecordingPaused = false;
-  //        togglePauseBtn();
-  //        break;
-  //      case AppConstants.ACTION_STOP:
-  //        stopRecording();
-  //        break;
-  //    }
-  //  }
-  //};
-
-  //private void unRegisterLocalBroadCastReceiver() {
-  //  LocalBroadcastManager.getInstance(mContext).unregisterReceiver(stopServiceReceiver);
-  //}
-  //
-  //private void registerLocalBroadCastReceiver() {
-  //  LocalBroadcastManager.getInstance(mContext)
-  //      .registerReceiver(stopServiceReceiver, new IntentFilter(AppConstants.ACTION_IN_SERVICE));
-  //}
-
-  //private void bindToService() {
-  //  Intent intent = new Intent(mContext, AudioRecordService.class);
-  //  mContext.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-  //  registerLocalBroadCastReceiver();
-  //}
-
-  //public Disposable timerDisposable;
-  //private final ServiceConnection serviceConnection = new ServiceConnection() {
-  //  @Override public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-  //    mAudioRecordService =
-  //        ((AudioRecordService.ServiceBinder) iBinder).getService();
-  //    Log.i("Tesing", " " + mAudioRecordService.isRecording() + " recording");
-  //    mIsRecording = mAudioRecordService.isRecording();
-  //    mIsServiceBound = true;
-  //    if (mIsRecording) {
-  //      mIsRecordingPaused = mAudioRecordService.isPaused();
-  //      onPauseRecord();
-  //      audioVisualization.linkTo(mAudioRecordService.getHandler());
-  //      mRecordButton.setImageResource(R.drawable.ic_media_stop);
-  //      timerDisposable = mAudioRecordService.subscribeForTimer(recordTimeConsumer);
-  //    } else {
-  //      unbindService();
-  //    }
-  //  }
-
-  //  @Override public void onServiceDisconnected(ComponentName componentName) {
-  //  }
-  //};
-
-  //private final Consumer<AudioRecorder.RecordTime> recordTimeConsumer = this::setChronometer;
-
-  //private void setChronometer(AudioRecorder.RecordTime recordTime) {
-  //  chronometer.setText(
-  //      String.format(Locale.getDefault(), getString(R.string.record_time_format), recordTime.hours,
-  //          recordTime.minutes,
-  //          recordTime.seconds));
-  //}
-  //
-  //private void onPauseRecord() {
-  //  mPauseButton.setVisibility(View.VISIBLE);
-  //  if (mIsRecordingPaused) {
-  //    mAudioRecordService.pauseRecord();
-  //    setAsResumeBtn();
-  //  } else {
-  //    mAudioRecordService.resumeRecord();
-  //    setAsPauseBtn();
-  //  }
-  //}
-
   private void setAsPauseBtn() {
     alphaAnimator.cancel();
     chronometer.setAlpha(1.0f);
@@ -234,19 +138,8 @@ public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
   @Override public void onDestroy() {
     super.onDestroy();
     audioVisualization.release();
-    audioRecordPresenter.onDestroy();
+    audioRecordPresenter.onDetach();
   }
-
-  //private void unbindService() {
-  //  unRegisterLocalBroadCastReceiver();
-  //  if (timerDisposable != null) {
-  //    timerDisposable.dispose();
-  //  }
-  //  if (mIsServiceBound) {
-  //    mIsServiceBound = false;
-  //    mContext.unbindService(serviceConnection);
-  //  }
-  //}
 
   @Override public void refreshTheme(ThemeHelper themeHelper) {
     GLAudioVisualizationView.ColorsBuilder colorsBuilder =
@@ -265,7 +158,7 @@ public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
     chronometer.setText(text);
   }
 
-  @Override public void togglePauseButton() {
+  @Override public void togglePauseStatus() {
     if (audioRecordPresenter.isPaused()) {
       setAsResumeBtn();
     } else {
@@ -273,13 +166,25 @@ public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
     }
   }
 
+  @Override
+  public void pauseRecord() {
+    mAudioRecordService.pauseRecord();
+    togglePauseStatus();
+  }
+
+  @Override
+  public void resumeRecord() {
+    mAudioRecordService.resumeRecord();
+    togglePauseStatus();
+  }
+
   @Override public void toggleRecordButton() {
     mRecordButton.setImageResource(
         audioRecordPresenter.isRecording() ? R.drawable.ic_media_stop : R.drawable.ic_media_record);
   }
 
-  @Override public void linkGLViewToHandler(AudioRecordingDbmHandler dbmHandler) {
-    audioVisualization.linkTo(dbmHandler);
+  @Override public void linkGLViewToHandler() {
+    audioVisualization.linkTo(mAudioRecordService.getHandler());
   }
 
   @Override public void setPauseButtonVisible() {
@@ -297,4 +202,68 @@ public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
   @Override public void clearScreenOnFlag() {
     mContext.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
   }
+
+  @Override public void startServiceAndBind() {
+    Intent intent = new Intent(mContext, AudioRecordService.class);
+    mContext.startService(intent);
+    bindToService();
+  }
+
+  @Override
+  public void bindToService() {
+    Intent intent = new Intent(mContext, AudioRecordService.class);
+    mContext.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    registerLocalBroadCastReceiver();
+  }
+
+  private final ServiceConnection serviceConnection = new ServiceConnection() {
+    @Override public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+      mIsServiceBound = true;
+      mAudioRecordService =
+          ((AudioRecordService.ServiceBinder) iBinder).getService();
+      Log.i("Tesing", " " + mAudioRecordService.isRecording() + " recording");
+      audioRecordPresenter.onServiceStatusAvailable(mAudioRecordService.isRecording(),
+          mAudioRecordService.isPaused());
+    }
+
+    @Override public void onServiceDisconnected(ComponentName componentName) {
+    }
+  };
+
+  @Override
+  public void unbindFromService() {
+    unRegisterLocalBroadCastReceiver();
+    if (mIsServiceBound) {
+      mIsServiceBound = false;
+      mContext.unbindService(serviceConnection);
+    }
+  }
+
+  @Override
+  public Disposable subscribeForTimer(Consumer<AudioRecorder.RecordTime> recordTimeConsumer) {
+    return mAudioRecordService.subscribeForTimer(recordTimeConsumer);
+  }
+
+  private void unRegisterLocalBroadCastReceiver() {
+    LocalBroadcastManager.getInstance(mContext).unregisterReceiver(serviceUpdateReceiver);
+  }
+
+  private void registerLocalBroadCastReceiver() {
+    LocalBroadcastManager.getInstance(mContext)
+        .registerReceiver(serviceUpdateReceiver, new IntentFilter(AppConstants.ACTION_IN_SERVICE));
+  }
+
+  @Override public void stopServiceAndUnBind() {
+    Intent intent = new Intent(mContext, AudioRecordService.class);
+    mContext.stopService(intent);
+    unbindFromService();
+  }
+
+  private final BroadcastReceiver serviceUpdateReceiver = new BroadcastReceiver() {
+    @Override public void onReceive(Context context, Intent intent) {
+      if (!intent.hasExtra(AppConstants.ACTION_IN_SERVICE)) return;
+      String actionExtra = intent.getStringExtra(AppConstants.ACTION_IN_SERVICE);
+      audioRecordPresenter.onServiceUpdateReceived(actionExtra);
+    }
+  };
 }

@@ -8,5 +8,6 @@ public interface AudioRecordPresenter<V extends AudioRecordMVPView> extends IMVP
   boolean isRecording();
   boolean isPaused();
   void onViewInitialised();
-  void onDestroy();
+  void onServiceStatusAvailable(boolean isRecoding, boolean isRecordingPaused);
+  void onServiceUpdateReceived(String actionExtra);
 }
