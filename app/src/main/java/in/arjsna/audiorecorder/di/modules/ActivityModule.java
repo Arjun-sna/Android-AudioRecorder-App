@@ -11,6 +11,7 @@ import in.arjsna.audiorecorder.audiorecording.AudioRecordPresenterImpl;
 import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.di.ActivityContext;
+import in.arjsna.audiorecorder.di.PerActivity;
 import io.reactivex.disposables.CompositeDisposable;
 import java.util.ArrayList;
 
@@ -44,7 +45,9 @@ public class ActivityModule {
     return new PlayListAdapter(context, recordItemDataSource, new ArrayList<RecordingItem>());
   }
 
-  @Provides AudioRecordPresenter<AudioRecordMVPView> provideAudioRecordPresenter(
+  @Provides
+  @PerActivity
+  AudioRecordPresenter<AudioRecordMVPView> provideAudioRecordPresenter(
       AudioRecordPresenterImpl<AudioRecordMVPView> audioRecordPresenter) {
     return audioRecordPresenter;
   }

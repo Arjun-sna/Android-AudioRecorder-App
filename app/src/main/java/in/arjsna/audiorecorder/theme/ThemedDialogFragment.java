@@ -10,8 +10,8 @@ public abstract class ThemedDialogFragment extends DialogFragment implements The
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
-        /*if (context instanceof ThemedActivity)
-            themeHelper = ((ThemedActivity) context).getThemeHelper();*/
+        /*if (mContext instanceof ThemedActivity)
+            themeHelper = ((ThemedActivity) mContext).getThemeHelper();*/
     themeHelper = ThemeHelper.getInstance(getContext());
   }
 

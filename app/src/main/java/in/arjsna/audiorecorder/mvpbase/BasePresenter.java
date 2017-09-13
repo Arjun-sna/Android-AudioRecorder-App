@@ -1,7 +1,6 @@
 package in.arjsna.audiorecorder.mvpbase;
 
 import io.reactivex.disposables.CompositeDisposable;
-import javax.inject.Inject;
 
 public class BasePresenter<V extends IMVPView> implements IMVPPresenter<V> {
   private V mAttachedView;
