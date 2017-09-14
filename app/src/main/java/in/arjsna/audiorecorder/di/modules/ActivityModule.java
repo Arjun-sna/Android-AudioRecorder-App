@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import dagger.Module;
 import dagger.Provides;
-import in.arjsna.audiorecorder.adapters.PlayListAdapter;
+import in.arjsna.audiorecorder.playlist.PlayListAdapter;
 import in.arjsna.audiorecorder.audiorecording.AudioRecordMVPView;
 import in.arjsna.audiorecorder.audiorecording.AudioRecordPresenter;
 import in.arjsna.audiorecorder.audiorecording.AudioRecordPresenterImpl;

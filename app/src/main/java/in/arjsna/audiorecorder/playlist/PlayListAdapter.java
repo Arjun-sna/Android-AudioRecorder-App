@@ -1,4 +1,4 @@
-package in.arjsna.audiorecorder.adapters;
+package in.arjsna.audiorecorder.playlist;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -39,6 +39,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
 
   private final Context mContext;
   private final ArrayList<RecordingItem> recordingItems;
+  private PlayListFragment listItemEventsListener;
 
   public PlayListAdapter(Context context, RecordItemDataSource recordItemDataSource,
       ArrayList<RecordingItem> recordingItems) {
@@ -50,63 +51,65 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
 
   @Override public void onBindViewHolder(final RecordingsViewHolder holder, int position) {
 
-    RecordingItem item = recordingItems.get(position);
-    long itemDuration = item.getLength();
+    RecordingItem currentRecording = recordingItems.get(position);
+    long itemDuration = currentRecording.getLength();
     long minutes = TimeUnit.MILLISECONDS.toMinutes(itemDuration);
     long seconds =
         TimeUnit.MILLISECONDS.toSeconds(itemDuration) - TimeUnit.MINUTES.toSeconds(minutes);
 
-    holder.vName.setText(item.getName());
+    holder.vName.setText(currentRecording.getName());
     holder.vLength.setText(
         String.format(mContext.getString(R.string.play_time_format), minutes, seconds));
-    holder.vDateAdded.setText(DateUtils.formatDateTime(mContext, item.getTime(),
+    holder.vDateAdded.setText(DateUtils.formatDateTime(mContext, currentRecording.getTime(),
         DateUtils.FORMAT_SHOW_DATE
             | DateUtils.FORMAT_NUMERIC_DATE
             | DateUtils.FORMAT_SHOW_TIME
             | DateUtils.FORMAT_SHOW_YEAR));
 
     holder.cardView.setOnClickListener(view -> {
-      try {
-        PlaybackFragment playbackFragment =
-            new PlaybackFragment().newInstance(recordingItems.get(position));
-        FragmentTransaction transaction =
-            ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction();
-        playbackFragment.show(transaction, "dialog_playback");
-      } catch (Exception e) {
-        Log.e(LOG_TAG, "exception", e);
-      }
+      listItemEventsListener.onItemClick(position, currentRecording);
+      //try {
+      //  PlaybackFragment playbackFragment =
+      //      new PlaybackFragment().newInstance(recordingItems.get(position));
+      //  FragmentTransaction transaction =
+      //      ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction();
+      //  playbackFragment.show(transaction, "dialog_playback");
+      //} catch (Exception e) {
+      //  Log.e(LOG_TAG, "exception", e);
+      //}
     });
 
     holder.cardView.setOnLongClickListener(v -> {
-
-      ArrayList<String> entrys = new ArrayList<>();
-      entrys.add(mContext.getString(R.string.dialog_file_share));
-      entrys.add(mContext.getString(R.string.dialog_file_rename));
-      entrys.add(mContext.getString(R.string.dialog_file_delete));
-
-      final CharSequence[] items = entrys.toArray(new CharSequence[entrys.size()]);
-
-      // File delete confirm
-      AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-      builder.setTitle(mContext.getString(R.string.dialog_title_options));
-      builder.setItems(items, (dialog, listItem) -> {
-        if (listItem == 0) {
-          shareFileDialog(holder.getAdapterPosition());
-        }
-        if (listItem == 1) {
-          renameFileDialog(holder.getAdapterPosition());
-        } else if (listItem == 2) {
-          deleteFileDialog(holder.getAdapterPosition());
-        }
-      });
-      builder.setCancelable(true);
-      builder.setNegativeButton(mContext.getString(R.string.dialog_action_cancel),
-          (dialog, id) -> dialog.cancel());
-
-      AlertDialog alert = builder.create();
-      alert.show();
-
+      listItemEventsListener.onItemLongClick(position, currentRecording);
       return false;
+      //ArrayList<String> entrys = new ArrayList<>();
+      //entrys.add(mContext.getString(R.string.dialog_file_share));
+      //entrys.add(mContext.getString(R.string.dialog_file_rename));
+      //entrys.add(mContext.getString(R.string.dialog_file_delete));
+      //
+      //final CharSequence[] items = entrys.toArray(new CharSequence[entrys.size()]);
+      //
+      //// File delete confirm
+      //AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+      //builder.setTitle(mContext.getString(R.string.dialog_title_options));
+      //builder.setItems(items, (dialog, listItem) -> {
+      //  if (listItem == 0) {
+      //    shareFileDialog(holder.getAdapterPosition());
+      //  }
+      //  if (listItem == 1) {
+      //    renameFileDialog(holder.getAdapterPosition());
+      //  } else if (listItem == 2) {
+      //    deleteFileDialog(holder.getAdapterPosition());
+      //  }
+      //});
+      //builder.setCancelable(true);
+      //builder.setNegativeButton(mContext.getString(R.string.dialog_action_cancel),
+      //    (dialog, id) -> dialog.cancel());
+      //
+      //AlertDialog alert = builder.create();
+      //alert.show();
+      //
+      //return false;
     });
   }
 
@@ -119,6 +122,10 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   public void addAllAndNotify(ArrayList<RecordingItem> recordingItems) {
     this.recordingItems.addAll(recordingItems);
     notifyDataSetChanged();
+  }
+
+  public void setListItemEventsListener(PlayListFragment listItemEventsListener) {
+    this.listItemEventsListener = listItemEventsListener;
   }
 
   static class RecordingsViewHolder extends RecyclerView.ViewHolder {
@@ -159,65 +166,65 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     //user deletes a saved recording out of the application through another application
   }
 
-  private Single<Integer> rename(int position, String name) {
-    return Single.create((SingleOnSubscribe<Integer>) e -> {
-      String mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-      mFilePath += "/SoundRecorder/" + name;
-      File f = new File(mFilePath);
+  //private Single<Integer> rename(int position, String name) {
+  //  return Single.create((SingleOnSubscribe<Integer>) e -> {
+  //    String mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+  //    mFilePath += "/SoundRecorder/" + name;
+  //    File f = new File(mFilePath);
+  //
+  //    if (f.exists() && !f.isDirectory()) {
+  //      e.onError(new Exception(mContext.getString(R.string.toast_file_exists)));
+  //    } else {
+  //      RecordingItem currentItem = recordingItems.get(position);
+  //      File oldFilePath = new File(currentItem.getFilePath());
+  //      oldFilePath.renameTo(f);
+  //      currentItem.setName(name);
+  //      recordItemDataSource.updateRecordItem(currentItem);
+  //      e.onSuccess(position);
+  //    }
+  //  }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+  //}
 
-      if (f.exists() && !f.isDirectory()) {
-        e.onError(new Exception(mContext.getString(R.string.toast_file_exists)));
-      } else {
-        RecordingItem currentItem = recordingItems.get(position);
-        File oldFilePath = new File(currentItem.getFilePath());
-        oldFilePath.renameTo(f);
-        currentItem.setName(name);
-        recordItemDataSource.updateRecordItem(currentItem);
-        e.onSuccess(position);
-      }
-    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-  }
+  //private void shareFileDialog(int position) {
+  //  Intent shareIntent = new Intent();
+  //  shareIntent.setAction(Intent.ACTION_SEND);
+  //  shareIntent.putExtra(Intent.EXTRA_STREAM,
+  //      Uri.fromFile(new File(recordingItems.get(position).getFilePath())));
+  //  shareIntent.setType("audio/mp4");
+  //  mContext.startActivity(Intent.createChooser(shareIntent, mContext.getText(R.string.send_to)));
+  //}
 
-  private void shareFileDialog(int position) {
-    Intent shareIntent = new Intent();
-    shareIntent.setAction(Intent.ACTION_SEND);
-    shareIntent.putExtra(Intent.EXTRA_STREAM,
-        Uri.fromFile(new File(recordingItems.get(position).getFilePath())));
-    shareIntent.setType("audio/mp4");
-    mContext.startActivity(Intent.createChooser(shareIntent, mContext.getText(R.string.send_to)));
-  }
-
-  private void renameFileDialog(final int position) {
-    // File rename dialog
-    AlertDialog.Builder renameFileBuilder = new AlertDialog.Builder(mContext);
-
-    View view = inflater.inflate(R.layout.dialog_rename_file, null);
-
-    final EditText input = (EditText) view.findViewById(R.id.new_name);
-
-    renameFileBuilder.setTitle(mContext.getString(R.string.dialog_title_rename));
-    renameFileBuilder.setCancelable(true);
-    renameFileBuilder.setPositiveButton(mContext.getString(R.string.dialog_action_ok),
-        (dialog, id) -> {
-          String value = input.getText().toString().trim() + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
-          rename(position, value).subscribe(new DisposableSingleObserver<Integer>() {
-            @Override public void onSuccess(Integer removedPosition) {
-              notifyItemChanged(removedPosition);
-            }
-
-            @Override public void onError(Throwable e) {
-              Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-          });
-          dialog.cancel();
-        });
-    renameFileBuilder.setNegativeButton(mContext.getString(R.string.dialog_action_cancel),
-        (dialog, id) -> dialog.cancel());
-
-    renameFileBuilder.setView(view);
-    AlertDialog alert = renameFileBuilder.create();
-    alert.show();
-  }
+  //private void renameFileDialog(final int position) {
+  //  // File rename dialog
+  //  AlertDialog.Builder renameFileBuilder = new AlertDialog.Builder(mContext);
+  //
+  //  View view = inflater.inflate(R.layout.dialog_rename_file, null);
+  //
+  //  final EditText input = (EditText) view.findViewById(R.id.new_name);
+  //
+  //  renameFileBuilder.setTitle(mContext.getString(R.string.dialog_title_rename));
+  //  renameFileBuilder.setCancelable(true);
+  //  renameFileBuilder.setPositiveButton(mContext.getString(R.string.dialog_action_ok),
+  //      (dialog, id) -> {
+  //        String value = input.getText().toString().trim() + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
+  //        rename(position, value).subscribe(new DisposableSingleObserver<Integer>() {
+  //          @Override public void onSuccess(Integer removedPosition) {
+  //            notifyItemChanged(removedPosition);
+  //          }
+  //
+  //          @Override public void onError(Throwable e) {
+  //            Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+  //          }
+  //        });
+  //        dialog.cancel();
+  //      });
+  //  renameFileBuilder.setNegativeButton(mContext.getString(R.string.dialog_action_cancel),
+  //      (dialog, id) -> dialog.cancel());
+  //
+  //  renameFileBuilder.setView(view);
+  //  AlertDialog alert = renameFileBuilder.create();
+  //  alert.show();
+  //}
 
   private void deleteFileDialog(final int position) {
     // File delete confirm
