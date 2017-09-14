@@ -1,4 +1,4 @@
-package in.arjsna.audiorecorder.recording;
+package in.arjsna.audiorecorder.recordingservice;
 
 import android.content.Context;
 import android.media.AudioRecord;
@@ -17,6 +17,7 @@ import io.reactivex.subscribers.DisposableSubscriber;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import javax.inject.Inject;
 
 public class AudioRecorder implements IAudioRecorder {
 
@@ -42,8 +43,9 @@ public class AudioRecorder implements IAudioRecorder {
   private final AtomicBoolean mIsPaused = new AtomicBoolean(false);
   private RecordTime currentRecordTime;
 
-  public AudioRecorder(Context applicationContext) {
-    this.audioSaveHelper = new AudioSaveHelper(applicationContext);
+  @Inject
+  public AudioRecorder(AudioSaveHelper audioSaveHelper) {
+    this.audioSaveHelper = audioSaveHelper;
   }
 
   @SuppressWarnings("ResultOfMethodCallIgnored") private void onRecordFailure() {

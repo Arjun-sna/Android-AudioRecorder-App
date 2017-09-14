@@ -1,10 +1,11 @@
-package in.arjsna.audiorecorder.recording;
+package in.arjsna.audiorecorder.recordingservice;
 
 import android.util.Log;
 import in.arjsna.audiorecorder.audiovisualization.DbmHandler;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
+import javax.inject.Inject;
 
 public class AudioRecordingDbmHandler extends DbmHandler<byte[]> {
 
@@ -13,6 +14,10 @@ public class AudioRecordingDbmHandler extends DbmHandler<byte[]> {
   private float[] dbs;
   private float[] allAmps;
   private Disposable disposableSubscriber;
+
+  @Inject
+  public AudioRecordingDbmHandler() {
+  }
 
   @Override protected void onDataReceivedImpl(byte[] bytes, int layersCount, float[] dBmArray,
       float[] ampsArray) {

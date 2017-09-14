@@ -1,4 +1,4 @@
-package in.arjsna.audiorecorder.recording;
+package in.arjsna.audiorecorder.recordingservice;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -12,17 +12,23 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import com.orhanobut.hawk.Hawk;
 import in.arjsna.audiorecorder.AppConstants;
+import in.arjsna.audiorecorder.AudioRecorderApp;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.activities.MainActivity;
+import in.arjsna.audiorecorder.di.components.DaggerServiceComponent;
+import in.arjsna.audiorecorder.di.components.ServiceComponent;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import java.util.Locale;
+import javax.inject.Inject;
 
 public class AudioRecordService extends Service {
   private static final String LOG_TAG = "RecordingService";
 
-  private AudioRecorder audioRecorder;
-  private AudioRecordingDbmHandler handler;
+  @Inject
+  public AudioRecorder audioRecorder;
+  @Inject
+  public AudioRecordingDbmHandler handler;
   private ServiceBinder mIBinder;
   private NotificationManager mNotificationManager;
   private static final int NOTIFY_ID = 100;
@@ -38,12 +44,15 @@ public class AudioRecordService extends Service {
     return audioRecorder.isRecording();
   }
 
-  @Override public void onCreate() {
+  @Override
+  public void onCreate() {
     super.onCreate();
-    mIBinder = new ServiceBinder();
-    audioRecorder = new AudioRecorder(getApplicationContext());
-    handler = new AudioRecordingDbmHandler();
+    ServiceComponent serviceComponent = DaggerServiceComponent.builder()
+        .applicationComponent(((AudioRecorderApp) getApplication()).getApplicationComponent())
+        .build();
+    serviceComponent.inject(this);
     handler.addRecorder(audioRecorder);
+    mIBinder = new ServiceBinder();
     mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
   }
 

@@ -1,4 +1,4 @@
-package in.arjsna.audiorecorder.fragments;
+package in.arjsna.audiorecorder.playback;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

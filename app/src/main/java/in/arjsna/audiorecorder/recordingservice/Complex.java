@@ -1,4 +1,4 @@
-package in.arjsna.audiorecorder.recording;
+package in.arjsna.audiorecorder.recordingservice;
 
 /******************************************************************************
  *  Compilation:  javac Complex.java

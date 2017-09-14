@@ -12,8 +12,8 @@ import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import in.arjsna.audiorecorder.R;
-import in.arjsna.audiorecorder.fragments.RecordFragment;
-import in.arjsna.audiorecorder.theme.ThemedActivity;
+import in.arjsna.audiorecorder.audiorecording.RecordFragment;
+import in.arjsna.audiorecorder.mvpbase.BaseActivity;
 
 public class MainActivity extends BaseActivity {
 
