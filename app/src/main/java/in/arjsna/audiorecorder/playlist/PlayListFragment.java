@@ -146,11 +146,15 @@ public class PlayListFragment extends BaseFragment
     Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
   }
 
+  @Override public void notifyListItemRemove(Integer position) {
+    mPlayListAdapter.removeItemAndNotify(position);
+  }
+
   @Override public void onItemLongClick(int position, RecordingItem recordingItem) {
     ArrayList<String> fileOptions = new ArrayList<>();
-    fileOptions.add(getActivity().getString(R.string.dialog_file_share));
-    fileOptions.add(getActivity().getString(R.string.dialog_file_rename));
-    fileOptions.add(getActivity().getString(R.string.dialog_file_delete));
+    fileOptions.add(getString(R.string.dialog_file_share));
+    fileOptions.add(getString(R.string.dialog_file_rename));
+    fileOptions.add(getString(R.string.dialog_file_delete));
 
     final CharSequence[] items = fileOptions.toArray(new CharSequence[fileOptions.size()]);
 
@@ -166,7 +170,7 @@ public class PlayListFragment extends BaseFragment
           renameFileDialog(recordingItem, position);
           break;
         case 2:
-          deleteFileDialog(recordingItem);
+          deleteFileDialog(recordingItem, position);
           break;
       }
     });
@@ -206,14 +210,14 @@ public class PlayListFragment extends BaseFragment
     alert.show();
   }
 
-  private void deleteFileDialog(final RecordingItem recordingItem) {
+  private void deleteFileDialog(final RecordingItem recordingItem, int position) {
     AlertDialog.Builder confirmDelete = new AlertDialog.Builder(getActivity());
     confirmDelete.setTitle(getString(R.string.dialog_title_delete));
     confirmDelete.setMessage(getString(R.string.dialog_text_delete));
     confirmDelete.setCancelable(true);
     confirmDelete.setPositiveButton(getString(R.string.dialog_action_yes),
         (dialog, id) -> {
-          playListPresenter.deleteFile(recordingItem);
+          playListPresenter.deleteFile(recordingItem, position);
           dialog.cancel();
         });
     confirmDelete.setNegativeButton(getString(R.string.dialog_action_no),

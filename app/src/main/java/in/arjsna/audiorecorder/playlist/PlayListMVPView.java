@@ -22,4 +22,6 @@ public interface PlayListMVPView extends IMVPView {
   void notifyListItemChange(Integer position);
 
   void showError(String message);
+
+  void notifyListItemRemove(Integer position);
 }

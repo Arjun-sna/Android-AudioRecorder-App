@@ -1,7 +1,6 @@
 package in.arjsna.audiorecorder.playlist;
 
 import android.os.Environment;
-import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.mvpbase.BasePresenter;
@@ -31,7 +30,7 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
     getAttachedView().startWatchingForFileChanges();
   }
 
-  @Override public void renameFile(RecordingItem recordingItem, int adapterPosition,  String value) {
+  @Override public void renameFile(RecordingItem recordingItem, int adapterPosition, String value) {
     rename(recordingItem, adapterPosition, value).subscribe(new SingleObserver<Integer>() {
       @Override public void onSubscribe(Disposable d) {
 
@@ -49,24 +48,49 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
 
   private Single<Integer> rename(RecordingItem recordingItem, int adapterPosition, String name) {
     return Single.create((SingleOnSubscribe<Integer>) e -> {
-      String mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-      mFilePath += "/SoundRecorder/" + name;
-      File f = new File(mFilePath);
-
+      File f = new File(
+          Environment.getExternalStorageDirectory().getAbsolutePath() + "/SoundRecorder/" + name);
       if (f.exists() && !f.isDirectory()) {
         e.onError(new Exception("File with same name already exists"));
       } else {
         File oldFilePath = new File(recordingItem.getFilePath());
-        oldFilePath.renameTo(f);
-        recordingItem.setName(name);
-        recordItemDataSource.updateRecordItem(recordingItem);
-        e.onSuccess(adapterPosition);
+        if (oldFilePath.renameTo(f)) {
+          recordingItem.setName(name);
+          recordItemDataSource.updateRecordItem(recordingItem);
+          e.onSuccess(adapterPosition);
+        } else {
+          e.onError(new Throwable("Cannot Rename file. Please try again"));
+        }
       }
     }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
   }
 
-  @Override public void deleteFile(RecordingItem recordingItem) {
+  @Override public void deleteFile(RecordingItem recordingItem, int position) {
+    removeFile(recordingItem, position).subscribe(new SingleObserver<Integer>() {
+      @Override public void onSubscribe(Disposable d) {
 
+      }
+
+      @Override public void onSuccess(Integer position) {
+        getAttachedView().notifyListItemRemove(position);
+      }
+
+      @Override public void onError(Throwable e) {
+        getAttachedView().showError(e.getMessage());
+      }
+    });
+  }
+
+  private Single<Integer> removeFile(RecordingItem recordingItem, int position) {
+    return Single.create((SingleOnSubscribe<Integer>) e -> {
+      File file = new File(recordingItem.getFilePath());
+      if (file.delete()) {
+        recordItemDataSource.deleteRecordItem(recordingItem);
+        e.onSuccess(position);
+      } else {
+        e.onError(new Exception("File deletion failed"));
+      }
+    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
   }
 
   @Override public void onDetach() {

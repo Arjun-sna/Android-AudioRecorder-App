@@ -119,13 +119,18 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     return new RecordingsViewHolder(itemView);
   }
 
-  public void addAllAndNotify(ArrayList<RecordingItem> recordingItems) {
+  void addAllAndNotify(ArrayList<RecordingItem> recordingItems) {
     this.recordingItems.addAll(recordingItems);
     notifyDataSetChanged();
   }
 
-  public void setListItemEventsListener(PlayListFragment listItemEventsListener) {
+  void setListItemEventsListener(PlayListFragment listItemEventsListener) {
     this.listItemEventsListener = listItemEventsListener;
+  }
+
+  void removeItemAndNotify(int position) {
+    recordingItems.remove(position);
+    notifyItemRemoved(position);
   }
 
   static class RecordingsViewHolder extends RecyclerView.ViewHolder {
@@ -147,19 +152,19 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     return recordingItems.size();
   }
 
-  private Single<String> remove(int position) {
-    return Single.create((SingleOnSubscribe<String>) e -> {
-      RecordingItem recordingItem = recordingItems.get(position);
-      File file = new File(recordingItem.getFilePath());
-      if (file.delete()) {
-        recordItemDataSource.deleteRecordItem(recordingItem);
-        recordingItems.remove(position);
-        e.onSuccess(recordingItem.getName());
-      } else {
-        e.onError(new Exception("File deletion failed"));
-      }
-    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-  }
+  //private Single<String> remove(int position) {
+  //  return Single.create((SingleOnSubscribe<String>) e -> {
+  //    RecordingItem recordingItem = recordingItems.get(position);
+  //    File file = new File(recordingItem.getFilePath());
+  //    if (file.delete()) {
+  //      recordItemDataSource.deleteRecordItem(recordingItem);
+  //      recordingItems.remove(position);
+  //      e.onSuccess(recordingItem.getName());
+  //    } else {
+  //      e.onError(new Exception("File deletion failed"));
+  //    }
+  //  }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+  //}
 
   //TODO
   public void removeOutOfApp(String filePath) {
@@ -226,37 +231,37 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   //  alert.show();
   //}
 
-  private void deleteFileDialog(final int position) {
-    // File delete confirm
-    AlertDialog.Builder confirmDelete = new AlertDialog.Builder(mContext);
-    confirmDelete.setTitle(mContext.getString(R.string.dialog_title_delete));
-    confirmDelete.setMessage(mContext.getString(R.string.dialog_text_delete));
-    confirmDelete.setCancelable(true);
-    confirmDelete.setPositiveButton(mContext.getString(R.string.dialog_action_yes),
-        (dialog, id) -> {
-          try {
-            remove(position).subscribe(new DisposableSingleObserver<String>() {
-              @Override public void onSuccess(String removedFileName) {
-                Toast.makeText(mContext,
-                    String.format(mContext.getString(R.string.toast_file_delete), removedFileName),
-                    Toast.LENGTH_SHORT).show();
-                notifyItemRemoved(position);
-              }
-
-              @Override public void onError(Throwable e) {
-                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
-              }
-            });
-          } catch (Exception e) {
-            Log.e(LOG_TAG, "exception", e);
-          }
-
-          dialog.cancel();
-        });
-    confirmDelete.setNegativeButton(mContext.getString(R.string.dialog_action_no),
-        (dialog, id) -> dialog.cancel());
-
-    AlertDialog alert = confirmDelete.create();
-    alert.show();
-  }
+  //private void deleteFileDialog(final int position) {
+  //  // File delete confirm
+  //  AlertDialog.Builder confirmDelete = new AlertDialog.Builder(mContext);
+  //  confirmDelete.setTitle(mContext.getString(R.string.dialog_title_delete));
+  //  confirmDelete.setMessage(mContext.getString(R.string.dialog_text_delete));
+  //  confirmDelete.setCancelable(true);
+  //  confirmDelete.setPositiveButton(mContext.getString(R.string.dialog_action_yes),
+  //      (dialog, id) -> {
+  //        try {
+  //          remove(position).subscribe(new DisposableSingleObserver<String>() {
+  //            @Override public void onSuccess(String removedFileName) {
+  //              Toast.makeText(mContext,
+  //                  String.format(mContext.getString(R.string.toast_file_delete), removedFileName),
+  //                  Toast.LENGTH_SHORT).show();
+  //              notifyItemRemoved(position);
+  //            }
+  //
+  //            @Override public void onError(Throwable e) {
+  //              Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+  //            }
+  //          });
+  //        } catch (Exception e) {
+  //          Log.e(LOG_TAG, "exception", e);
+  //        }
+  //
+  //        dialog.cancel();
+  //      });
+  //  confirmDelete.setNegativeButton(mContext.getString(R.string.dialog_action_no),
+  //      (dialog, id) -> dialog.cancel());
+  //
+  //  AlertDialog alert = confirmDelete.create();
+  //  alert.show();
+  //}
 }
