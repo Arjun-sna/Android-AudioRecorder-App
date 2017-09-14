@@ -25,7 +25,8 @@ public class AudioRecordPresenterImpl<V extends AudioRecordMVPView> extends Base
     super(compositeDisposable);
   }
 
-  @Override public void onToggleRecodingStatus() {
+  @Override
+  public void onToggleRecodingStatus() {
     if (!mIsRecording) {
       mIsRecording = true;
       getAttachedView().startServiceAndBind();

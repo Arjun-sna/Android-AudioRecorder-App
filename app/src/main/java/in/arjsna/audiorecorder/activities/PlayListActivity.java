@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import in.arjsna.audiorecorder.R;
-import in.arjsna.audiorecorder.fragments.PlayListFragment;
+import in.arjsna.audiorecorder.playlist.PlayListFragment;
 import in.arjsna.audiorecorder.mvpbase.BaseActivity;
 
 public class PlayListActivity extends BaseActivity {

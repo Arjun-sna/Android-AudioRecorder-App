@@ -1,4 +1,4 @@
-package in.arjsna.audiorecorder.fragments;
+package in.arjsna.audiorecorder.playlist;
 
 import android.os.Bundle;
 import android.os.FileObserver;
@@ -12,28 +12,22 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.adapters.PlayListAdapter;
-import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.di.components.ActivityComponent;
 import in.arjsna.audiorecorder.mvpbase.BaseFragment;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import javax.inject.Inject;
 
-public class PlayListFragment extends BaseFragment {
+public class PlayListFragment extends BaseFragment implements PlayListMVPView {
   private static final String LOG_TAG = "PlayListFragment";
 
   @Inject
   public PlayListAdapter mPlayListAdapter;
   @Inject
-  public RecordItemDataSource recordItemDataSource;
-  @Inject
-  public CompositeDisposable compositeDisposable;
-  @Inject
   public LinearLayoutManager llm;
+  @Inject
+  public PlayListPresenter<PlayListMVPView> playListPresenter;
   private RecyclerView mRecordingsListView;
   private TextView emptyListLabel;
 
@@ -47,8 +41,8 @@ public class PlayListFragment extends BaseFragment {
     ActivityComponent activityComponent = getActivityComponent();
     if (activityComponent != null) {
       activityComponent.inject(this);
+      playListPresenter.onAttach(this);
     }
-    observer.startWatching();
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,22 +65,7 @@ public class PlayListFragment extends BaseFragment {
     mRecordingsListView.setLayoutManager(llm);
     mRecordingsListView.setItemAnimator(new DefaultItemAnimator());
     mRecordingsListView.setAdapter(mPlayListAdapter);
-    fillAdapter();
-  }
-
-  private void fillAdapter() {
-    //ArrayList<RecordingItem> recordingItems = new ArrayList<>();
-    compositeDisposable.add(recordItemDataSource.getAllRecordings()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe((recordingItem) -> {
-          if (recordingItem.size() > 0) {
-            mPlayListAdapter.addAllAndNotify((ArrayList<RecordingItem>) recordingItem);
-          } else {
-            emptyListLabel.setVisibility(View.VISIBLE);
-            mRecordingsListView.setVisibility(View.GONE);
-          }
-        }));
+    playListPresenter.onViewInitialised();
   }
 
   private final FileObserver observer = new FileObserver(
@@ -119,7 +98,35 @@ public class PlayListFragment extends BaseFragment {
 
   @Override public void onDestroy() {
     super.onDestroy();
-    compositeDisposable.dispose();
+    playListPresenter.onDetach();
+  }
+
+  @Override public void showData(ArrayList<RecordingItem> recordingItems) {
+    mPlayListAdapter.addAllAndNotify(recordingItems);
+  }
+
+  @Override public void setRecordingListVisible() {
+    mRecordingsListView.setVisibility(View.VISIBLE);
+  }
+
+  @Override public void setRecordingListInVisible() {
+    mRecordingsListView.setVisibility(View.GONE);
+  }
+
+  @Override public void setEmptyLabelVisible() {
+    emptyListLabel.setVisibility(View.VISIBLE);
+  }
+
+  @Override public void setEmptyLabelInVisible() {
+    emptyListLabel.setVisibility(View.GONE);
+  }
+
+  @Override public void startWatchingForFileChanges() {
+    observer.startWatching();
+  }
+
+  @Override public void stopWatchingForFileChanges() {
+    observer.stopWatching();
   }
 }
 
