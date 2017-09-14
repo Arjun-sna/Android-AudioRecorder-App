@@ -2,7 +2,7 @@ package in.arjsna.audiorecorder.audiovisualization;
 
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
-import in.arjsna.audiorecorder.recording.AudioRecorder;
+import in.arjsna.audiorecorder.recordingservice.AudioRecorder;
 import java.util.Timer;
 import java.util.TimerTask;
 

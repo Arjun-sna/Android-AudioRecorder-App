@@ -43,7 +43,7 @@
           android:resource="@xml/filepaths"/>
     </provider>
 
-    <service android:name="in.arjsna.audiorecorder.recording.AudioRecordService"/>
+    <service android:name="in.arjsna.audiorecorder.recordingservice.AudioRecordService"/>
 
     <activity android:name="in.arjsna.audiorecorder.activities.PlayListActivity"
         android:parentActivityName="in.arjsna.audiorecorder.activities.MainActivity"

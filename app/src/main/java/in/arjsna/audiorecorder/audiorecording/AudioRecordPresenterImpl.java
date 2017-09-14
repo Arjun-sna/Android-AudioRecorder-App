@@ -5,7 +5,7 @@ import in.arjsna.audiorecorder.AppConstants;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.di.ActivityContext;
 import in.arjsna.audiorecorder.mvpbase.BasePresenter;
-import in.arjsna.audiorecorder.recording.AudioRecorder;
+import in.arjsna.audiorecorder.recordingservice.AudioRecorder;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import java.util.Locale;

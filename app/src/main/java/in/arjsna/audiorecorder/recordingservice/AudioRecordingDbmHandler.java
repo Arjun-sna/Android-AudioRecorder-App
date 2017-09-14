@@ -1,4 +1,4 @@
-package in.arjsna.audiorecorder.recording;
+package in.arjsna.audiorecorder.recordingservice;
 
 import android.util.Log;
 import in.arjsna.audiorecorder.audiovisualization.DbmHandler;

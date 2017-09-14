@@ -1,4 +1,4 @@
-package in.arjsna.audiorecorder.fragments;
+package in.arjsna.audiorecorder.settings;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;

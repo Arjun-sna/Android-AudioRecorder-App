@@ -1,7 +1,7 @@
 package in.arjsna.audiorecorder.audiorecording;
 
 import in.arjsna.audiorecorder.mvpbase.IMVPView;
-import in.arjsna.audiorecorder.recording.AudioRecorder;
+import in.arjsna.audiorecorder.recordingservice.AudioRecorder;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 

@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -31,8 +30,8 @@ import in.arjsna.audiorecorder.audiovisualization.GLAudioVisualizationView;
 import in.arjsna.audiorecorder.di.ActivityContext;
 import in.arjsna.audiorecorder.di.components.ActivityComponent;
 import in.arjsna.audiorecorder.mvpbase.BaseFragment;
-import in.arjsna.audiorecorder.recording.AudioRecordService;
-import in.arjsna.audiorecorder.recording.AudioRecorder;
+import in.arjsna.audiorecorder.recordingservice.AudioRecordService;
+import in.arjsna.audiorecorder.recordingservice.AudioRecorder;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -58,12 +57,6 @@ public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
   @Inject
   public AudioRecordPresenter<AudioRecordMVPView> audioRecordPresenter;
 
-  /**
-   * Use this factory method to create a new instance of
-   * this fragment using the provided parameters.
-   *
-   * @return A new instance of fragment Record_Fragment.
-   */
   public static RecordFragment newInstance() {
     return new RecordFragment();
   }
