@@ -48,14 +48,15 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
 
   private Single<Integer> rename(RecordingItem recordingItem, int adapterPosition, String name) {
     return Single.create((SingleOnSubscribe<Integer>) e -> {
-      File f = new File(
+      File newFile = new File(
           Environment.getExternalStorageDirectory().getAbsolutePath() + "/SoundRecorder/" + name);
-      if (f.exists() && !f.isDirectory()) {
+      if (newFile.exists() && !newFile.isDirectory()) {
         e.onError(new Exception("File with same name already exists"));
       } else {
         File oldFilePath = new File(recordingItem.getFilePath());
-        if (oldFilePath.renameTo(f)) {
+        if (oldFilePath.renameTo(newFile)) {
           recordingItem.setName(name);
+          recordingItem.setFilePath(newFile.getPath());
           recordItemDataSource.updateRecordItem(recordingItem);
           e.onSuccess(adapterPosition);
         } else {
