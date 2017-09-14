@@ -68,8 +68,8 @@ public class AudioRecordPresenterImpl<V extends AudioRecordMVPView> extends Base
   }
 
   @Override public void onDetach() {
-    super.onDetach();
     getAttachedView().unbindFromService();
+    super.onDetach();
   }
 
   private void stopRecording() {

@@ -1,10 +1,8 @@
 package in.arjsna.audiorecorder.recordingservice;
 
-import android.content.Context;
 import android.media.AudioFormat;
 import android.os.Environment;
 import android.util.Log;
-import in.arjsna.audiorecorder.db.AppDataBase;
 import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import java.io.File;
@@ -14,6 +12,7 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import javax.inject.Inject;
 
 class AudioSaveHelper {
 
@@ -22,8 +21,9 @@ class AudioSaveHelper {
   private File mFile;
   private int mRecordSampleRate;
 
-  public AudioSaveHelper(Context applicationContext) {
-    recordItemDataSource = AppDataBase.getInstance(applicationContext).getRecordItemDataSource();
+  @Inject
+  public AudioSaveHelper(RecordItemDataSource recordItemDataSource) {
+    this.recordItemDataSource = recordItemDataSource;
   }
 
   public void createNewFile() {
