@@ -57,8 +57,7 @@ public abstract class ThemedActivity extends AppCompatActivity implements UiElem
     }
   }
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-  public void setNavBarColor() {
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP) protected void setNavBarColor() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       if (isNavigationBarColored()) {
         getWindow().setNavigationBarColor(getPrimaryColor());
