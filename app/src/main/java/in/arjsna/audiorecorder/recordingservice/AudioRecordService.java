@@ -119,7 +119,7 @@ public class AudioRecordService extends Service {
     lastUpdated = recordTime;
     NotificationCompat.Builder mBuilder =
         new NotificationCompat.Builder(getApplicationContext()).setSmallIcon(
-            R.drawable.ic_launcher_background)
+            R.drawable.ic_media_record)
             .setContentTitle(getString(R.string.notification_recording))
             .setContentText(
                 String.format(Locale.getDefault(), getString(R.string.record_time_format),
