@@ -46,8 +46,8 @@ public class SettingBasic extends FrameLayout implements Themed {
   }
 
   private void initViews(View rootView) {
-    title = (TextView) rootView.findViewById(R.id.title);
-    caption = (TextView) rootView.findViewById(R.id.caption);
+    title = rootView.findViewById(R.id.title);
+    caption = rootView.findViewById(R.id.caption);
   }
 
   @Override

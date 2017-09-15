@@ -1,6 +1,5 @@
 package in.arjsna.audiorecorder.recordingservice;
 
-import android.content.Context;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.util.Log;

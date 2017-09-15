@@ -81,8 +81,8 @@ public class SettingsFragment extends ThemedFragment {
   }
 
   private void initViews() {
-    themeSetting = (SettingBasic) rootView.findViewById(R.id.theme_settings);
-    rateApp = (SettingBasic) rootView.findViewById(R.id.rate_app);
+    themeSetting = rootView.findViewById(R.id.theme_settings);
+    rateApp = rootView.findViewById(R.id.rate_app);
   }
 
   //Preference aboutPref = findPreference(getString(R.string.pref_about_key));

@@ -33,10 +33,10 @@ public class ColorsSetting extends ThemedSetting {
     View dialogLayout =
         LayoutInflater.from(getActivity()).inflate(R.layout.dialog_color_picker, null);
     final LineColorPicker colorPicker =
-        (LineColorPicker) dialogLayout.findViewById(R.id.color_picker_primary);
+        dialogLayout.findViewById(R.id.color_picker_primary);
     final LineColorPicker colorPicker2 =
-        (LineColorPicker) dialogLayout.findViewById(R.id.color_picker_primary_2);
-    final TextView dialogTitle = (TextView) dialogLayout.findViewById(R.id.dialog_title);
+        dialogLayout.findViewById(R.id.color_picker_primary_2);
+    final TextView dialogTitle = dialogLayout.findViewById(R.id.dialog_title);
     dialogTitle.setText(title);
     dialogTitle.setBackgroundColor(getActivity().getPrimaryColor());
     colorPicker.setSelected(true);

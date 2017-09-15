@@ -45,7 +45,7 @@ public class ActivityModule {
   @Provides
   PlayListAdapter providesPlayListAdapter(@ActivityContext AppCompatActivity context,
       RecordItemDataSource recordItemDataSource) {
-    return new PlayListAdapter(context, recordItemDataSource, new ArrayList<RecordingItem>());
+    return new PlayListAdapter(context, recordItemDataSource, new ArrayList<>());
   }
 
   @Provides

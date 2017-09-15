@@ -9,7 +9,6 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
     <in.arjsna.audiorecorder.libs.SettingWithSwitchView
-        android:id="@+id/audio_quality_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:settingTitle="@string/pref_high_quality_title"
