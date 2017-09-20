@@ -27,7 +27,7 @@ import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.activities.PlayListActivity;
 import in.arjsna.audiorecorder.activities.SettingsActivity;
 import in.arjsna.audiorecorder.audiovisualization.GLAudioVisualizationView;
-import in.arjsna.audiorecorder.di.ActivityContext;
+import in.arjsna.audiorecorder.di.qualifiers.ActivityContext;
 import in.arjsna.audiorecorder.di.components.ActivityComponent;
 import in.arjsna.audiorecorder.mvpbase.BaseFragment;
 import in.arjsna.audiorecorder.recordingservice.AudioRecordService;

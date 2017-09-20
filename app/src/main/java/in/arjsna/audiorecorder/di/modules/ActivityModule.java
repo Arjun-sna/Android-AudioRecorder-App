@@ -8,10 +8,8 @@ import in.arjsna.audiorecorder.playlist.PlayListAdapter;
 import in.arjsna.audiorecorder.audiorecording.AudioRecordMVPView;
 import in.arjsna.audiorecorder.audiorecording.AudioRecordPresenter;
 import in.arjsna.audiorecorder.audiorecording.AudioRecordPresenterImpl;
-import in.arjsna.audiorecorder.db.RecordItemDataSource;
-import in.arjsna.audiorecorder.db.RecordingItem;
-import in.arjsna.audiorecorder.di.ActivityContext;
-import in.arjsna.audiorecorder.di.PerActivity;
+import in.arjsna.audiorecorder.di.qualifiers.ActivityContext;
+import in.arjsna.audiorecorder.di.scopes.ActivityScope;
 import in.arjsna.audiorecorder.playlist.PlayListMVPView;
 import in.arjsna.audiorecorder.playlist.PlayListPresenter;
 import in.arjsna.audiorecorder.playlist.PlayListPresenterImpl;
@@ -28,38 +26,38 @@ public class ActivityModule {
 
   @Provides
   @ActivityContext
-  @PerActivity
+  @ActivityScope
   AppCompatActivity provideActivityContext() {
     return appCompatActivity;
   }
 
   @Provides
-  @PerActivity
+  @ActivityScope
   CompositeDisposable provideCompositeDisposable() {
     return new CompositeDisposable();
   }
 
   @Provides
-  @PerActivity
+  @ActivityScope
   LinearLayoutManager provideLinearLayoutManager(@ActivityContext AppCompatActivity context) {
     return new LinearLayoutManager(context);
   }
 
   @Provides
-  @PerActivity
+  @ActivityScope
   PlayListAdapter providesPlayListAdapter(@ActivityContext AppCompatActivity context) {
     return new PlayListAdapter(context, new ArrayList<>());
   }
 
   @Provides
-  @PerActivity
+  @ActivityScope
   AudioRecordPresenter<AudioRecordMVPView> provideAudioRecordPresenter(
       AudioRecordPresenterImpl<AudioRecordMVPView> audioRecordPresenter) {
     return audioRecordPresenter;
   }
 
   @Provides
-  @PerActivity
+  @ActivityScope
   PlayListPresenter<PlayListMVPView> providePlayListPresenter(
       PlayListPresenterImpl<PlayListMVPView> playListPresenter) {
     return playListPresenter;
