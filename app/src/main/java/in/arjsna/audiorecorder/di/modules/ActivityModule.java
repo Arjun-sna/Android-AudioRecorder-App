@@ -28,24 +28,27 @@ public class ActivityModule {
 
   @Provides
   @ActivityContext
+  @PerActivity
   AppCompatActivity provideActivityContext() {
     return appCompatActivity;
   }
 
   @Provides
+  @PerActivity
   CompositeDisposable provideCompositeDisposable() {
     return new CompositeDisposable();
   }
 
   @Provides
+  @PerActivity
   LinearLayoutManager provideLinearLayoutManager(@ActivityContext AppCompatActivity context) {
     return new LinearLayoutManager(context);
   }
 
   @Provides
-  PlayListAdapter providesPlayListAdapter(@ActivityContext AppCompatActivity context,
-      RecordItemDataSource recordItemDataSource) {
-    return new PlayListAdapter(context, recordItemDataSource, new ArrayList<>());
+  @PerActivity
+  PlayListAdapter providesPlayListAdapter(@ActivityContext AppCompatActivity context) {
+    return new PlayListAdapter(context, new ArrayList<>());
   }
 
   @Provides

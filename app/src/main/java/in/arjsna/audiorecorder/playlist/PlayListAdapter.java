@@ -23,8 +23,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   private final ArrayList<RecordingItem> recordingItems;
   private PlayListFragment listItemEventsListener;
 
-  public PlayListAdapter(Context context, RecordItemDataSource recordItemDataSource,
-      ArrayList<RecordingItem> recordingItems) {
+  public PlayListAdapter(Context context, ArrayList<RecordingItem> recordingItems) {
     mContext = context;
     this.recordingItems = recordingItems;
     inflater = LayoutInflater.from(mContext);
