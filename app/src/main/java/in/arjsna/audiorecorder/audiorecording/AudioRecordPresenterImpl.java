@@ -3,7 +3,7 @@ package in.arjsna.audiorecorder.audiorecording;
 import android.support.v7.app.AppCompatActivity;
 import in.arjsna.audiorecorder.AppConstants;
 import in.arjsna.audiorecorder.R;
-import in.arjsna.audiorecorder.di.ActivityContext;
+import in.arjsna.audiorecorder.di.qualifiers.ActivityContext;
 import in.arjsna.audiorecorder.mvpbase.BasePresenter;
 import in.arjsna.audiorecorder.recordingservice.AudioRecorder;
 import io.reactivex.disposables.CompositeDisposable;

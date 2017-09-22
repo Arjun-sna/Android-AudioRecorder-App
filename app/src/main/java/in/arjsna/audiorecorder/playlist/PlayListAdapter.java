@@ -23,8 +23,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   private final ArrayList<RecordingItem> recordingItems;
   private PlayListFragment listItemEventsListener;
 
-  public PlayListAdapter(Context context, RecordItemDataSource recordItemDataSource,
-      ArrayList<RecordingItem> recordingItems) {
+  public PlayListAdapter(Context context, ArrayList<RecordingItem> recordingItems) {
     mContext = context;
     this.recordingItems = recordingItems;
     inflater = LayoutInflater.from(mContext);
@@ -47,9 +46,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
             | DateUtils.FORMAT_SHOW_TIME
             | DateUtils.FORMAT_SHOW_YEAR));
 
-    holder.cardView.setOnClickListener(view -> {
-      listItemEventsListener.onItemClick(position, currentRecording);
-    });
+    holder.cardView.setOnClickListener(view -> listItemEventsListener.onItemClick(position, currentRecording));
 
     holder.cardView.setOnLongClickListener(v -> {
       listItemEventsListener.onItemLongClick(position, currentRecording);

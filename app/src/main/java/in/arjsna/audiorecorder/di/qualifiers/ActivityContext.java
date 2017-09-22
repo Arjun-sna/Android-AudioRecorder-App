@@ -1,4 +1,4 @@
-package in.arjsna.audiorecorder.di;
+package in.arjsna.audiorecorder.di.qualifiers;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -1,13 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-    <!--<item name="colorPrimary">@color/primary</item>-->
-    <!--<item name="colorPrimaryDark">@color/primary_dark</item>-->
-    <!--<item name="colorAccent">@color/accent</item>-->
-    <item name="android:windowNoTitle">true</item>
-    <item name="windowActionBar">false</item>
-  </style>
-
   <style name="MyToolbar" parent="Widget.AppCompat.Toolbar">
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">wrap_content</item>

@@ -8,7 +8,6 @@
 
   <android.support.v7.widget.CardView
       xmlns:card_view="http://schemas.android.com/apk/res-auto"
-      android:id="@+id/mediaplayer_view"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="center"
@@ -37,7 +36,7 @@
           android:fontFamily="sans-serif-condensed"
           />
 
-      <SeekBar
+      <android.support.v7.widget.AppCompatSeekBar
           android:id="@+id/seekbar"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"

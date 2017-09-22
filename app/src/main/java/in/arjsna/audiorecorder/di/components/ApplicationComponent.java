@@ -4,7 +4,7 @@ import android.content.Context;
 import dagger.Component;
 import in.arjsna.audiorecorder.AudioRecorderApp;
 import in.arjsna.audiorecorder.db.RecordItemDataSource;
-import in.arjsna.audiorecorder.di.ApplicationContext;
+import in.arjsna.audiorecorder.di.qualifiers.ApplicationContext;
 import in.arjsna.audiorecorder.di.modules.ApplicationModule;
 import javax.inject.Singleton;
 

@@ -13,7 +13,7 @@ public class SettingsActivity extends BaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_preferences);
 
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {

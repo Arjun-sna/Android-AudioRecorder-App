@@ -58,9 +58,9 @@ public class SettingWithSwitchView extends FrameLayout implements View.OnClickLi
   }
 
   private void initViews(View rootView) {
-    title = (TextView) rootView.findViewById(R.id.title);
-    caption = (TextView) rootView.findViewById(R.id.caption);
-    toggle = (SwitchCompat) rootView.findViewById(R.id.toggle);
+    title = rootView.findViewById(R.id.title);
+    caption = rootView.findViewById(R.id.caption);
+    toggle = rootView.findViewById(R.id.toggle);
   }
 
   @Override
