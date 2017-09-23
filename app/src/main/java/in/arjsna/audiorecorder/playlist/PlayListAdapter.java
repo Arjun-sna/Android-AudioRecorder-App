@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import in.arjsna.audiorecorder.R;
-import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -56,7 +55,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
 
   @Override public RecordingsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View itemView = inflater.
-        inflate(R.layout.card_view, parent, false);
+        inflate(R.layout.record_list_item, parent, false);
     return new RecordingsViewHolder(itemView);
   }
 
