@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/record_item_root_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="75dp"
+    android:layout_gravity="center"
+    android:layout_margin="5dp"
+    app:cardCornerRadius="4dp"
+    app:cardElevation="3dp"
 >
-
-  <android.support.v7.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
-      android:id="@+id/card_view"
+  <in.arjsna.audiorecorder.libs.FillSeekBar
       android:layout_width="match_parent"
-      android:layout_height="75dp"
-      android:layout_gravity="center"
-      android:layout_margin="5dp"
-      android:foreground="?android:attr/selectableItemBackground"
-      android:transitionName="open_mediaplayer"
-      app:cardCornerRadius="4dp"
-      app:cardElevation="3dp"
+      android:layout_height="match_parent"
+      android:background="#303F9F"
+      app:fill_color="@color/primary_light"
   >
 
     <android.support.constraint.ConstraintLayout
@@ -74,5 +74,5 @@
           app:layout_constraintBottom_toBottomOf="@+id/record_list_image"
       />
     </android.support.constraint.ConstraintLayout>
-  </android.support.v7.widget.CardView>
-</LinearLayout>
+  </in.arjsna.audiorecorder.libs.FillSeekBar>
+</android.support.v7.widget.CardView>

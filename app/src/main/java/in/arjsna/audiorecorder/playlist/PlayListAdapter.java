@@ -84,7 +84,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
       vName = v.findViewById(R.id.file_name_text);
       vLength = v.findViewById(R.id.file_length_text);
       vDateAdded = v.findViewById(R.id.file_date_added_text);
-      cardView = v.findViewById(R.id.card_view);
+      cardView = v.findViewById(R.id.record_item_root_view);
     }
   }
 

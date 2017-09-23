@@ -265,6 +265,7 @@ public class PlaybackFragment extends ThemedDialogFragment {
     if (mMediaPlayer != null) {
 
       int mCurrentPosition = mMediaPlayer.getCurrentPosition();
+      Log.i("Seekbar", " " + mCurrentPosition);
       mSeekBar.setProgress(mCurrentPosition);
 
       long minutes = TimeUnit.MILLISECONDS.toMinutes(mCurrentPosition);

@@ -19,10 +19,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class FillSeekBar extends FrameLayout {
-  protected static final int LARGE = 1;
-  protected static final int MIDDLE = 2;
-  protected static final int LITTLE = 3;
-
   private int mProgress;
   private Solid mSolid;
 
@@ -133,7 +129,7 @@ public class FillSeekBar extends FrameLayout {
     }
   };
 
-  static class Solid extends View {
+  private static class Solid extends View {
 
     private Paint progressPaint;
 
