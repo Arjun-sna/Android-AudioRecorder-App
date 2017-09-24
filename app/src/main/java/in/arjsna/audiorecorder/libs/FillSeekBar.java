@@ -44,7 +44,7 @@ public class FillSeekBar extends FrameLayout {
   }
 
   public void setProgress(int progress) {
-    this.mProgress = progress > 100 ? 100 : progress;
+    this.mProgress = progress > 10000 ? 10000 : progress;
     computeProgressRigth();
   }
 
@@ -56,7 +56,7 @@ public class FillSeekBar extends FrameLayout {
   }
 
   private void computeProgressRigth() {
-    mSolidRight = (int) (getWidth() * (1f - mProgress / 100f));
+    mSolidRight = (int) (getWidth() * (1f - mProgress / 10000f));
     ViewGroup.LayoutParams params = mSolid.getLayoutParams();
     if (params != null) {
       ((LayoutParams) params).rightMargin = mSolidRight;
@@ -115,7 +115,7 @@ public class FillSeekBar extends FrameLayout {
   public void setAutoProgress(long offset, long finalVal) {
     timer = new Timer();
     this.finalValue = finalVal;
-    timer.scheduleAtFixedRate(timerTask, 0 , 100);
+    timer.scheduleAtFixedRate(timerTask, 0 , 10);
   }
   Handler handler = new Handler(Looper.getMainLooper());
   Timer timer;
@@ -123,7 +123,7 @@ public class FillSeekBar extends FrameLayout {
     @Override public void run() {
       handler.post(new Runnable() {
         @Override public void run() {
-          setProgress(mProgress + 1);
+          setProgress(mProgress + 10);
         }
       });
     }
