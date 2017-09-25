@@ -68,6 +68,21 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     notifyItemChanged(position);
   }
 
+  public void stopProgress(int currentPlayingItem) {
+    recordingItems.get(currentPlayingItem).isPlaying = false;
+    notifyItemChanged(currentPlayingItem);
+  }
+
+  public void pauseProgress(int currentPlayingItem) {
+    recordingItems.get(currentPlayingItem).isPaused = true;
+    notifyItemChanged(currentPlayingItem);
+  }
+
+  public void resumeProgress(int currentPlayingItem) {
+    recordingItems.get(currentPlayingItem).isPaused = false;
+    notifyItemChanged(currentPlayingItem);
+  }
+
   @Override public RecordingsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View itemView = inflater.
         inflate(R.layout.record_list_item, parent, false);

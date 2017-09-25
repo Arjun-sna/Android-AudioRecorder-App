@@ -237,10 +237,12 @@ public class PlayListFragment extends BaseFragment
 
   @Override public void pauseMediaPlayer(int position) {
     mMediaPlayer.pause();
+    mPlayListAdapter.pauseProgress(position);
   }
 
   @Override public void resumeMediaPlayer(int position) {
     mMediaPlayer.start();
+    mPlayListAdapter.resumeProgress(position);
   }
 
   @Override public void stopMediaPlayer(int currentPlayingItem) {
@@ -250,6 +252,7 @@ public class PlayListFragment extends BaseFragment
       mMediaPlayer.release();
       mMediaPlayer = null;
     }
+    mPlayListAdapter.stopProgress(currentPlayingItem);
   }
 
   @Override public void startMediaPlayer(int position, RecordingItem recordingItem)

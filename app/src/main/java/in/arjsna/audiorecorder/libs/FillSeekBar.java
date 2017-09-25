@@ -130,26 +130,30 @@ public class FillSeekBar extends FrameLayout {
   public void stopProgress() {
     if (timer != null) {
       timer.cancel();
+      setProgress(0);
     }
-    setProgress(0);
   }
 
   public void resumeProgress() {
     timer = new Timer();
-    timer.scheduleAtFixedRate(timerTask, 0 , 10);
+    timer.scheduleAtFixedRate(getNewTask(), 0 , 10);
   }
 
   public void startProgress() {
     timer = new Timer();
-    timer.scheduleAtFixedRate(timerTask, 0 , 10);
+    timer.scheduleAtFixedRate(getNewTask(), 0 , 10);
   }
+
   Handler handler = new Handler(Looper.getMainLooper());
   Timer timer;
-  TimerTask timerTask = new TimerTask() {
-    @Override public void run() {
-      handler.post(() -> setProgress(mProgress + 10));
-    }
-  };
+
+  private TimerTask getNewTask() {
+    return new TimerTask() {
+      @Override public void run() {
+        handler.post(() -> setProgress(mProgress + 10));
+      }
+    };
+  }
 
   private static class Solid extends View {
 
@@ -177,6 +181,7 @@ public class FillSeekBar extends FrameLayout {
 
     @Override protected void onDraw(Canvas canvas) {
       super.onDraw(canvas);
+      Log.i("Statsinneer " , getRight() + " ");
       canvas.drawRect(getLeft(), 0, getRight(), getBottom(), progressPaint);
     }
   }
