@@ -52,6 +52,20 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
       listItemEventsListener.onItemLongClick(position, currentRecording);
       return false;
     });
+    if (currentRecording.isPlaying) {
+      if (currentRecording.isPaused) {
+        holder.fillSeekBar.pauseProgress();
+      } else {
+        holder.fillSeekBar.startProgress();
+      }
+    } else {
+      holder.fillSeekBar.stopProgress();
+    }
+  }
+
+  public void startProgress(int position) {
+    recordingItems.get(position).isPlaying = true;
+    notifyItemChanged(position);
   }
 
   @Override public RecordingsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

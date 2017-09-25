@@ -45,12 +45,15 @@ public class FillSeekBar extends FrameLayout {
 
   public void setMaxVal(double maxVal) {
     this.mMaxValue = maxVal;
-    setAutoProgress();
   }
 
   public void setProgress(int progress) {
-    this.mProgress = progress > mMaxValue ? (int) mMaxValue : progress;
-    computeProgressRigth();
+    if (progress > mMaxValue) {
+      stopProgress();
+    } else {
+      mProgress = progress;
+      computeProgressRigth();
+    }
   }
 
   @Override public void onWindowFocusChanged(boolean hasWindowFocus) {
@@ -118,7 +121,25 @@ public class FillSeekBar extends FrameLayout {
     };
   }
 
-  public void setAutoProgress() {
+  public void pauseProgress() {
+    if (timer != null) {
+      timer.cancel();
+    }
+  }
+
+  public void stopProgress() {
+    if (timer != null) {
+      timer.cancel();
+    }
+    setProgress(0);
+  }
+
+  public void resumeProgress() {
+    timer = new Timer();
+    timer.scheduleAtFixedRate(timerTask, 0 , 10);
+  }
+
+  public void startProgress() {
     timer = new Timer();
     timer.scheduleAtFixedRate(timerTask, 0 , 10);
   }
@@ -126,11 +147,7 @@ public class FillSeekBar extends FrameLayout {
   Timer timer;
   TimerTask timerTask = new TimerTask() {
     @Override public void run() {
-      handler.post(new Runnable() {
-        @Override public void run() {
-          setProgress(mProgress + 10);
-        }
-      });
+      handler.post(() -> setProgress(mProgress + 10));
     }
   };
 

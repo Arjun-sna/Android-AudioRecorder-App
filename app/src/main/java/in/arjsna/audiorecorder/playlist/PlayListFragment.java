@@ -258,6 +258,7 @@ public class PlayListFragment extends BaseFragment
     mMediaPlayer.setDataSource(recordingItem.getFilePath());
     mMediaPlayer.prepare();
     mMediaPlayer.setOnPreparedListener(MediaPlayer::start);
+    mPlayListAdapter.startProgress(position);
   }
 }
 
