@@ -11,6 +11,7 @@
     app:cardElevation="3dp"
 >
   <in.arjsna.audiorecorder.libs.FillSeekBar
+      android:id="@+id/attached_seek_bar"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:background="#303F9F"

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.db.RecordingItem;
+import in.arjsna.audiorecorder.libs.FillSeekBar;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -35,7 +36,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     long minutes = TimeUnit.MILLISECONDS.toMinutes(itemDuration);
     long seconds =
         TimeUnit.MILLISECONDS.toSeconds(itemDuration) - TimeUnit.MINUTES.toSeconds(minutes);
-
+    holder.fillSeekBar.setMaxVal(itemDuration);
     holder.vName.setText(currentRecording.getName());
     holder.vLength.setText(
         String.format(mContext.getString(R.string.play_time_format), minutes, seconds));
@@ -78,6 +79,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     final TextView vLength;
     final TextView vDateAdded;
     final View cardView;
+    final FillSeekBar fillSeekBar;
 
     RecordingsViewHolder(View v) {
       super(v);
@@ -85,6 +87,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
       vLength = v.findViewById(R.id.file_length_text);
       vDateAdded = v.findViewById(R.id.file_date_added_text);
       cardView = v.findViewById(R.id.record_item_root_view);
+      fillSeekBar = v.findViewById(R.id.attached_seek_bar);
     }
   }
 

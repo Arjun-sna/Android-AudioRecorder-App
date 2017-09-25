@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -25,7 +26,7 @@ public class FillSeekBar extends FrameLayout {
   private final int DEFAULT_FILL_COLOR = Color.WHITE;
   private final int DEFAULT_PROGRESS = 80;
   private int mSolidRight;
-  private long finalValue;
+  private double mMaxValue = 1.0;
 
   public FillSeekBar(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -40,11 +41,15 @@ public class FillSeekBar extends FrameLayout {
     mSolid.initPaint(mFillColor);
     addView(mSolid);
     setProgress(0);
-    setAutoProgress(1000, 1000);
+  }
+
+  public void setMaxVal(double maxVal) {
+    this.mMaxValue = maxVal;
+    setAutoProgress();
   }
 
   public void setProgress(int progress) {
-    this.mProgress = progress > 10000 ? 10000 : progress;
+    this.mProgress = progress > mMaxValue ? (int) mMaxValue : progress;
     computeProgressRigth();
   }
 
@@ -56,7 +61,8 @@ public class FillSeekBar extends FrameLayout {
   }
 
   private void computeProgressRigth() {
-    mSolidRight = (int) (getWidth() * (1f - mProgress / 10000f));
+    mSolidRight = (int) (getWidth() * (1f - mProgress / mMaxValue));
+    Log.i("Stats " , mSolidRight + " " + mProgress);
     ViewGroup.LayoutParams params = mSolid.getLayoutParams();
     if (params != null) {
       ((LayoutParams) params).rightMargin = mSolidRight;
@@ -112,9 +118,8 @@ public class FillSeekBar extends FrameLayout {
     };
   }
 
-  public void setAutoProgress(long offset, long finalVal) {
+  public void setAutoProgress() {
     timer = new Timer();
-    this.finalValue = finalVal;
     timer.scheduleAtFixedRate(timerTask, 0 , 10);
   }
   Handler handler = new Handler(Looper.getMainLooper());
@@ -159,4 +164,11 @@ public class FillSeekBar extends FrameLayout {
     }
   }
 
+  @Override protected void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
+    if (timer != null) {
+      timer.cancel();
+      timer = null;
+    }
+  }
 }
