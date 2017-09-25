@@ -2,6 +2,7 @@ package in.arjsna.audiorecorder.playlist;
 
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.mvpbase.IMVPView;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public interface PlayListMVPView extends IMVPView {
@@ -24,4 +25,12 @@ public interface PlayListMVPView extends IMVPView {
   void showError(String message);
 
   void notifyListItemRemove(Integer position);
+
+  void pauseMediaPlayer(int position);
+
+  void stopMediaPlayer(int currentPlayingItem);
+
+  void startMediaPlayer(int position, RecordingItem recordingItem) throws IOException;
+
+  void resumeMediaPlayer(int position);
 }

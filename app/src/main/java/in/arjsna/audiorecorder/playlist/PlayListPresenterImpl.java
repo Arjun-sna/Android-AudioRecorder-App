@@ -12,6 +12,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.inject.Inject;
 
@@ -19,6 +20,10 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
     implements PlayListPresenter<V> {
   @Inject
   public RecordItemDataSource recordItemDataSource;
+
+  private int currentPlayingItem;
+  private boolean isAudioPlaying = false;
+  private boolean isAudioPaused = false;
 
   @Inject
   public PlayListPresenterImpl(CompositeDisposable compositeDisposable) {
@@ -82,6 +87,32 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
     });
   }
 
+  @Override public void onListItemClicked(int position, RecordingItem recordingItem) {
+    try {
+      if (isAudioPlaying) {
+        if (currentPlayingItem == position) {
+          if (isAudioPaused) {
+            isAudioPaused = false;
+            getAttachedView().resumeMediaPlayer(position);
+          } else {
+            isAudioPaused = true;
+            getAttachedView().pauseMediaPlayer(position);
+          }
+        } else {
+          getAttachedView().stopMediaPlayer(currentPlayingItem);
+          getAttachedView().startMediaPlayer(position, recordingItem);
+          currentPlayingItem = position;
+        }
+      } else {
+        isAudioPlaying = true;
+        getAttachedView().startMediaPlayer(position, recordingItem);
+        currentPlayingItem = position;
+      }
+    } catch (IOException e) {
+      getAttachedView().showError("Failed to start media Player");
+    }
+  }
+
   private Single<Integer> removeFile(RecordingItem recordingItem, int position) {
     return Single.create((SingleOnSubscribe<Integer>) e -> {
       File file = new File(recordingItem.getFilePath());
@@ -96,6 +127,7 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
 
   @Override public void onDetach() {
     getAttachedView().stopWatchingForFileChanges();
+    getAttachedView().stopMediaPlayer(currentPlayingItem);
     super.onDetach();
   }
 

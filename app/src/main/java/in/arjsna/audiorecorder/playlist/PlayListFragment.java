@@ -1,6 +1,7 @@
 package in.arjsna.audiorecorder.playlist;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.FileObserver;
@@ -18,11 +19,11 @@ import android.widget.Toast;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.di.components.ActivityComponent;
-import in.arjsna.audiorecorder.playback.PlaybackFragment;
 import in.arjsna.audiorecorder.mvpbase.BaseFragment;
 import in.arjsna.audiorecorder.recordingservice.Constants;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.inject.Inject;
 
@@ -38,6 +39,7 @@ public class PlayListFragment extends BaseFragment
   public PlayListPresenter<PlayListMVPView> playListPresenter;
   private RecyclerView mRecordingsListView;
   private TextView emptyListLabel;
+  private MediaPlayer mMediaPlayer;
 
   public static PlayListFragment newInstance() {
     return new PlayListFragment();
@@ -57,6 +59,7 @@ public class PlayListFragment extends BaseFragment
       Bundle savedInstanceState) {
     View v = inflater.inflate(R.layout.fragment_file_viewer, container, false);
     initViews(v);
+    mMediaPlayer = new MediaPlayer();
     return v;
   }
 
@@ -106,8 +109,8 @@ public class PlayListFragment extends BaseFragment
   }
 
   @Override public void onDestroy() {
-    super.onDestroy();
     playListPresenter.onDetach();
+    super.onDestroy();
   }
 
   @Override public void showData(ArrayList<RecordingItem> recordingItems) {
@@ -227,8 +230,34 @@ public class PlayListFragment extends BaseFragment
   }
 
   @Override public void onItemClick(int position, RecordingItem recordingItem) {
-    PlaybackFragment playbackFragment = new PlaybackFragment().newInstance(recordingItem);
-    playbackFragment.show(getActivity().getSupportFragmentManager(), "dialog_playback");
+    //PlaybackFragment playbackFragment = new PlaybackFragment().newInstance(recordingItem);
+    //playbackFragment.show(getActivity().getSupportFragmentManager(), "dialog_playback");
+    playListPresenter.onListItemClicked(position, recordingItem);
+  }
+
+  @Override public void pauseMediaPlayer(int position) {
+    mMediaPlayer.pause();
+  }
+
+  @Override public void resumeMediaPlayer(int position) {
+    mMediaPlayer.start();
+  }
+
+  @Override public void stopMediaPlayer(int currentPlayingItem) {
+    if (mMediaPlayer != null) {
+      mMediaPlayer.stop();
+      mMediaPlayer.reset();
+      mMediaPlayer.release();
+      mMediaPlayer = null;
+    }
+  }
+
+  @Override public void startMediaPlayer(int position, RecordingItem recordingItem)
+      throws IOException {
+    mMediaPlayer = new MediaPlayer();
+    mMediaPlayer.setDataSource(recordingItem.getFilePath());
+    mMediaPlayer.prepare();
+    mMediaPlayer.setOnPreparedListener(MediaPlayer::start);
   }
 }
 

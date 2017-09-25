@@ -9,4 +9,6 @@ public interface PlayListPresenter<V extends PlayListMVPView> extends IMVPPresen
   void renameFile(RecordingItem recordingItem, int position, String value);
 
   void deleteFile(RecordingItem recordingItem, int position);
+
+  void onListItemClicked(int position, RecordingItem recordingItem);
 }
