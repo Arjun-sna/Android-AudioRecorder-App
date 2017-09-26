@@ -4,9 +4,9 @@ import dagger.Component;
 import in.arjsna.audiorecorder.activities.MainActivity;
 import in.arjsna.audiorecorder.activities.PlayListActivity;
 import in.arjsna.audiorecorder.activities.SettingsActivity;
-import in.arjsna.audiorecorder.di.scopes.ActivityScope;
-import in.arjsna.audiorecorder.di.modules.ActivityModule;
 import in.arjsna.audiorecorder.audiorecording.RecordFragment;
+import in.arjsna.audiorecorder.di.modules.ActivityModule;
+import in.arjsna.audiorecorder.di.scopes.ActivityScope;
 import in.arjsna.audiorecorder.playlist.PlayListFragment;
 
 @ActivityScope

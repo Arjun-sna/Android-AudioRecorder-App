@@ -23,13 +23,11 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
 
   private final Context mContext;
   private final PlayListPresenter<PlayListMVPView> playListPresenter;
-  //private final ArrayList<RecordingItem> recordingItems;
 
   @Inject
   public PlayListAdapter(@ActivityContext AppCompatActivity context,
       PlayListPresenter<PlayListMVPView> playListPresenter) {
     mContext = context;
-    //this.recordingItems = recordingItems;
     this.playListPresenter = playListPresenter;
     inflater = LayoutInflater.from(mContext);
   }
@@ -60,47 +58,12 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     });
 
     holder.fillSeekBar.setProgress(currentRecording.playProgress);
-    //if (currentRecording.isPlaying) {
-    //  if (currentRecording.isPaused) {
-    //    holder.fillSeekBar.pauseProgress();
-    //  } else {
-    //    holder.fillSeekBar.startProgress();
-    //  }
-    //} else {
-    //  holder.fillSeekBar.stopProgress();
-    //}
   }
-
-  //public void startProgress(int position) {
-  //  recordingItems.get(position).isPlaying = true;
-  //  notifyItemChanged(position);
-  //}
-  //
-  //public void stopProgress(int currentPlayingItem) {
-  //  recordingItems.get(currentPlayingItem).isPlaying = false;
-  //  notifyItemChanged(currentPlayingItem);
-  //}
-  //
-  //public void pauseProgress(int currentPlayingItem) {
-  //  recordingItems.get(currentPlayingItem).isPaused = true;
-  //  notifyItemChanged(currentPlayingItem);
-  //}
-  //
-  //public void resumeProgress(int currentPlayingItem) {
-  //  recordingItems.get(currentPlayingItem).isPaused = false;
-  //  notifyItemChanged(currentPlayingItem);
-  //}
 
   @Override public RecordingsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     return new RecordingsViewHolder(inflater.
         inflate(R.layout.record_list_item, parent, false));
   }
-
-  //
-  //void removeItemAndNotify(int position) {
-  //  recordingItems.remove(position);
-  //  notifyItemRemoved(position);
-  //}
 
   static class RecordingsViewHolder extends RecyclerView.ViewHolder {
     final TextView vName;

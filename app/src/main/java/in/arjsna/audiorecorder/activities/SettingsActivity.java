@@ -5,8 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import in.arjsna.audiorecorder.R;
-import in.arjsna.audiorecorder.settings.SettingsFragment;
 import in.arjsna.audiorecorder.mvpbase.BaseActivity;
+import in.arjsna.audiorecorder.settings.SettingsFragment;
 
 public class SettingsActivity extends BaseActivity {
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {

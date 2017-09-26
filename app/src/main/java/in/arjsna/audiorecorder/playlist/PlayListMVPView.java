@@ -3,7 +3,6 @@ package in.arjsna.audiorecorder.playlist;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.mvpbase.IMVPView;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public interface PlayListMVPView extends IMVPView {
   void notifyListAdapter();

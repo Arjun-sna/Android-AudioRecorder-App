@@ -9,12 +9,10 @@ import in.arjsna.audiorecorder.audiorecording.AudioRecordPresenter;
 import in.arjsna.audiorecorder.audiorecording.AudioRecordPresenterImpl;
 import in.arjsna.audiorecorder.di.qualifiers.ActivityContext;
 import in.arjsna.audiorecorder.di.scopes.ActivityScope;
-import in.arjsna.audiorecorder.playlist.PlayListAdapter;
 import in.arjsna.audiorecorder.playlist.PlayListMVPView;
 import in.arjsna.audiorecorder.playlist.PlayListPresenter;
 import in.arjsna.audiorecorder.playlist.PlayListPresenterImpl;
 import io.reactivex.disposables.CompositeDisposable;
-import java.util.ArrayList;
 
 @Module
 public class ActivityModule {

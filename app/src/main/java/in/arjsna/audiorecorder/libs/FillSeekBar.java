@@ -5,27 +5,20 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import in.arjsna.audiorecorder.R;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class FillSeekBar extends FrameLayout {
   private long mProgress;
   private Solid mSolid;
 
   private final int DEFAULT_FILL_COLOR = Color.WHITE;
-  private final int DEFAULT_PROGRESS = 80;
-  private int mSolidRight;
   private double mMaxValue = 1.0;
 
   public FillSeekBar(Context context, AttributeSet attrs) {
@@ -35,7 +28,7 @@ public class FillSeekBar extends FrameLayout {
         .obtainStyledAttributes(attrs, R.styleable.FillSeekBar, R.attr.fillseekbarViewStyle, 0);
     int mFillColor =
         attributes.getColor(R.styleable.FillSeekBar_fill_color, DEFAULT_FILL_COLOR);
-    mProgress = attributes.getInt(R.styleable.FillSeekBar_progress, DEFAULT_PROGRESS);
+    mProgress = attributes.getInt(R.styleable.FillSeekBar_progress, 0);
     attributes.recycle();
     mSolid = new Solid(context, null);
     mSolid.initPaint(mFillColor);
@@ -60,7 +53,7 @@ public class FillSeekBar extends FrameLayout {
   }
 
   private void computeProgressRight() {
-    mSolidRight = (int) (getWidth() * (1f - mProgress / mMaxValue));
+    int mSolidRight = (int) (getWidth() * (1f - mProgress / mMaxValue));
     //Log.i("Stats ", mSolidRight + " " + mProgress);
     ViewGroup.LayoutParams params = mSolid.getLayoutParams();
     if (params != null) {
@@ -117,40 +110,6 @@ public class FillSeekBar extends FrameLayout {
     };
   }
 
-  public void pauseProgress() {
-    if (timer != null) {
-      timer.cancel();
-    }
-  }
-
-  public void stopProgress() {
-    if (timer != null) {
-      timer.cancel();
-      setProgress(0);
-    }
-  }
-
-  public void resumeProgress() {
-    timer = new Timer();
-    timer.scheduleAtFixedRate(getNewTask(), 0, 10);
-  }
-
-  public void startProgress() {
-    timer = new Timer();
-    timer.scheduleAtFixedRate(getNewTask(), 0, 10);
-  }
-
-  Handler handler = new Handler(Looper.getMainLooper());
-  Timer timer;
-
-  private TimerTask getNewTask() {
-    return new TimerTask() {
-      @Override public void run() {
-        handler.post(() -> setProgress(mProgress + 10));
-      }
-    };
-  }
-
   private static class Solid extends View {
 
     private Paint progressPaint;
@@ -179,14 +138,6 @@ public class FillSeekBar extends FrameLayout {
       super.onDraw(canvas);
       //Log.i("Statsinneer ", getRight() + " ");
       canvas.drawRect(getLeft(), 0, getRight(), getBottom(), progressPaint);
-    }
-  }
-
-  @Override protected void onDetachedFromWindow() {
-    super.onDetachedFromWindow();
-    if (timer != null) {
-      timer.cancel();
-      timer = null;
     }
   }
 }

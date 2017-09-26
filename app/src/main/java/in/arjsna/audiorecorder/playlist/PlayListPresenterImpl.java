@@ -5,16 +5,13 @@ import android.util.Log;
 import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.mvpbase.BasePresenter;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 import java.io.File;
@@ -27,6 +24,7 @@ import javax.inject.Inject;
 public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresenter<V>
     implements PlayListPresenter<V> {
   private static final int INVALID_ITEM = -1;
+  private static final int PROGRESS_OFFSET = 50;
   @Inject
   public RecordItemDataSource recordItemDataSource;
 
@@ -96,32 +94,6 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
         getAttachedView().showError(e.getMessage());
       }
     });
-  }
-
-  @Override public void onListItemClicked(int position, RecordingItem recordingItem) {
-    try {
-      if (isAudioPlaying) {
-        if (currentPlayingItem == position) {
-          if (isAudioPaused) {
-            isAudioPaused = false;
-            getAttachedView().resumeMediaPlayer(position);
-          } else {
-            isAudioPaused = true;
-            getAttachedView().pauseMediaPlayer(position);
-          }
-        } else {
-          getAttachedView().stopMediaPlayer(currentPlayingItem);
-          getAttachedView().startMediaPlayer(position, recordingItem);
-          currentPlayingItem = position;
-        }
-      } else {
-        isAudioPlaying = true;
-        getAttachedView().startMediaPlayer(position, recordingItem);
-        currentPlayingItem = position;
-      }
-    } catch (IOException e) {
-      getAttachedView().showError("Failed to start media Player");
-    }
   }
 
   @Override public RecordingItem getListItemAt(int position) {
@@ -203,12 +175,12 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
 
   private DisposableSubscriber<Long> playProgressDisposable;
   private void updateProgress(int position) {
-    playProgressDisposable = Flowable.interval(50, TimeUnit.MILLISECONDS)
+    playProgressDisposable = Flowable.interval(PROGRESS_OFFSET, TimeUnit.MILLISECONDS)
         .onBackpressureDrop()
         .subscribeOn(AndroidSchedulers.mainThread())
         .subscribeWith(new DisposableSubscriber<Long>() {
           @Override public void onNext(Long aLong) {
-            currentProgress += 50;
+            currentProgress += PROGRESS_OFFSET;
             recordingItems.get(position).playProgress = currentProgress;
             getAttachedView().notifyListItemChange(position);
           }

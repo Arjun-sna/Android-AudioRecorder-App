@@ -5,8 +5,8 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.FileObserver;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -141,10 +141,9 @@ public class PlayListFragment extends BaseFragment
     observer.stopWatching();
   }
 
+  Handler handler = new Handler();
   @Override public void notifyListItemChange(Integer position) {
-    if (!mRecordingsListView.isComputingLayout()) {
-      mPlayListAdapter.notifyItemChanged(position);
-    }
+    handler.post(() -> mPlayListAdapter.notifyItemChanged(position));
   }
 
   @Override public void showError(String message) {

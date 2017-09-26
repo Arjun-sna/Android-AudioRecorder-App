@@ -10,8 +10,6 @@ public interface PlayListPresenter<V extends PlayListMVPView> extends IMVPPresen
 
   void deleteFile(int position);
 
-  void onListItemClicked(int position, RecordingItem recordingItem);
-
   RecordingItem getListItemAt(int position);
 
   void onListItemClick(int position);
