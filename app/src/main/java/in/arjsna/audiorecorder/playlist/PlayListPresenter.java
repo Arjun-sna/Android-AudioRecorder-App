@@ -25,4 +25,6 @@ public interface PlayListPresenter<V extends PlayListMVPView> extends IMVPPresen
   void renameFileClicked(int position);
 
   void deleteFileClicked(int position);
+
+  void mediaPlayerStopped();
 }

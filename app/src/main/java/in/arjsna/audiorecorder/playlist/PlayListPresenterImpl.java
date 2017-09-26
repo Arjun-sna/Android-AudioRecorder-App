@@ -4,17 +4,20 @@ import android.os.Environment;
 import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.mvpbase.BasePresenter;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresenter<V>
@@ -120,8 +123,35 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
     return recordingItems.get(position);
   }
 
-  @Override public void onListItemClick(int position) {
+  @Override public void mediaPlayerStopped() {
+    isAudioPlaying = false;
+    isAudioPaused = false;
+  }
 
+  @Override public void onListItemClick(int position) {
+    try {
+      if (isAudioPlaying) {
+        if (currentPlayingItem == position) {
+          if (isAudioPaused) {
+            isAudioPaused = false;
+            getAttachedView().resumeMediaPlayer(position);
+          } else {
+            isAudioPaused = true;
+            getAttachedView().pauseMediaPlayer(position);
+          }
+        } else {
+          getAttachedView().stopMediaPlayer(currentPlayingItem);
+          getAttachedView().startMediaPlayer(position, recordingItems.get(position));
+          currentPlayingItem = position;
+        }
+      } else {
+        isAudioPlaying = true;
+        getAttachedView().startMediaPlayer(position, recordingItems.get(position));
+        currentPlayingItem = position;
+      }
+    } catch (IOException e) {
+      getAttachedView().showError("Failed to start media Player");
+    }
   }
 
   @Override public void onListItemLongClick(int position) {
@@ -142,6 +172,23 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
 
   @Override public void deleteFileClicked(int position) {
     getAttachedView().showDeleteFileDialog(position);
+  }
+
+  private void startProgress() {
+    Observable.interval(10, TimeUnit.MILLISECONDS)
+        .subscribeWith(new DisposableObserver<Long>() {
+          @Override public void onNext(Long aLong) {
+
+          }
+
+          @Override public void onError(Throwable e) {
+
+          }
+
+          @Override public void onComplete() {
+
+          }
+        });
   }
 
   private Single<Integer> removeFile(RecordingItem recordingItem, int position) {

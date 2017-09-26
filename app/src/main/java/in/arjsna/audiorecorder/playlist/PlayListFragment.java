@@ -1,13 +1,11 @@
 package in.arjsna.audiorecorder.playlist;
 
-import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.FileObserver;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +19,6 @@ import android.widget.Toast;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.di.components.ActivityComponent;
-import in.arjsna.audiorecorder.di.qualifiers.ActivityContext;
 import in.arjsna.audiorecorder.mvpbase.BaseFragment;
 import in.arjsna.audiorecorder.recordingservice.Constants;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
@@ -31,7 +28,7 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 public class PlayListFragment extends BaseFragment
-    implements PlayListMVPView{
+    implements PlayListMVPView {
   private static final String LOG_TAG = "PlayListFragment";
 
   @Inject
@@ -40,8 +37,6 @@ public class PlayListFragment extends BaseFragment
   public LinearLayoutManager llm;
   @Inject
   public PlayListPresenter<PlayListMVPView> playListPresenter;
-  @Inject
-  public PlayListPresenter<PlayListMVPView> playListPresenter2;
 
   private RecyclerView mRecordingsListView;
   private TextView emptyListLabel;
@@ -245,12 +240,10 @@ public class PlayListFragment extends BaseFragment
 
   @Override public void pauseMediaPlayer(int position) {
     mMediaPlayer.pause();
-    //mPlayListAdapter.pauseProgress(position);
   }
 
   @Override public void resumeMediaPlayer(int position) {
     mMediaPlayer.start();
-    //mPlayListAdapter.resumeProgress(position);
   }
 
   @Override public void stopMediaPlayer(int currentPlayingItem) {
@@ -260,7 +253,6 @@ public class PlayListFragment extends BaseFragment
       mMediaPlayer.release();
       mMediaPlayer = null;
     }
-    //mPlayListAdapter.stopProgress(currentPlayingItem);
   }
 
   @Override public void startMediaPlayer(int position, RecordingItem recordingItem)
@@ -269,7 +261,7 @@ public class PlayListFragment extends BaseFragment
     mMediaPlayer.setDataSource(recordingItem.getFilePath());
     mMediaPlayer.prepare();
     mMediaPlayer.setOnPreparedListener(MediaPlayer::start);
-    //mPlayListAdapter.startProgress(position);
+    mMediaPlayer.setOnCompletionListener(mp -> playListPresenter.mediaPlayerStopped());
   }
 }
 
