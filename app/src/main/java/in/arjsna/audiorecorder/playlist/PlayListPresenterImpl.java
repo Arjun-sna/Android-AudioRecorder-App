@@ -1,6 +1,7 @@
 package in.arjsna.audiorecorder.playlist;
 
 import android.os.Environment;
+import android.util.Log;
 import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.mvpbase.BasePresenter;
@@ -25,6 +26,7 @@ import javax.inject.Inject;
 
 public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresenter<V>
     implements PlayListPresenter<V> {
+  private static final int INVALID_ITEM = -1;
   @Inject
   public RecordItemDataSource recordItemDataSource;
 
@@ -127,14 +129,21 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
   }
 
   @Override public void mediaPlayerStopped() {
-    isAudioPlaying = false;
-    isAudioPaused = false;
+    Log.i("Debug ", "Stopping called");
+
+    updateStateToStop();
+  }
+
+  private void updateStateToStop() {
     if (playProgressDisposable != null) {
       playProgressDisposable.dispose();
     }
+    isAudioPlaying = false;
+    isAudioPaused = false;
     currentProgress = 0;
     recordingItems.get(currentPlayingItem).playProgress = 0;
     getAttachedView().notifyListItemChange(currentPlayingItem);
+    currentPlayingItem = INVALID_ITEM;
   }
 
   @Override public void onListItemClick(int position) {
@@ -144,16 +153,18 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
           if (isAudioPaused) {
             isAudioPaused = false;
             getAttachedView().resumeMediaPlayer(position);
+            updateProgress(position);
           } else {
             isAudioPaused = true;
             getAttachedView().pauseMediaPlayer(position);
+            playProgressDisposable.dispose();
           }
         } else {
           getAttachedView().stopMediaPlayer(currentPlayingItem);
+          updateStateToStop();
           startPlayer(position);
         }
       } else {
-        isAudioPlaying = true;
         startPlayer(position);
       }
     } catch (IOException e) {
@@ -163,6 +174,7 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
 
   private long currentProgress = 0;
   private void startPlayer(int position) throws IOException {
+    isAudioPlaying = true;
     currentProgress = 0;
     getAttachedView().startMediaPlayer(position, recordingItems.get(position));
     currentPlayingItem = position;

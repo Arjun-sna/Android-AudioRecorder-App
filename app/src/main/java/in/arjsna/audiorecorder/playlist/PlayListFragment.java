@@ -142,7 +142,9 @@ public class PlayListFragment extends BaseFragment
   }
 
   @Override public void notifyListItemChange(Integer position) {
-    mPlayListAdapter.notifyItemChanged(position);
+    if (!mRecordingsListView.isComputingLayout()) {
+      mPlayListAdapter.notifyItemChanged(position);
+    }
   }
 
   @Override public void showError(String message) {
@@ -242,6 +244,7 @@ public class PlayListFragment extends BaseFragment
 
   @Override public void stopMediaPlayer(int currentPlayingItem) {
     if (mMediaPlayer != null) {
+      Log.i("Debug ", "Stopping");
       mMediaPlayer.stop();
       mMediaPlayer.reset();
       mMediaPlayer.release();
@@ -256,6 +259,7 @@ public class PlayListFragment extends BaseFragment
     mMediaPlayer.prepare();
     mMediaPlayer.setOnPreparedListener(MediaPlayer::start);
     mMediaPlayer.setOnCompletionListener(mp -> playListPresenter.mediaPlayerStopped());
+    Log.i("Debug ", "Started");
   }
 }
 

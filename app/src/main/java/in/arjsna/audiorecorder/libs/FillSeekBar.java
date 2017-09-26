@@ -61,7 +61,7 @@ public class FillSeekBar extends FrameLayout {
 
   private void computeProgressRight() {
     mSolidRight = (int) (getWidth() * (1f - mProgress / mMaxValue));
-    Log.i("Stats ", mSolidRight + " " + mProgress);
+    //Log.i("Stats ", mSolidRight + " " + mProgress);
     ViewGroup.LayoutParams params = mSolid.getLayoutParams();
     if (params != null) {
       ((LayoutParams) params).rightMargin = mSolidRight;
@@ -177,7 +177,7 @@ public class FillSeekBar extends FrameLayout {
 
     @Override protected void onDraw(Canvas canvas) {
       super.onDraw(canvas);
-      Log.i("Statsinneer ", getRight() + " ");
+      //Log.i("Statsinneer ", getRight() + " ");
       canvas.drawRect(getLeft(), 0, getRight(), getBottom(), progressPaint);
     }
   }
