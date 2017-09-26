@@ -1,11 +1,13 @@
 package in.arjsna.audiorecorder.playlist;
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.FileObserver;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.di.components.ActivityComponent;
+import in.arjsna.audiorecorder.di.qualifiers.ActivityContext;
 import in.arjsna.audiorecorder.mvpbase.BaseFragment;
 import in.arjsna.audiorecorder.recordingservice.Constants;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
@@ -28,7 +31,7 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 public class PlayListFragment extends BaseFragment
-    implements PlayListMVPView, ListItemEventsListener {
+    implements PlayListMVPView{
   private static final String LOG_TAG = "PlayListFragment";
 
   @Inject
@@ -37,6 +40,9 @@ public class PlayListFragment extends BaseFragment
   public LinearLayoutManager llm;
   @Inject
   public PlayListPresenter<PlayListMVPView> playListPresenter;
+  @Inject
+  public PlayListPresenter<PlayListMVPView> playListPresenter2;
+
   private RecyclerView mRecordingsListView;
   private TextView emptyListLabel;
   private MediaPlayer mMediaPlayer;
@@ -76,7 +82,6 @@ public class PlayListFragment extends BaseFragment
     mRecordingsListView.setLayoutManager(llm);
     mRecordingsListView.setItemAnimator(new DefaultItemAnimator());
     mRecordingsListView.setAdapter(mPlayListAdapter);
-    mPlayListAdapter.setListItemEventsListener(this);
     playListPresenter.onViewInitialised();
   }
 
@@ -113,8 +118,8 @@ public class PlayListFragment extends BaseFragment
     super.onDestroy();
   }
 
-  @Override public void showData(ArrayList<RecordingItem> recordingItems) {
-    mPlayListAdapter.addAllAndNotify(recordingItems);
+  @Override public void notifyListAdapter() {
+    mPlayListAdapter.notifyDataSetChanged();
   }
 
   @Override public void setRecordingListVisible() {
@@ -150,10 +155,10 @@ public class PlayListFragment extends BaseFragment
   }
 
   @Override public void notifyListItemRemove(Integer position) {
-    mPlayListAdapter.removeItemAndNotify(position);
+    mPlayListAdapter.notifyItemRemoved(position);
   }
 
-  @Override public void onItemLongClick(int position, RecordingItem recordingItem) {
+  @Override public void showFileOptionDialog(int position, RecordingItem recordingItem) {
     ArrayList<String> fileOptions = new ArrayList<>();
     fileOptions.add(getString(R.string.dialog_file_share));
     fileOptions.add(getString(R.string.dialog_file_rename));
@@ -167,13 +172,13 @@ public class PlayListFragment extends BaseFragment
     builder.setItems(items, (dialog, listItem) -> {
       switch (listItem) {
         case 0:
-          shareFileDialog(recordingItem);
+          playListPresenter.shareFileClicked(position);
           break;
         case 1:
-          renameFileDialog(recordingItem, position);
+          playListPresenter.renameFileClicked(position);
           break;
         case 2:
-          deleteFileDialog(recordingItem, position);
+          playListPresenter.deleteFileClicked(position);
           break;
       }
     });
@@ -185,16 +190,18 @@ public class PlayListFragment extends BaseFragment
     alert.show();
   }
 
-  private void shareFileDialog(RecordingItem recordingItem) {
+  @Override
+  public void shareFileDialog(String filePath) {
     Intent shareIntent = new Intent();
     shareIntent.setAction(Intent.ACTION_SEND);
     shareIntent.putExtra(Intent.EXTRA_STREAM,
-        Uri.fromFile(new File(recordingItem.getFilePath())));
+        Uri.fromFile(new File(filePath)));
     shareIntent.setType("audio/mp4");
     getActivity().startActivity(Intent.createChooser(shareIntent, getText(R.string.send_to)));
   }
 
-  private void renameFileDialog(final RecordingItem recordingItem, int position) {
+  @Override
+  public void showRenameFileDialog(int position) {
     AlertDialog.Builder renameFileBuilder = new AlertDialog.Builder(getActivity());
     View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_rename_file, null);
     final EditText input = view.findViewById(R.id.new_name);
@@ -203,7 +210,7 @@ public class PlayListFragment extends BaseFragment
     renameFileBuilder.setPositiveButton(getString(R.string.dialog_action_ok),
         (dialog, id) -> {
           String value = input.getText().toString().trim() + Constants.AUDIO_RECORDER_FILE_EXT_WAV;
-          playListPresenter.renameFile(recordingItem, position, value);
+          playListPresenter.renameFile(position, value);
           dialog.cancel();
         });
     renameFileBuilder.setNegativeButton(getActivity().getString(R.string.dialog_action_cancel),
@@ -213,14 +220,15 @@ public class PlayListFragment extends BaseFragment
     alert.show();
   }
 
-  private void deleteFileDialog(final RecordingItem recordingItem, int position) {
+  @Override
+  public void showDeleteFileDialog(int position) {
     AlertDialog.Builder confirmDelete = new AlertDialog.Builder(getActivity());
     confirmDelete.setTitle(getString(R.string.dialog_title_delete));
     confirmDelete.setMessage(getString(R.string.dialog_text_delete));
     confirmDelete.setCancelable(true);
     confirmDelete.setPositiveButton(getString(R.string.dialog_action_yes),
         (dialog, id) -> {
-          playListPresenter.deleteFile(recordingItem, position);
+          playListPresenter.deleteFile(position);
           dialog.cancel();
         });
     confirmDelete.setNegativeButton(getString(R.string.dialog_action_no),
@@ -229,20 +237,20 @@ public class PlayListFragment extends BaseFragment
     alert.show();
   }
 
-  @Override public void onItemClick(int position, RecordingItem recordingItem) {
-    //PlaybackFragment playbackFragment = new PlaybackFragment().newInstance(recordingItem);
-    //playbackFragment.show(getActivity().getSupportFragmentManager(), "dialog_playback");
-    playListPresenter.onListItemClicked(position, recordingItem);
-  }
+  //@Override public void onItemClick(int position, RecordingItem recordingItem) {
+  //  //PlaybackFragment playbackFragment = new PlaybackFragment().newInstance(recordingItem);
+  //  //playbackFragment.show(getActivity().getSupportFragmentManager(), "dialog_playback");
+  //  playListPresenter.onListItemClicked(position, recordingItem);
+  //}
 
   @Override public void pauseMediaPlayer(int position) {
     mMediaPlayer.pause();
-    mPlayListAdapter.pauseProgress(position);
+    //mPlayListAdapter.pauseProgress(position);
   }
 
   @Override public void resumeMediaPlayer(int position) {
     mMediaPlayer.start();
-    mPlayListAdapter.resumeProgress(position);
+    //mPlayListAdapter.resumeProgress(position);
   }
 
   @Override public void stopMediaPlayer(int currentPlayingItem) {
@@ -252,7 +260,7 @@ public class PlayListFragment extends BaseFragment
       mMediaPlayer.release();
       mMediaPlayer = null;
     }
-    mPlayListAdapter.stopProgress(currentPlayingItem);
+    //mPlayListAdapter.stopProgress(currentPlayingItem);
   }
 
   @Override public void startMediaPlayer(int position, RecordingItem recordingItem)
@@ -261,7 +269,7 @@ public class PlayListFragment extends BaseFragment
     mMediaPlayer.setDataSource(recordingItem.getFilePath());
     mMediaPlayer.prepare();
     mMediaPlayer.setOnPreparedListener(MediaPlayer::start);
-    mPlayListAdapter.startProgress(position);
+    //mPlayListAdapter.startProgress(position);
   }
 }
 

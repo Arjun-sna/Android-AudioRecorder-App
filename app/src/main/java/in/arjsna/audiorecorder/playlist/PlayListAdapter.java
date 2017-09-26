@@ -1,6 +1,7 @@
 package in.arjsna.audiorecorder.playlist;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -9,9 +10,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.db.RecordingItem;
+import in.arjsna.audiorecorder.di.qualifiers.ActivityContext;
 import in.arjsna.audiorecorder.libs.FillSeekBar;
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+import javax.inject.Inject;
 
 public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.RecordingsViewHolder> {
 
@@ -20,18 +22,21 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   private final LayoutInflater inflater;
 
   private final Context mContext;
-  private final ArrayList<RecordingItem> recordingItems;
-  private PlayListFragment listItemEventsListener;
+  private final PlayListPresenter<PlayListMVPView> playListPresenter;
+  //private final ArrayList<RecordingItem> recordingItems;
 
-  public PlayListAdapter(Context context, ArrayList<RecordingItem> recordingItems) {
+  @Inject
+  public PlayListAdapter(@ActivityContext AppCompatActivity context,
+      PlayListPresenter<PlayListMVPView> playListPresenter) {
     mContext = context;
-    this.recordingItems = recordingItems;
+    //this.recordingItems = recordingItems;
+    this.playListPresenter = playListPresenter;
     inflater = LayoutInflater.from(mContext);
   }
 
   @Override public void onBindViewHolder(final RecordingsViewHolder holder, int position) {
 
-    RecordingItem currentRecording = recordingItems.get(position);
+    RecordingItem currentRecording = playListPresenter.getListItemAt(position);
     long itemDuration = currentRecording.getLength();
     long minutes = TimeUnit.MILLISECONDS.toMinutes(itemDuration);
     long seconds =
@@ -46,12 +51,13 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
             | DateUtils.FORMAT_SHOW_TIME
             | DateUtils.FORMAT_SHOW_YEAR));
 
-    holder.cardView.setOnClickListener(view -> listItemEventsListener.onItemClick(position, currentRecording));
+    holder.cardView.setOnClickListener(view -> playListPresenter.onListItemClick(position));
 
     holder.cardView.setOnLongClickListener(v -> {
-      listItemEventsListener.onItemLongClick(position, currentRecording);
+      playListPresenter.onListItemLongClick(position);
       return false;
     });
+
     if (currentRecording.isPlaying) {
       if (currentRecording.isPaused) {
         holder.fillSeekBar.pauseProgress();
@@ -63,25 +69,25 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     }
   }
 
-  public void startProgress(int position) {
-    recordingItems.get(position).isPlaying = true;
-    notifyItemChanged(position);
-  }
-
-  public void stopProgress(int currentPlayingItem) {
-    recordingItems.get(currentPlayingItem).isPlaying = false;
-    notifyItemChanged(currentPlayingItem);
-  }
-
-  public void pauseProgress(int currentPlayingItem) {
-    recordingItems.get(currentPlayingItem).isPaused = true;
-    notifyItemChanged(currentPlayingItem);
-  }
-
-  public void resumeProgress(int currentPlayingItem) {
-    recordingItems.get(currentPlayingItem).isPaused = false;
-    notifyItemChanged(currentPlayingItem);
-  }
+  //public void startProgress(int position) {
+  //  recordingItems.get(position).isPlaying = true;
+  //  notifyItemChanged(position);
+  //}
+  //
+  //public void stopProgress(int currentPlayingItem) {
+  //  recordingItems.get(currentPlayingItem).isPlaying = false;
+  //  notifyItemChanged(currentPlayingItem);
+  //}
+  //
+  //public void pauseProgress(int currentPlayingItem) {
+  //  recordingItems.get(currentPlayingItem).isPaused = true;
+  //  notifyItemChanged(currentPlayingItem);
+  //}
+  //
+  //public void resumeProgress(int currentPlayingItem) {
+  //  recordingItems.get(currentPlayingItem).isPaused = false;
+  //  notifyItemChanged(currentPlayingItem);
+  //}
 
   @Override public RecordingsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View itemView = inflater.
@@ -89,19 +95,11 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     return new RecordingsViewHolder(itemView);
   }
 
-  void addAllAndNotify(ArrayList<RecordingItem> recordingItems) {
-    this.recordingItems.addAll(recordingItems);
-    notifyDataSetChanged();
-  }
-
-  void setListItemEventsListener(PlayListFragment listItemEventsListener) {
-    this.listItemEventsListener = listItemEventsListener;
-  }
-
-  void removeItemAndNotify(int position) {
-    recordingItems.remove(position);
-    notifyItemRemoved(position);
-  }
+  //
+  //void removeItemAndNotify(int position) {
+  //  recordingItems.remove(position);
+  //  notifyItemRemoved(position);
+  //}
 
   static class RecordingsViewHolder extends RecyclerView.ViewHolder {
     final TextView vName;
@@ -121,7 +119,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   }
 
   @Override public int getItemCount() {
-    return recordingItems.size();
+    return playListPresenter.getListItemCount();
   }
 
   //TODO

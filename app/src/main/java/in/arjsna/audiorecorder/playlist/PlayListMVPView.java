@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public interface PlayListMVPView extends IMVPView {
-  void showData(ArrayList<RecordingItem> recordingItems);
+  void notifyListAdapter();
 
   void setRecordingListVisible();
 
@@ -33,4 +33,12 @@ public interface PlayListMVPView extends IMVPView {
   void startMediaPlayer(int position, RecordingItem recordingItem) throws IOException;
 
   void resumeMediaPlayer(int position);
+
+  void showFileOptionDialog(int position, RecordingItem recordingItem);
+
+  void shareFileDialog(String filePath);
+
+  void showRenameFileDialog(int position);
+
+  void showDeleteFileDialog(int position);
 }

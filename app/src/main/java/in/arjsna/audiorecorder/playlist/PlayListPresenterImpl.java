@@ -14,6 +14,7 @@ import io.reactivex.schedulers.Schedulers;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 
 public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresenter<V>
@@ -24,6 +25,7 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
   private int currentPlayingItem;
   private boolean isAudioPlaying = false;
   private boolean isAudioPaused = false;
+  private List<RecordingItem> recordingItems = new ArrayList<>();
 
   @Inject
   public PlayListPresenterImpl(CompositeDisposable compositeDisposable) {
@@ -35,20 +37,21 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
     getAttachedView().startWatchingForFileChanges();
   }
 
-  @Override public void renameFile(RecordingItem recordingItem, int adapterPosition, String value) {
-    rename(recordingItem, adapterPosition, value).subscribe(new SingleObserver<Integer>() {
-      @Override public void onSubscribe(Disposable d) {
+  @Override public void renameFile(int adapterPosition, String value) {
+    rename(recordingItems.get(adapterPosition), adapterPosition, value).subscribe(
+        new SingleObserver<Integer>() {
+          @Override public void onSubscribe(Disposable d) {
 
-      }
+          }
 
-      @Override public void onSuccess(Integer position) {
-        getAttachedView().notifyListItemChange(position);
-      }
+          @Override public void onSuccess(Integer position) {
+            getAttachedView().notifyListItemChange(position);
+          }
 
-      @Override public void onError(Throwable e) {
-        getAttachedView().showError(e.getMessage());
-      }
-    });
+          @Override public void onError(Throwable e) {
+            getAttachedView().showError(e.getMessage());
+          }
+        });
   }
 
   private Single<Integer> rename(RecordingItem recordingItem, int adapterPosition, String name) {
@@ -71,8 +74,8 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
     }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
   }
 
-  @Override public void deleteFile(RecordingItem recordingItem, int position) {
-    removeFile(recordingItem, position).subscribe(new SingleObserver<Integer>() {
+  @Override public void deleteFile(int position) {
+    removeFile(recordingItems.get(position), position).subscribe(new SingleObserver<Integer>() {
       @Override public void onSubscribe(Disposable d) {
 
       }
@@ -113,6 +116,34 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
     }
   }
 
+  @Override public RecordingItem getListItemAt(int position) {
+    return recordingItems.get(position);
+  }
+
+  @Override public void onListItemClick(int position) {
+
+  }
+
+  @Override public void onListItemLongClick(int position) {
+    getAttachedView().showFileOptionDialog(position, recordingItems.get(position));
+  }
+
+  @Override public int getListItemCount() {
+    return recordingItems.size();
+  }
+
+  @Override public void shareFileClicked(int position) {
+    getAttachedView().shareFileDialog(recordingItems.get(position).getFilePath());
+  }
+
+  @Override public void renameFileClicked(int position) {
+    getAttachedView().showRenameFileDialog(position);
+  }
+
+  @Override public void deleteFileClicked(int position) {
+    getAttachedView().showDeleteFileDialog(position);
+  }
+
   private Single<Integer> removeFile(RecordingItem recordingItem, int position) {
     return Single.create((SingleOnSubscribe<Integer>) e -> {
       File file = new File(recordingItem.getFilePath());
@@ -137,7 +168,8 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe((recordingItems) -> {
           if (recordingItems.size() > 0) {
-            getAttachedView().showData((ArrayList<RecordingItem>) recordingItems);
+            this.recordingItems.addAll(recordingItems);
+            getAttachedView().notifyListAdapter();
           } else {
             getAttachedView().setRecordingListInVisible();
             getAttachedView().setEmptyLabelVisible();

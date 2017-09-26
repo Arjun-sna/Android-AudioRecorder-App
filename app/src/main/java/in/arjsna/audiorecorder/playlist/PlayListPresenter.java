@@ -6,9 +6,23 @@ import in.arjsna.audiorecorder.mvpbase.IMVPPresenter;
 public interface PlayListPresenter<V extends PlayListMVPView> extends IMVPPresenter<V> {
   void onViewInitialised();
 
-  void renameFile(RecordingItem recordingItem, int position, String value);
+  void renameFile(int position, String value);
 
-  void deleteFile(RecordingItem recordingItem, int position);
+  void deleteFile(int position);
 
   void onListItemClicked(int position, RecordingItem recordingItem);
+
+  RecordingItem getListItemAt(int position);
+
+  void onListItemClick(int position);
+
+  void onListItemLongClick(int position);
+
+  int getListItemCount();
+
+  void shareFileClicked(int position);
+
+  void renameFileClicked(int position);
+
+  void deleteFileClicked(int position);
 }
