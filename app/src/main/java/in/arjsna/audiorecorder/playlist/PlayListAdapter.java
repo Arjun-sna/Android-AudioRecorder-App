@@ -51,10 +51,11 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
             | DateUtils.FORMAT_SHOW_TIME
             | DateUtils.FORMAT_SHOW_YEAR));
 
-    holder.cardView.setOnClickListener(view -> playListPresenter.onListItemClick(position));
+    holder.cardView.setOnClickListener(
+        view -> playListPresenter.onListItemClick(holder.getAdapterPosition()));
 
     holder.cardView.setOnLongClickListener(v -> {
-      playListPresenter.onListItemLongClick(position);
+      playListPresenter.onListItemLongClick(holder.getAdapterPosition());
       return false;
     });
 
@@ -90,9 +91,8 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   //}
 
   @Override public RecordingsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View itemView = inflater.
-        inflate(R.layout.record_list_item, parent, false);
-    return new RecordingsViewHolder(itemView);
+    return new RecordingsViewHolder(inflater.
+        inflate(R.layout.record_list_item, parent, false));
   }
 
   //

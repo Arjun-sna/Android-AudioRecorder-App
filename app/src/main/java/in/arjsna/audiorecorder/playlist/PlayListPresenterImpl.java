@@ -149,6 +149,7 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
       File file = new File(recordingItem.getFilePath());
       if (file.delete()) {
         recordItemDataSource.deleteRecordItem(recordingItem);
+        recordingItems.remove(position);
         e.onSuccess(position);
       } else {
         e.onError(new Exception("File deletion failed"));
