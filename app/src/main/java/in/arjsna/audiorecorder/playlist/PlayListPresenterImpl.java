@@ -4,6 +4,8 @@ import android.os.Environment;
 import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.mvpbase.BasePresenter;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
@@ -13,6 +15,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subscribers.DisposableSubscriber;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -126,6 +129,12 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
   @Override public void mediaPlayerStopped() {
     isAudioPlaying = false;
     isAudioPaused = false;
+    if (playProgressDisposable != null) {
+      playProgressDisposable.dispose();
+    }
+    currentProgress = 0;
+    recordingItems.get(currentPlayingItem).playProgress = 0;
+    getAttachedView().notifyListItemChange(currentPlayingItem);
   }
 
   @Override public void onListItemClick(int position) {
@@ -141,17 +150,23 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
           }
         } else {
           getAttachedView().stopMediaPlayer(currentPlayingItem);
-          getAttachedView().startMediaPlayer(position, recordingItems.get(position));
-          currentPlayingItem = position;
+          startPlayer(position);
         }
       } else {
         isAudioPlaying = true;
-        getAttachedView().startMediaPlayer(position, recordingItems.get(position));
-        currentPlayingItem = position;
+        startPlayer(position);
       }
     } catch (IOException e) {
       getAttachedView().showError("Failed to start media Player");
     }
+  }
+
+  private long currentProgress = 0;
+  private void startPlayer(int position) throws IOException {
+    currentProgress = 0;
+    getAttachedView().startMediaPlayer(position, recordingItems.get(position));
+    currentPlayingItem = position;
+    updateProgress(position);
   }
 
   @Override public void onListItemLongClick(int position) {
@@ -174,14 +189,19 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
     getAttachedView().showDeleteFileDialog(position);
   }
 
-  private void startProgress() {
-    Observable.interval(10, TimeUnit.MILLISECONDS)
-        .subscribeWith(new DisposableObserver<Long>() {
+  private DisposableSubscriber<Long> playProgressDisposable;
+  private void updateProgress(int position) {
+    playProgressDisposable = Flowable.interval(50, TimeUnit.MILLISECONDS)
+        .onBackpressureDrop()
+        .subscribeOn(AndroidSchedulers.mainThread())
+        .subscribeWith(new DisposableSubscriber<Long>() {
           @Override public void onNext(Long aLong) {
-
+            currentProgress += 50;
+            recordingItems.get(position).playProgress = currentProgress;
+            getAttachedView().notifyListItemChange(position);
           }
 
-          @Override public void onError(Throwable e) {
+          @Override public void onError(Throwable t) {
 
           }
 
@@ -189,6 +209,7 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
 
           }
         });
+    getCompositeDisposable().add(playProgressDisposable);
   }
 
   private Single<Integer> removeFile(RecordingItem recordingItem, int position) {

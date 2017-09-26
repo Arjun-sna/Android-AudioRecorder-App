@@ -59,15 +59,16 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
       return false;
     });
 
-    if (currentRecording.isPlaying) {
-      if (currentRecording.isPaused) {
-        holder.fillSeekBar.pauseProgress();
-      } else {
-        holder.fillSeekBar.startProgress();
-      }
-    } else {
-      holder.fillSeekBar.stopProgress();
-    }
+    holder.fillSeekBar.setProgress(currentRecording.playProgress);
+    //if (currentRecording.isPlaying) {
+    //  if (currentRecording.isPaused) {
+    //    holder.fillSeekBar.pauseProgress();
+    //  } else {
+    //    holder.fillSeekBar.startProgress();
+    //  }
+    //} else {
+    //  holder.fillSeekBar.stopProgress();
+    //}
   }
 
   //public void startProgress(int position) {

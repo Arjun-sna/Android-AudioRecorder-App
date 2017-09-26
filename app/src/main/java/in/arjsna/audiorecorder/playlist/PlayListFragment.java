@@ -75,7 +75,7 @@ public class PlayListFragment extends BaseFragment
     llm.setStackFromEnd(true);
 
     mRecordingsListView.setLayoutManager(llm);
-    mRecordingsListView.setItemAnimator(new DefaultItemAnimator());
+    //mRecordingsListView.setItemAnimator(new DefaultItemAnimator());
     mRecordingsListView.setAdapter(mPlayListAdapter);
     playListPresenter.onViewInitialised();
   }
@@ -231,12 +231,6 @@ public class PlayListFragment extends BaseFragment
     AlertDialog alert = confirmDelete.create();
     alert.show();
   }
-
-  //@Override public void onItemClick(int position, RecordingItem recordingItem) {
-  //  //PlaybackFragment playbackFragment = new PlaybackFragment().newInstance(recordingItem);
-  //  //playbackFragment.show(getActivity().getSupportFragmentManager(), "dialog_playback");
-  //  playListPresenter.onListItemClicked(position, recordingItem);
-  //}
 
   @Override public void pauseMediaPlayer(int position) {
     mMediaPlayer.pause();

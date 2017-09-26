@@ -20,7 +20,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class FillSeekBar extends FrameLayout {
-  private int mProgress;
+  private long mProgress;
   private Solid mSolid;
 
   private final int DEFAULT_FILL_COLOR = Color.WHITE;
@@ -47,25 +47,21 @@ public class FillSeekBar extends FrameLayout {
     this.mMaxValue = maxVal;
   }
 
-  public void setProgress(int progress) {
-    if (progress > mMaxValue) {
-      stopProgress();
-    } else {
-      mProgress = progress;
-      computeProgressRigth();
-    }
+  public void setProgress(long progress) {
+    mProgress = progress > mMaxValue ? (long) mMaxValue : progress;
+    computeProgressRight();
   }
 
   @Override public void onWindowFocusChanged(boolean hasWindowFocus) {
     super.onWindowFocusChanged(hasWindowFocus);
     if (hasWindowFocus) {
-      computeProgressRigth();
+      computeProgressRight();
     }
   }
 
-  private void computeProgressRigth() {
+  private void computeProgressRight() {
     mSolidRight = (int) (getWidth() * (1f - mProgress / mMaxValue));
-    Log.i("Stats " , mSolidRight + " " + mProgress);
+    Log.i("Stats ", mSolidRight + " " + mProgress);
     ViewGroup.LayoutParams params = mSolid.getLayoutParams();
     if (params != null) {
       ((LayoutParams) params).rightMargin = mSolidRight;
@@ -73,19 +69,19 @@ public class FillSeekBar extends FrameLayout {
     mSolid.setLayoutParams(params);
   }
 
-  @Override public Parcelable onSaveInstanceState() {
-    // Force our ancestor class to save its state
-    Parcelable superState = super.onSaveInstanceState();
-    SavedState ss = new SavedState(superState);
-    ss.progress = mProgress;
-    return ss;
-  }
-
-  @Override public void onRestoreInstanceState(Parcelable state) {
-    SavedState ss = (SavedState) state;
-    super.onRestoreInstanceState(ss.getSuperState());
-    setProgress(ss.progress);
-  }
+  //@Override public Parcelable onSaveInstanceState() {
+  //  // Force our ancestor class to save its state
+  //  Parcelable superState = super.onSaveInstanceState();
+  //  SavedState ss = new SavedState(superState);
+  //  ss.progress = mProgress;
+  //  return ss;
+  //}
+  //
+  //@Override public void onRestoreInstanceState(Parcelable state) {
+  //  SavedState ss = (SavedState) state;
+  //  super.onRestoreInstanceState(ss.getSuperState());
+  //  setProgress(ss.progress);
+  //}
 
   private static class SavedState extends BaseSavedState {
     int progress;
@@ -136,12 +132,12 @@ public class FillSeekBar extends FrameLayout {
 
   public void resumeProgress() {
     timer = new Timer();
-    timer.scheduleAtFixedRate(getNewTask(), 0 , 10);
+    timer.scheduleAtFixedRate(getNewTask(), 0, 10);
   }
 
   public void startProgress() {
     timer = new Timer();
-    timer.scheduleAtFixedRate(getNewTask(), 0 , 10);
+    timer.scheduleAtFixedRate(getNewTask(), 0, 10);
   }
 
   Handler handler = new Handler(Looper.getMainLooper());
@@ -181,7 +177,7 @@ public class FillSeekBar extends FrameLayout {
 
     @Override protected void onDraw(Canvas canvas) {
       super.onDraw(canvas);
-      Log.i("Statsinneer " , getRight() + " ");
+      Log.i("Statsinneer ", getRight() + " ");
       canvas.drawRect(getLeft(), 0, getRight(), getBottom(), progressPaint);
     }
   }

@@ -21,6 +21,8 @@ public class RecordingItem implements Parcelable {
 
   @Ignore
   public boolean isPaused;
+  @Ignore
+  public long playProgress;
 
   public RecordingItem() {
   }
