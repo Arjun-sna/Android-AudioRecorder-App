@@ -48,21 +48,12 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
             | DateUtils.FORMAT_NUMERIC_DATE
             | DateUtils.FORMAT_SHOW_TIME
             | DateUtils.FORMAT_SHOW_YEAR));
-
-    holder.cardView.setOnClickListener(
-        view -> playListPresenter.onListItemClick(holder.getAdapterPosition()));
-
-    holder.cardView.setOnLongClickListener(v -> {
-      playListPresenter.onListItemLongClick(holder.getAdapterPosition());
-      return false;
-    });
-
     holder.fillSeekBar.setProgress(currentRecording.playProgress);
   }
 
   @Override public RecordingsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     return new RecordingsViewHolder(inflater.
-        inflate(R.layout.record_list_item, parent, false));
+        inflate(R.layout.record_list_item, parent, false), playListPresenter);
   }
 
   static class RecordingsViewHolder extends RecyclerView.ViewHolder {
@@ -71,14 +62,31 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     final TextView vDateAdded;
     final View cardView;
     final FillSeekBar fillSeekBar;
+    private final PlayListPresenter playListPresenter;
 
-    RecordingsViewHolder(View v) {
+    RecordingsViewHolder(View v, PlayListPresenter playListPresenter) {
       super(v);
+      this.playListPresenter = playListPresenter;
       vName = v.findViewById(R.id.file_name_text);
       vLength = v.findViewById(R.id.file_length_text);
       vDateAdded = v.findViewById(R.id.file_date_added_text);
       cardView = v.findViewById(R.id.record_item_root_view);
       fillSeekBar = v.findViewById(R.id.attached_seek_bar);
+      bindEvents();
+    }
+
+    private void bindEvents() {
+      cardView.setOnClickListener(
+          view -> playListPresenter.onListItemClick(this, getAdapterPosition()));
+
+      cardView.setOnLongClickListener(v -> {
+        playListPresenter.onListItemLongClick(getAdapterPosition());
+        return false;
+      });
+    }
+
+    public void setProgress(long p) {
+      fillSeekBar.setProgress(p);
     }
   }
 
