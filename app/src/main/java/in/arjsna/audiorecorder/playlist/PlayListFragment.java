@@ -150,8 +150,11 @@ public class PlayListFragment extends BaseFragment
           (PlayListAdapter.RecordingsViewHolder) mRecordingsListView.findViewHolderForAdapterPosition(
               position);
     }
-    if (recordingsViewHolder != null) {
+    if (recordingsViewHolder != null && recordingsViewHolder.getAdapterPosition() == position) {
       recordingsViewHolder.updateProgressInSeekBar(position);
+    } else {
+      positionOfCurrentViewHolder = -1;
+      recordingsViewHolder = null;
     }
   }
 
