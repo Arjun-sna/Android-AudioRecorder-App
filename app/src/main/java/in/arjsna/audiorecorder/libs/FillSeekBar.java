@@ -5,17 +5,18 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import in.arjsna.audiorecorder.R;
+import in.arjsna.audiorecorder.theme.ThemedActivity;
 
 public class FillSeekBar extends FrameLayout {
-  private long mProgress;
+  private final int mFillColor;
+  private long mProgress = 0;
   private Solid mSolid;
 
   private final int DEFAULT_FILL_COLOR = Color.WHITE;
@@ -26,14 +27,13 @@ public class FillSeekBar extends FrameLayout {
     //load styled attributes.
     final TypedArray attributes = context.getTheme()
         .obtainStyledAttributes(attrs, R.styleable.FillSeekBar, R.attr.fillseekbarViewStyle, 0);
-    int mFillColor =
-        attributes.getColor(R.styleable.FillSeekBar_fill_color, DEFAULT_FILL_COLOR);
+    mFillColor =
+        ((ThemedActivity) context).getPrimaryColor();
     mProgress = attributes.getInt(R.styleable.FillSeekBar_progress, 0);
     attributes.recycle();
     mSolid = new Solid(context, null);
     mSolid.initPaint(mFillColor);
-    addView(mSolid);
-    setProgress(0);
+    addView(mSolid, 0, LayoutParams.MATCH_PARENT);
   }
 
   public void setMaxVal(double maxVal) {
@@ -45,69 +45,14 @@ public class FillSeekBar extends FrameLayout {
     computeProgressRight();
   }
 
-  @Override public void onWindowFocusChanged(boolean hasWindowFocus) {
-    super.onWindowFocusChanged(hasWindowFocus);
-    if (hasWindowFocus) {
-      computeProgressRight();
-    }
-  }
-
   private void computeProgressRight() {
     int mSolidRight = (int) (getWidth() * (1f - mProgress / mMaxValue));
-    //Log.i("Stats ", mSolidRight + " " + mProgress);
+    Log.i("Stats ", mSolidRight + " " + mProgress);
     ViewGroup.LayoutParams params = mSolid.getLayoutParams();
     if (params != null) {
-      ((LayoutParams) params).rightMargin = mSolidRight;
+      ((LayoutParams) params).width = getWidth() - mSolidRight;
     }
     mSolid.setLayoutParams(params);
-  }
-
-  //@Override public Parcelable onSaveInstanceState() {
-  //  // Force our ancestor class to save its state
-  //  Parcelable superState = super.onSaveInstanceState();
-  //  SavedState ss = new SavedState(superState);
-  //  ss.progress = mProgress;
-  //  return ss;
-  //}
-  //
-  //@Override public void onRestoreInstanceState(Parcelable state) {
-  //  SavedState ss = (SavedState) state;
-  //  super.onRestoreInstanceState(ss.getSuperState());
-  //  setProgress(ss.progress);
-  //}
-
-  private static class SavedState extends BaseSavedState {
-    int progress;
-
-    /**
-     * Constructor called from {@link android.widget.ProgressBar#onSaveInstanceState()}
-     */
-    SavedState(Parcelable superState) {
-      super(superState);
-    }
-
-    /**
-     * Constructor called from {@link #CREATOR}
-     */
-    private SavedState(Parcel in) {
-      super(in);
-      progress = in.readInt();
-    }
-
-    @Override public void writeToParcel(Parcel out, int flags) {
-      super.writeToParcel(out, flags);
-      out.writeInt(progress);
-    }
-
-    public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
-      public SavedState createFromParcel(Parcel in) {
-        return new SavedState(in);
-      }
-
-      public SavedState[] newArray(int size) {
-        return new SavedState[size];
-      }
-    };
   }
 
   private static class Solid extends View {
@@ -136,8 +81,8 @@ public class FillSeekBar extends FrameLayout {
 
     @Override protected void onDraw(Canvas canvas) {
       super.onDraw(canvas);
-      //Log.i("Statsinneer ", getRight() + " ");
-      canvas.drawRect(getLeft(), 0, getRight(), getBottom(), progressPaint);
+      Log.i("Statsinneer ", getRight() + " ");
+      canvas.drawRect(getLeft(), 0, getWidth(), getBottom(), progressPaint);
     }
   }
 }

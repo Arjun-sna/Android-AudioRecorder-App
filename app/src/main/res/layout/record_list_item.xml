@@ -14,7 +14,6 @@
       android:id="@+id/attached_seek_bar"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="#303F9F"
       app:fill_color="@color/primary_light"
   >
 
