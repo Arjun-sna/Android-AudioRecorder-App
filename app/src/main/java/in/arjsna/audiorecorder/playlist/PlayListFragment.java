@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.FileObserver;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -143,6 +144,8 @@ public class PlayListFragment extends BaseFragment
   private int positionOfCurrentViewHolder = -1;
   private PlayListAdapter.RecordingsViewHolder recordingsViewHolder;
 
+  Handler uiThreadHandler = new Handler();
+
   @Override public void updateProgressInListItem(Integer position) {
     if (position != positionOfCurrentViewHolder || recordingsViewHolder == null) {
       positionOfCurrentViewHolder = position;
@@ -151,7 +154,7 @@ public class PlayListFragment extends BaseFragment
               position);
     }
     if (recordingsViewHolder != null && recordingsViewHolder.getAdapterPosition() == position) {
-      recordingsViewHolder.updateProgressInSeekBar(position);
+      uiThreadHandler.post(() -> recordingsViewHolder.updateProgressInSeekBar(position));
     } else {
       positionOfCurrentViewHolder = -1;
       recordingsViewHolder = null;
