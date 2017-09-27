@@ -59,4 +59,6 @@ dependencies {
   annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
   provided 'javax.annotation:jsr250-api:1.0'
   compile 'javax.inject:javax.inject:1'
+
+  debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
 }

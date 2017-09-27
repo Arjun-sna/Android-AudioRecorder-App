@@ -25,7 +25,7 @@ import javax.inject.Inject;
 public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresenter<V>
     implements PlayListPresenter<V> {
   private static final int INVALID_ITEM = -1;
-  private static final int PROGRESS_OFFSET = 10;
+  private static final int PROGRESS_OFFSET = 20;
   @Inject
   public RecordItemDataSource recordItemDataSource;
 
