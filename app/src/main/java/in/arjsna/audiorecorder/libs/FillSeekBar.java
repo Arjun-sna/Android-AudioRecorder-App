@@ -75,6 +75,7 @@ public class FillSeekBar extends FrameLayout {
     public void initPaint(int mFillColor) {
       progressPaint = new Paint();
       progressPaint.setColor(mFillColor);
+      progressPaint.setAlpha(125);
       progressPaint.setStyle(Paint.Style.FILL);
       progressPaint.setAntiAlias(true);
     }
