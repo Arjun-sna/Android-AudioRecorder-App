@@ -12,6 +12,7 @@ import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 import java.io.File;
@@ -114,7 +115,8 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
     isAudioPaused = false;
     currentProgress = 0;
     recordingItems.get(currentPlayingItem).playProgress = 0;
-    getAttachedView().notifyListItemChange(currentPlayingItem);
+    getAttachedView().updateProgressInListItem(currentPlayingItem);
+    getAttachedView().updateTimerInListItem(currentPlayingItem);
     currentPlayingItem = INVALID_ITEM;
   }
 
@@ -178,11 +180,16 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
     playProgressDisposable = Flowable.interval(PROGRESS_OFFSET, TimeUnit.MILLISECONDS)
         .onBackpressureDrop()
         .observeOn(AndroidSchedulers.mainThread())
+        .map(aLong -> {
+          currentProgress += PROGRESS_OFFSET;
+          recordingItems.get(position).playProgress = currentProgress;
+          getAttachedView().updateProgressInListItem(position);
+          return currentProgress / 1000;
+        })
+        .distinctUntilChanged()
         .subscribeWith(new DisposableSubscriber<Long>() {
           @Override public void onNext(Long aLong) {
-            currentProgress += PROGRESS_OFFSET;
-            recordingItems.get(position).playProgress = currentProgress;
-            getAttachedView().updateProgressInListItem(position);
+            getAttachedView().updateTimerInListItem(position);
           }
 
           @Override public void onError(Throwable t) {

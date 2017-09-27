@@ -58,6 +58,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
 
   static class RecordingsViewHolder extends RecyclerView.ViewHolder {
     final TextView vName;
+    final TextView playProgress;
     final TextView vLength;
     final TextView vDateAdded;
     final View cardView;
@@ -68,6 +69,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
       super(v);
       this.playListPresenter = playListPresenter;
       vName = v.findViewById(R.id.file_name_text);
+      playProgress = v.findViewById(R.id.play_progress_text);
       vLength = v.findViewById(R.id.file_length_text);
       vDateAdded = v.findViewById(R.id.file_date_added_text);
       cardView = v.findViewById(R.id.record_item_root_view);
@@ -86,7 +88,22 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     }
 
     public void updateProgressInSeekBar(Integer position) {
-      fillSeekBar.setProgress(playListPresenter.getListItemAt(position).playProgress);
+      RecordingItem currentItem = playListPresenter.getListItemAt(position);
+      fillSeekBar.setProgress(currentItem.playProgress);
+    }
+
+    public void updatePlayTimer(int position) {
+      RecordingItem currentItem = playListPresenter.getListItemAt(position);
+      if (currentItem.playProgress > 0) {
+        playProgress.setVisibility(View.VISIBLE);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(currentItem.playProgress);
+        long seconds =
+            TimeUnit.MILLISECONDS.toSeconds(currentItem.playProgress) - TimeUnit.MINUTES.toSeconds(
+                minutes);
+        playProgress.setText(String.format("%02d:%02d", minutes, seconds));
+      } else {
+        playProgress.setVisibility(View.GONE);
+      }
     }
   }
 

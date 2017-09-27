@@ -42,4 +42,6 @@ public interface PlayListMVPView extends IMVPView {
   void showDeleteFileDialog(int position);
 
   void updateProgressInListItem(Integer position);
+
+  void updateTimerInListItem(int position);
 }

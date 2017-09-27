@@ -161,6 +161,12 @@ public class PlayListFragment extends BaseFragment
     }
   }
 
+  @Override public void updateTimerInListItem(int position) {
+    if (recordingsViewHolder != null) {
+      uiThreadHandler.post(() -> recordingsViewHolder.updatePlayTimer(position));
+    }
+  }
+
   @Override public void notifyListItemChange(Integer position) {
     mPlayListAdapter.notifyItemChanged(position);
   }
