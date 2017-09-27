@@ -24,7 +24,7 @@ import javax.inject.Inject;
 public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresenter<V>
     implements PlayListPresenter<V> {
   private static final int INVALID_ITEM = -1;
-  private static final int PROGRESS_OFFSET = 100;
+  private static final int PROGRESS_OFFSET = 25;
   @Inject
   public RecordItemDataSource recordItemDataSource;
 
@@ -177,12 +177,12 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
   private void updateProgress(int position) {
     playProgressDisposable = Flowable.interval(PROGRESS_OFFSET, TimeUnit.MILLISECONDS)
         .onBackpressureDrop()
-        .subscribeOn(AndroidSchedulers.mainThread())
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(new DisposableSubscriber<Long>() {
           @Override public void onNext(Long aLong) {
             currentProgress += PROGRESS_OFFSET;
             recordingItems.get(position).playProgress = currentProgress;
-            getAttachedView().notifyListItemChange(position);
+            getAttachedView().updateProgressInListItem(position);
           }
 
           @Override public void onError(Throwable t) {

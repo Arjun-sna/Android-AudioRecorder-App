@@ -5,7 +5,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.FileObserver;
-import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -141,9 +140,23 @@ public class PlayListFragment extends BaseFragment
     observer.stopWatching();
   }
 
-  Handler handler = new Handler();
+  private int positionOfCurrentViewHolder = -1;
+  private PlayListAdapter.RecordingsViewHolder recordingsViewHolder;
+
+  @Override public void updateProgressInListItem(Integer position) {
+    if (position != positionOfCurrentViewHolder || recordingsViewHolder == null) {
+      positionOfCurrentViewHolder = position;
+      recordingsViewHolder =
+          (PlayListAdapter.RecordingsViewHolder) mRecordingsListView.findViewHolderForAdapterPosition(
+              position);
+    }
+    if (recordingsViewHolder != null) {
+      recordingsViewHolder.updateProgressInSeekBar(position);
+    }
+  }
+
   @Override public void notifyListItemChange(Integer position) {
-    handler.post(() -> mPlayListAdapter.notifyItemChanged(position));
+    mPlayListAdapter.notifyItemChanged(position);
   }
 
   @Override public void showError(String message) {

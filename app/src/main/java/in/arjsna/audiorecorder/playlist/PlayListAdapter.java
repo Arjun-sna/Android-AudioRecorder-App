@@ -77,7 +77,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
 
     private void bindEvents() {
       cardView.setOnClickListener(
-          view -> playListPresenter.onListItemClick(this, getAdapterPosition()));
+          view -> playListPresenter.onListItemClick(getAdapterPosition()));
 
       cardView.setOnLongClickListener(v -> {
         playListPresenter.onListItemLongClick(getAdapterPosition());
@@ -85,8 +85,8 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
       });
     }
 
-    public void setProgress(long p) {
-      fillSeekBar.setProgress(p);
+    public void updateProgressInSeekBar(Integer position) {
+      fillSeekBar.setProgress(playListPresenter.getListItemAt(position).playProgress);
     }
   }
 
