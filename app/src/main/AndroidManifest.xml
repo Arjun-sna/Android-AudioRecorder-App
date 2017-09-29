@@ -16,6 +16,7 @@
       android:theme="@style/Theme.AppCompat.Light.NoActionBar">
     <activity
         android:name="in.arjsna.audiorecorder.activities.MainActivity"
+        android:screenOrientation="portrait"
         android:launchMode="singleTop">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>

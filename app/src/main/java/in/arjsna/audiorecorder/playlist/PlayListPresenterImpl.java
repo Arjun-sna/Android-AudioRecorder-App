@@ -102,8 +102,6 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
   }
 
   @Override public void mediaPlayerStopped() {
-    Log.i("Debug ", "Stopping called");
-
     updateStateToStop();
   }
 
@@ -114,9 +112,10 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
     isAudioPlaying = false;
     isAudioPaused = false;
     currentProgress = 0;
-    recordingItems.get(currentPlayingItem).playProgress = 0;
-    getAttachedView().updateProgressInListItem(currentPlayingItem);
-    getAttachedView().updateTimerInListItem(currentPlayingItem);
+    RecordingItem currentItem = recordingItems.get(currentPlayingItem);
+    currentItem.isPlaying = false;
+    currentItem.playProgress = 0;
+    getAttachedView().notifyListItemChange(currentPlayingItem);
     currentPlayingItem = INVALID_ITEM;
   }
 
@@ -127,10 +126,12 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
           if (isAudioPaused) {
             isAudioPaused = false;
             getAttachedView().resumeMediaPlayer(position);
+            recordingItems.get(position).isPlaying = true;
             updateProgress(position);
           } else {
             isAudioPaused = true;
             getAttachedView().pauseMediaPlayer(position);
+            recordingItems.get(position).isPlaying = false;
             playProgressDisposable.dispose();
           }
         } else {
@@ -141,6 +142,7 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
       } else {
         startPlayer(position);
       }
+      getAttachedView().notifyListItemChange(position);
     } catch (IOException e) {
       getAttachedView().showError("Failed to start media Player");
     }
@@ -150,6 +152,7 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
   private void startPlayer(int position) throws IOException {
     isAudioPlaying = true;
     currentProgress = 0;
+    recordingItems.get(position).isPlaying = true;
     getAttachedView().startMediaPlayer(position, recordingItems.get(position));
     currentPlayingItem = position;
     updateProgress(position);

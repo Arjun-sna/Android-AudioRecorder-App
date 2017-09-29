@@ -17,7 +17,7 @@ public class RecordingItem implements Parcelable {
   private long mTime; // date/time of the recording
 
   @Ignore
-  public boolean isPlaying;
+  public boolean isPlaying = false;
 
   @Ignore
   public boolean isPaused;

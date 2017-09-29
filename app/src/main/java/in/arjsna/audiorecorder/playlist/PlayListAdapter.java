@@ -7,6 +7,7 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.db.RecordingItem;
@@ -49,6 +50,8 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
             | DateUtils.FORMAT_SHOW_TIME
             | DateUtils.FORMAT_SHOW_YEAR));
     holder.fillSeekBar.setProgress(currentRecording.playProgress);
+    holder.playStateImage.setImageResource(
+        currentRecording.isPlaying ? R.drawable.ic_pause_grey : R.drawable.ic_play_arrow_grey);
   }
 
   @Override public RecordingsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -57,6 +60,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   }
 
   static class RecordingsViewHolder extends RecyclerView.ViewHolder {
+    final ImageView playStateImage;
     final TextView vName;
     final TextView playProgress;
     final TextView vLength;
@@ -68,6 +72,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
     RecordingsViewHolder(View v, PlayListPresenter playListPresenter) {
       super(v);
       this.playListPresenter = playListPresenter;
+      playStateImage = v.findViewById(R.id.record_list_image);
       vName = v.findViewById(R.id.file_name_text);
       playProgress = v.findViewById(R.id.play_progress_text);
       vLength = v.findViewById(R.id.file_length_text);
