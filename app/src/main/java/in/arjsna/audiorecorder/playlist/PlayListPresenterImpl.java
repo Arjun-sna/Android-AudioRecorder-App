@@ -179,7 +179,6 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
   private void updateProgress(int position) {
     playProgressDisposable = Flowable.interval(PROGRESS_OFFSET, TimeUnit.MILLISECONDS)
         .onBackpressureDrop()
-        .observeOn(AndroidSchedulers.mainThread())
         .map(aLong -> {
           currentProgress += PROGRESS_OFFSET;
           recordingItems.get(position).playProgress = currentProgress;
@@ -187,6 +186,7 @@ public class PlayListPresenterImpl<V extends PlayListMVPView> extends BasePresen
           return currentProgress / 1000;
         })
         .distinctUntilChanged()
+        .subscribeOn(Schedulers.computation())
         .subscribeWith(new DisposableSubscriber<Long>() {
           @Override public void onNext(Long aLong) {
             getAttachedView().updateTimerInListItem(position);
