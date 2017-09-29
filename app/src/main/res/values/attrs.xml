@@ -25,4 +25,11 @@
     <attr name="settingDefaultValue" format="boolean"/>
     <attr name="settingPreferenceKey" format="reference"/>
   </declare-styleable>
+  <declare-styleable name="FillSeekBar">
+    <attr name="fill_color" format="color"/>
+    <attr name="progress" format="integer"/>
+  </declare-styleable>
+  <declare-styleable name="Themes">
+    <attr name="fillseekbarViewStyle" format="reference"/>
+  </declare-styleable>
 </resources>

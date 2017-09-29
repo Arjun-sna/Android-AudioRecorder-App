@@ -1,6 +1,7 @@
 package in.arjsna.audiorecorder.db;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,6 +15,14 @@ public class RecordingItem implements Parcelable {
   //private int mId; //id in database
   private long mLength; // length of recording in seconds
   private long mTime; // date/time of the recording
+
+  @Ignore
+  public boolean isPlaying = false;
+
+  @Ignore
+  public boolean isPaused;
+  @Ignore
+  public long playProgress;
 
   public RecordingItem() {
   }
