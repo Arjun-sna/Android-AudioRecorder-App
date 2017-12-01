@@ -26,7 +26,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   private final PlayListPresenter<PlayListMVPView> playListPresenter;
 
   @Inject
-  public PlayListAdapter(@ActivityContext AppCompatActivity context,
+  public PlayListAdapter(@ActivityContext Context context,
       PlayListPresenter<PlayListMVPView> playListPresenter) {
     mContext = context;
     this.playListPresenter = playListPresenter;

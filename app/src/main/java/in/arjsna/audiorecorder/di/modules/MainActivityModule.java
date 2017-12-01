@@ -19,7 +19,7 @@ import in.arjsna.audiorecorder.playlist.PlayListPresenterImpl;
 import io.reactivex.disposables.CompositeDisposable;
 
 @Module
-public class ActivityModule {
+public class MainActivityModule {
   @Provides
   @ActivityContext
   @ActivityScope

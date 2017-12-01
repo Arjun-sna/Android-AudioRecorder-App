@@ -14,7 +14,7 @@ import io.reactivex.disposables.CompositeDisposable;
  */
 
 @Module
-class PlaybackFragmentModule {
+class PlayListFragmentModule {
 
   @Provides
   @FragmentScope

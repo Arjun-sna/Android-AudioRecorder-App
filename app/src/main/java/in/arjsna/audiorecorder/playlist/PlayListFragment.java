@@ -26,14 +26,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.inject.Inject;
 
-public class PlayListFragment extends BaseFragment
-    implements PlayListMVPView {
+public class PlayListFragment extends BaseFragment implements PlayListMVPView {
   private static final String LOG_TAG = "PlayListFragment";
 
   @Inject
   public PlayListAdapter mPlayListAdapter;
-  @Inject
-  public LinearLayoutManager llm;
+
   @Inject
   public PlayListPresenter<PlayListMVPView> playListPresenter;
 
@@ -63,6 +61,7 @@ public class PlayListFragment extends BaseFragment
     emptyListLabel = v.findViewById(R.id.empty_list_label);
     mRecordingsListView = v.findViewById(R.id.recyclerView);
     mRecordingsListView.setHasFixedSize(true);
+    LinearLayoutManager llm = new LinearLayoutManager(getActivity());
     llm.setOrientation(LinearLayoutManager.VERTICAL);
 
     //newest to oldest order (database stores from oldest to newest)
