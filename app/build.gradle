@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
   compileSdkVersion 26
-  buildToolsVersion "26.0.1"
+  buildToolsVersion '26.0.2'
   defaultConfig {
     applicationId "in.arjsna.audiorecorder"
     minSdkVersion 16
     targetSdkVersion 26
-    versionCode 4
-    versionName "3.1"
+    versionCode 5
+    versionName "3.2"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }
 
@@ -51,14 +51,16 @@ dependencies {
   compile 'com.orhanobut:hawk:2.0.1'
   compile 'uz.shift:colorpicker:0.5@aar'
 
-  compile "android.arch.persistence.room:runtime:1.0.0-alpha9"
-  annotationProcessor "android.arch.persistence.room:compiler:1.0.0-alpha9"
-  compile "android.arch.persistence.room:rxjava2:1.0.0-alpha9"
+  compile "android.arch.persistence.room:runtime:1.0.0"
+  annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+  compile "android.arch.persistence.room:rxjava2:1.0.0"
 
-  compile 'com.google.dagger:dagger:2.11'
+
+  implementation 'com.google.dagger:dagger:2.11'
   annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
-  provided 'javax.annotation:jsr250-api:1.0'
-  compile 'javax.inject:javax.inject:1'
+  implementation 'com.google.dagger:dagger-android:2.11'
+  implementation 'com.google.dagger:dagger-android-support:2.11'
+  annotationProcessor 'com.google.dagger:dagger-android-processor:2.11'
 
   debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
   releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'

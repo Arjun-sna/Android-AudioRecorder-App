@@ -14,7 +14,6 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +26,6 @@ import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.activities.PlayListActivity;
 import in.arjsna.audiorecorder.activities.SettingsActivity;
 import in.arjsna.audiorecorder.audiovisualization.GLAudioVisualizationView;
-import in.arjsna.audiorecorder.di.components.ActivityComponent;
 import in.arjsna.audiorecorder.di.qualifiers.ActivityContext;
 import in.arjsna.audiorecorder.mvpbase.BaseFragment;
 import in.arjsna.audiorecorder.recordingservice.AudioRecordService;
@@ -52,7 +50,7 @@ public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
 
   @Inject
   @ActivityContext
-  public AppCompatActivity mContext;
+  public Context mContext;
 
   @Inject
   public AudioRecordPresenter<AudioRecordMVPView> audioRecordPresenter;
@@ -63,11 +61,7 @@ public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ActivityComponent activityComponent = getActivityComponent();
-    if (activityComponent != null) {
-      activityComponent.inject(this);
-      audioRecordPresenter.onAttach(this);
-    }
+    audioRecordPresenter.onAttach(this);
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -179,11 +173,11 @@ public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
   }
 
   @Override public void setScreenOnFlag() {
-    mContext.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
   }
 
   @Override public void clearScreenOnFlag() {
-    mContext.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
   }
 
   @Override public void startServiceAndBind() {

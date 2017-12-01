@@ -1,7 +1,6 @@
 package in.arjsna.audiorecorder.playlist;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -26,7 +25,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Record
   private final PlayListPresenter<PlayListMVPView> playListPresenter;
 
   @Inject
-  public PlayListAdapter(@ActivityContext AppCompatActivity context,
+  public PlayListAdapter(@ActivityContext Context context,
       PlayListPresenter<PlayListMVPView> playListPresenter) {
     mContext = context;
     this.playListPresenter = playListPresenter;

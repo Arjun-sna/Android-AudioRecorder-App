@@ -1,4 +1,4 @@
-package in.arjsna.audiorecorder.di.modules;
+package in.arjsna.audiorecorder.di;
 
 import android.app.Application;
 import android.content.Context;
@@ -11,16 +11,11 @@ import javax.inject.Singleton;
 
 @Module
 public class ApplicationModule {
-  private Application application;
-
-  public ApplicationModule(Application application) {
-    this.application = application;
-  }
 
   @Provides
   @ApplicationContext
   @Singleton
-  Context provideApplicationContext() {
+  Context provideApplicationContext(Application application) {
     return application.getApplicationContext();
   }
 

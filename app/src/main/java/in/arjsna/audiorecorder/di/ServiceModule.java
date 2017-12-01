@@ -1,4 +1,4 @@
-package in.arjsna.audiorecorder.di.modules;
+package in.arjsna.audiorecorder.di;
 
 import dagger.Module;
 

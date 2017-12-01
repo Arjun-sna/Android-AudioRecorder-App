@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.db.RecordingItem;
-import in.arjsna.audiorecorder.di.components.ActivityComponent;
 import in.arjsna.audiorecorder.mvpbase.BaseFragment;
 import in.arjsna.audiorecorder.recordingservice.Constants;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
@@ -27,14 +26,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.inject.Inject;
 
-public class PlayListFragment extends BaseFragment
-    implements PlayListMVPView {
+public class PlayListFragment extends BaseFragment implements PlayListMVPView {
   private static final String LOG_TAG = "PlayListFragment";
 
   @Inject
   public PlayListAdapter mPlayListAdapter;
-  @Inject
-  public LinearLayoutManager llm;
+
   @Inject
   public PlayListPresenter<PlayListMVPView> playListPresenter;
 
@@ -49,11 +46,7 @@ public class PlayListFragment extends BaseFragment
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ActivityComponent activityComponent = getActivityComponent();
-    if (activityComponent != null) {
-      activityComponent.inject(this);
-      playListPresenter.onAttach(this);
-    }
+    playListPresenter.onAttach(this);
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,6 +61,7 @@ public class PlayListFragment extends BaseFragment
     emptyListLabel = v.findViewById(R.id.empty_list_label);
     mRecordingsListView = v.findViewById(R.id.recyclerView);
     mRecordingsListView.setHasFixedSize(true);
+    LinearLayoutManager llm = new LinearLayoutManager(getActivity());
     llm.setOrientation(LinearLayoutManager.VERTICAL);
 
     //newest to oldest order (database stores from oldest to newest)
