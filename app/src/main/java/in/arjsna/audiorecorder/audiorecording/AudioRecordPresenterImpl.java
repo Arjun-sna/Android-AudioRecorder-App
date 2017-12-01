@@ -1,7 +1,6 @@
 package in.arjsna.audiorecorder.audiorecording;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import in.arjsna.audiorecorder.AppConstants;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.di.qualifiers.ActivityContext;

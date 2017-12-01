@@ -1,7 +1,6 @@
 package in.arjsna.audiorecorder.playlist;
 
 import android.os.Environment;
-import android.util.Log;
 import in.arjsna.audiorecorder.db.RecordItemDataSource;
 import in.arjsna.audiorecorder.db.RecordingItem;
 import in.arjsna.audiorecorder.mvpbase.BasePresenter;
@@ -12,7 +11,6 @@ import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 import java.io.File;

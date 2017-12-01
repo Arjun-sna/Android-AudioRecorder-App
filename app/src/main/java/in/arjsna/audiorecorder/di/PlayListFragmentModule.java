@@ -2,7 +2,6 @@ package in.arjsna.audiorecorder.di;
 
 import dagger.Module;
 import dagger.Provides;
-import in.arjsna.audiorecorder.di.scopes.ActivityScope;
 import in.arjsna.audiorecorder.di.scopes.FragmentScope;
 import in.arjsna.audiorecorder.playlist.PlayListMVPView;
 import in.arjsna.audiorecorder.playlist.PlayListPresenter;
