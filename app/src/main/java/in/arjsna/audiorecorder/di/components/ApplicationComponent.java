@@ -18,7 +18,7 @@ public interface ApplicationComponent {
   interface Builder {
     @BindsInstance Builder application(Application application);
 
-    ApplicationComponent builder();
+    ApplicationComponent build();
   }
 
   void inject(AudioRecorderApp audioRecorderApp);

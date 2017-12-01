@@ -3,6 +3,7 @@ package in.arjsna.audiorecorder.di.components;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import in.arjsna.audiorecorder.activities.MainActivity;
+import in.arjsna.audiorecorder.activities.PlayListActivity;
 import in.arjsna.audiorecorder.activities.SettingsActivity;
 
 /**
@@ -15,8 +16,8 @@ abstract class ActivityBuilderModule {
   abstract MainActivity contributeMainActivity();
 
   @ContributesAndroidInjector(modules = {PlaybackFragmentBuilderModule.class})
-  abstract MainActivity contributePlayListActivity();
+  abstract PlayListActivity contributePlayListActivity();
 
   @ContributesAndroidInjector()
-  abstract SettingsActivity contributeSettinsActivity();
+  abstract SettingsActivity contributeSettingsActivity();
 }

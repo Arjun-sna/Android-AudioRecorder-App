@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.db.RecordingItem;
-import in.arjsna.audiorecorder.di.components.ActivityComponent;
 import in.arjsna.audiorecorder.mvpbase.BaseFragment;
 import in.arjsna.audiorecorder.recordingservice.Constants;
 import in.arjsna.audiorecorder.theme.ThemeHelper;
@@ -49,11 +48,7 @@ public class PlayListFragment extends BaseFragment
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ActivityComponent activityComponent = getActivityComponent();
-    if (activityComponent != null) {
-      activityComponent.inject(this);
-      playListPresenter.onAttach(this);
-    }
+    playListPresenter.onAttach(this);
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,

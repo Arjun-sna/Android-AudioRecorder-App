@@ -12,11 +12,8 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import com.orhanobut.hawk.Hawk;
 import in.arjsna.audiorecorder.AppConstants;
-import in.arjsna.audiorecorder.AudioRecorderApp;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.activities.MainActivity;
-import in.arjsna.audiorecorder.di.components.DaggerServiceComponent;
-import in.arjsna.audiorecorder.di.components.ServiceComponent;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import java.util.Locale;
@@ -47,10 +44,6 @@ public class AudioRecordService extends Service {
   @Override
   public void onCreate() {
     super.onCreate();
-    ServiceComponent serviceComponent = DaggerServiceComponent.builder()
-        .applicationComponent(((AudioRecorderApp) getApplication()).getApplicationComponent())
-        .build();
-    serviceComponent.inject(this);
     handler.addRecorder(audioRecorder);
     mIBinder = new ServiceBinder();
     mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

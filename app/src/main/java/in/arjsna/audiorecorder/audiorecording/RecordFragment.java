@@ -27,7 +27,6 @@ import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.activities.PlayListActivity;
 import in.arjsna.audiorecorder.activities.SettingsActivity;
 import in.arjsna.audiorecorder.audiovisualization.GLAudioVisualizationView;
-import in.arjsna.audiorecorder.di.components.ActivityComponent;
 import in.arjsna.audiorecorder.di.qualifiers.ActivityContext;
 import in.arjsna.audiorecorder.mvpbase.BaseFragment;
 import in.arjsna.audiorecorder.recordingservice.AudioRecordService;
@@ -63,11 +62,7 @@ public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ActivityComponent activityComponent = getActivityComponent();
-    if (activityComponent != null) {
-      activityComponent.inject(this);
-      audioRecordPresenter.onAttach(this);
-    }
+    audioRecordPresenter.onAttach(this);
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
