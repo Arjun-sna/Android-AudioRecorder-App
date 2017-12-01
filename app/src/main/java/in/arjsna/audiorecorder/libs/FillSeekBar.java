@@ -15,7 +15,6 @@ import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.theme.ThemedActivity;
 
 public class FillSeekBar extends FrameLayout {
-  private final int mFillColor;
   private long mProgress = 0;
   private Solid mSolid;
 
@@ -27,8 +26,7 @@ public class FillSeekBar extends FrameLayout {
     //load styled attributes.
     final TypedArray attributes = context.getTheme()
         .obtainStyledAttributes(attrs, R.styleable.FillSeekBar, R.attr.fillseekbarViewStyle, 0);
-    mFillColor =
-        ((ThemedActivity) context).getPrimaryColor();
+    int mFillColor = ((ThemedActivity) context).getPrimaryColor();
     mProgress = attributes.getInt(R.styleable.FillSeekBar_progress, 0);
     attributes.recycle();
     mSolid = new Solid(context, null);
