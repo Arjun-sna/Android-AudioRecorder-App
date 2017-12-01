@@ -9,8 +9,8 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 import dagger.android.HasServiceInjector;
-import in.arjsna.audiorecorder.di.components.ApplicationComponent;
-import in.arjsna.audiorecorder.di.components.DaggerApplicationComponent;
+import in.arjsna.audiorecorder.di.ApplicationComponent;
+import in.arjsna.audiorecorder.di.DaggerApplicationComponent;
 import javax.inject.Inject;
 
 public class AudioRecorderApp extends Application implements HasActivityInjector, HasServiceInjector{

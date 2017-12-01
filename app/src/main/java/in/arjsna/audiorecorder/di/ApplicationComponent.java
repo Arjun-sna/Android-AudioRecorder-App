@@ -1,14 +1,10 @@
-package in.arjsna.audiorecorder.di.components;
+package in.arjsna.audiorecorder.di;
 
 import android.app.Application;
-import android.content.Context;
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjectionModule;
 import in.arjsna.audiorecorder.AudioRecorderApp;
-import in.arjsna.audiorecorder.db.RecordItemDataSource;
-import in.arjsna.audiorecorder.di.modules.ApplicationModule;
-import in.arjsna.audiorecorder.di.qualifiers.ApplicationContext;
 import javax.inject.Singleton;
 
 @Singleton

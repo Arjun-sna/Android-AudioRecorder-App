@@ -1,11 +1,10 @@
-package in.arjsna.audiorecorder.di.components;
+package in.arjsna.audiorecorder.di;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import in.arjsna.audiorecorder.activities.MainActivity;
 import in.arjsna.audiorecorder.activities.PlayListActivity;
 import in.arjsna.audiorecorder.activities.SettingsActivity;
-import in.arjsna.audiorecorder.di.modules.MainActivityModule;
 import in.arjsna.audiorecorder.di.scopes.ActivityScope;
 
 /**

@@ -1,4 +1,4 @@
-package in.arjsna.audiorecorder.di.components;
+package in.arjsna.audiorecorder.di;
 
 import android.content.Context;
 import dagger.Module;
