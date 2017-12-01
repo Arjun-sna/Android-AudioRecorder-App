@@ -51,7 +51,7 @@ public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
 
   @Inject
   @ActivityContext
-  public AppCompatActivity mContext;
+  public Context mContext;
 
   @Inject
   public AudioRecordPresenter<AudioRecordMVPView> audioRecordPresenter;
@@ -174,11 +174,11 @@ public class RecordFragment extends BaseFragment implements AudioRecordMVPView {
   }
 
   @Override public void setScreenOnFlag() {
-    mContext.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
   }
 
   @Override public void clearScreenOnFlag() {
-    mContext.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
   }
 
   @Override public void startServiceAndBind() {

@@ -6,6 +6,7 @@ import in.arjsna.audiorecorder.audiorecording.AudioRecordMVPView;
 import in.arjsna.audiorecorder.audiorecording.AudioRecordPresenter;
 import in.arjsna.audiorecorder.audiorecording.AudioRecordPresenterImpl;
 import in.arjsna.audiorecorder.di.scopes.ActivityScope;
+import in.arjsna.audiorecorder.di.scopes.FragmentScope;
 import io.reactivex.disposables.CompositeDisposable;
 
 /**
@@ -14,15 +15,16 @@ import io.reactivex.disposables.CompositeDisposable;
 
 @Module
 class RecordFragmentModule {
+
   @Provides
-  @ActivityScope
+  @FragmentScope
   AudioRecordPresenter<AudioRecordMVPView> provideAudioRecordPresenter(
       AudioRecordPresenterImpl<AudioRecordMVPView> audioRecordPresenter) {
     return audioRecordPresenter;
   }
 
   @Provides
-  @ActivityScope
+  @FragmentScope
   CompositeDisposable provideCompositeDisposable() {
     return new CompositeDisposable();
   }

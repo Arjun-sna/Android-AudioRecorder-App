@@ -2,6 +2,7 @@ package in.arjsna.audiorecorder.di.components;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
+import in.arjsna.audiorecorder.di.scopes.FragmentScope;
 import in.arjsna.audiorecorder.playback.PlaybackFragment;
 
 /**
@@ -10,6 +11,7 @@ import in.arjsna.audiorecorder.playback.PlaybackFragment;
 
 @Module
 abstract class PlaybackFragmentBuilderModule {
+  @FragmentScope
   @ContributesAndroidInjector(modules = {PlaybackFragmentModule.class})
   abstract PlaybackFragment contributePlaybackFragment();
 }

@@ -1,5 +1,6 @@
 package in.arjsna.audiorecorder.audiorecording;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import in.arjsna.audiorecorder.AppConstants;
 import in.arjsna.audiorecorder.R;
@@ -16,7 +17,7 @@ public class AudioRecordPresenterImpl<V extends AudioRecordMVPView> extends Base
 
   @Inject
   @ActivityContext
-  public AppCompatActivity mContext;
+  public Context mContext;
   private boolean mIsRecording = false;
   private boolean mIsRecordingPaused = false;
 

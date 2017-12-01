@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import com.squareup.haha.perflib.Main;
 import dagger.Module;
 import dagger.Provides;
+import in.arjsna.audiorecorder.activities.MainActivity;
 import in.arjsna.audiorecorder.audiorecording.AudioRecordMVPView;
 import in.arjsna.audiorecorder.audiorecording.AudioRecordPresenter;
 import in.arjsna.audiorecorder.audiorecording.AudioRecordPresenterImpl;
@@ -18,13 +20,10 @@ import io.reactivex.disposables.CompositeDisposable;
 
 @Module
 public class ActivityModule {
-
   @Provides
   @ActivityContext
   @ActivityScope
-  Context provideActivityContext(Activity activity) {
+  Context provideActivityContext(MainActivity activity) {
     return activity;
   }
-
-
 }

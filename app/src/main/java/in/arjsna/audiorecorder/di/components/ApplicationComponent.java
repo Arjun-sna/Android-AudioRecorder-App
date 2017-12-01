@@ -12,7 +12,7 @@ import in.arjsna.audiorecorder.di.qualifiers.ApplicationContext;
 import javax.inject.Singleton;
 
 @Singleton
-@Component(modules = {ApplicationModule.class, AndroidInjectionModule.class, ActivityBuilderModule.class})
+@Component(modules = {ApplicationModule.class, AndroidInjectionModule.class, ActivityBuilderModule.class, ServiceBuilderModule.class})
 public interface ApplicationComponent {
   @Component.Builder
   interface Builder {

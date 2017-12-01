@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import com.orhanobut.hawk.Hawk;
+import dagger.android.AndroidInjection;
 import in.arjsna.audiorecorder.AppConstants;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.activities.MainActivity;
@@ -44,6 +45,7 @@ public class AudioRecordService extends Service {
   @Override
   public void onCreate() {
     super.onCreate();
+    AndroidInjection.inject(this);
     handler.addRecorder(audioRecorder);
     mIBinder = new ServiceBinder();
     mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
