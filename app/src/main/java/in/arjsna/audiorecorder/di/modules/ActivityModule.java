@@ -1,5 +1,7 @@
 package in.arjsna.audiorecorder.di.modules;
 
+import android.app.Activity;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import dagger.Module;
@@ -16,42 +18,13 @@ import io.reactivex.disposables.CompositeDisposable;
 
 @Module
 public class ActivityModule {
-  private AppCompatActivity appCompatActivity;
-
-  public ActivityModule(AppCompatActivity appCompatActivity) {
-    this.appCompatActivity = appCompatActivity;
-  }
 
   @Provides
   @ActivityContext
   @ActivityScope
-  AppCompatActivity provideActivityContext() {
-    return appCompatActivity;
+  Context provideActivityContext(Activity activity) {
+    return activity;
   }
 
-  @Provides
-  @ActivityScope
-  CompositeDisposable provideCompositeDisposable() {
-    return new CompositeDisposable();
-  }
 
-  @Provides
-  @ActivityScope
-  LinearLayoutManager provideLinearLayoutManager(@ActivityContext AppCompatActivity context) {
-    return new LinearLayoutManager(context);
-  }
-
-  @Provides
-  @ActivityScope
-  AudioRecordPresenter<AudioRecordMVPView> provideAudioRecordPresenter(
-      AudioRecordPresenterImpl<AudioRecordMVPView> audioRecordPresenter) {
-    return audioRecordPresenter;
-  }
-
-  @Provides
-  @ActivityScope
-  PlayListPresenter<PlayListMVPView> providePlayListPresenter(
-      PlayListPresenterImpl<PlayListMVPView> playListPresenter) {
-    return playListPresenter;
-  }
 }
