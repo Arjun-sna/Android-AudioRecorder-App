@@ -62,6 +62,7 @@ dependencies {
   implementation 'com.google.dagger:dagger-android-support:2.11'
   annotationProcessor 'com.google.dagger:dagger-android-processor:2.11'
 
+  implementation 'pub.devrel:easypermissions:1.0.1'
   debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
   releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 }

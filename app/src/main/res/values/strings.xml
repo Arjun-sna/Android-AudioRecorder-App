@@ -48,5 +48,8 @@
   <string name="preference_layer_colors">layer_colors_key</string>
   <string name="rate_app_title">Rate Application</string>
   <string name="rate_app_desc">Rate the application in Google Play Store</string>
+  <string name="permissions_required">App requires RECORD_AUDIO permission to access mic and
+    WRITE_EXTERNAL_STORAGE to save recorded audio
+  </string>
 
 </resources>
