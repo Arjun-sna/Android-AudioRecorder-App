@@ -12,15 +12,19 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
+import com.squareup.haha.perflib.Main;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 import in.arjsna.audiorecorder.R;
 import in.arjsna.audiorecorder.audiorecording.RecordFragment;
 import in.arjsna.audiorecorder.mvpbase.BaseActivity;
+import java.util.List;
 import javax.inject.Inject;
+import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends BaseActivity implements HasSupportFragmentInjector {
+public class MainActivity extends BaseActivity
+    implements HasSupportFragmentInjector, EasyPermissions.PermissionCallbacks {
 
   private static final String LOG_TAG = MainActivity.class.getSimpleName();
   private static final int PERMISSION_REQ = 222;
@@ -56,41 +60,28 @@ public class MainActivity extends BaseActivity implements HasSupportFragmentInje
 
   @TargetApi(23)
   private void getPermissions() {
-    if (ContextCompat.checkSelfPermission(MainActivity.this,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(MainActivity.this,
-        Manifest.permission.RECORD_AUDIO)
-        != PackageManager.PERMISSION_GRANTED) {
-      String[] permissions = new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE,
-          Manifest.permission.RECORD_AUDIO};
-      requestPermissions(permissions, PERMISSION_REQ);
+    String[] permissions = new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.RECORD_AUDIO};
+    if (!EasyPermissions.hasPermissions(MainActivity.this, permissions)) {
+      EasyPermissions.requestPermissions(this, getString(R.string.permissions_required),
+          PERMISSION_REQ, permissions);
     }
   }
 
   @TargetApi(23)
   @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
       @NonNull int[] grantResults) {
-    if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)
-        || shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-      showRationale(false);
-    } else if (grantResults[0] != PackageManager.PERMISSION_GRANTED
-        || grantResults[1] != PackageManager.PERMISSION_GRANTED) {
-      showRationale(true);
-    }
+    EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
   }
 
-  private void showRationale(boolean openSettings) {
+  private void showRationale() {
     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
     builder.setTitle("Permissions Required")
         .setCancelable(false)
         .setMessage(
-            "App requires RECORD_AUDIO permission to access mic and WRITE_EXTERNAL_STORAGE to save recorded audio")
+            getString(R.string.permissions_required))
         .setPositiveButton(R.string.dialog_action_ok, (dialog, which) -> {
-          if (openSettings) {
-            openSettingsPage();
-          } else {
-            getPermissions();
-          }
+          openSettingsPage();
           dialog.dismiss();
         })
         .setNegativeButton(R.string.dialog_action_cancel,
@@ -111,5 +102,17 @@ public class MainActivity extends BaseActivity implements HasSupportFragmentInje
 
   @Override public AndroidInjector<Fragment> supportFragmentInjector() {
     return dispatchingAndroidInjector;
+  }
+
+  @Override public void onPermissionsGranted(int requestCode, List<String> perms) {
+    //NO-OP
+  }
+
+  @Override public void onPermissionsDenied(int requestCode, List<String> perms) {
+    if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+      showRationale();
+      return;
+    }
+    finish();
   }
 }
