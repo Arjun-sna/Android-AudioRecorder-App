@@ -1,3 +1,8 @@
+# Not maintained
+This projecct is more of a sample app to demonstrate use of Dagger, RxJava, MVC pattern etc.
+Due to time constraints i'm not able to accept and work on bugs anymore. 
+
+
 # Android Audio Recorder App
 Application to record audio and save it locally in the device.  The application also visualizes the audio in wave format. It also supports recording in the background while you can continue using the device for other tasks.
 
