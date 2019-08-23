@@ -1,5 +1,5 @@
 # Not maintained
-This projecct is more of a sample app to demonstrate use of Dagger, RxJava, MVC pattern etc.
+This project is more of a sample app to demonstrate use of Dagger, RxJava, MVC pattern etc.
 Due to time constraints i'm not able to accept and work on bugs anymore. 
 
 
